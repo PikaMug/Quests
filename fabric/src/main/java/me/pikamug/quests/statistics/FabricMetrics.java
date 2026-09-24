@@ -64,7 +64,7 @@ public class FabricMetrics {
     this.plugin = plugin;
     final int serviceId = 9528;
     // Get the config file
-    final File bStatsFolder = new File(plugin.getPluginDataFolder(), "bStats");
+    final File bStatsFolder = new File(plugin.getPluginDataFolder().getParentFile(), "bStats");
     configFile = new File(bStatsFolder, "config.properties");
     if (!configFile.exists()) {
       if (!bStatsFolder.exists() && !bStatsFolder.mkdirs()) {

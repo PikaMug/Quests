@@ -11,12 +11,15 @@
 package me.pikamug.quests.util;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -27,10 +30,19 @@ public class FabricMiscUtil {
 
     private static final Map<String, EntityType<?>> entityTypeCache = new ConcurrentHashMap<>();
 
+    public static final EntityType<?> PLAYER = getEntityType("player");
+    public static final EntityType<?> COW = getEntityType("cow");
+    public static final EntityType<?> MOOSHROOM = getEntityType("mooshroom");
+    public static final EntityType<?> SHEEP = getEntityType("sheep");
+    @SuppressWarnings("unchecked")
+    public static final EntityType<LightningBolt> LIGHTNING_BOLT = (EntityType<LightningBolt>) getEntityType("lightning_bolt");
+
     public static EntityType<?> getEntityType(String name) {
-        return entityTypeCache.computeIfAbsent(name.toUpperCase(), k -> {
-            final Optional<EntityType<?>> type = EntityType.byString(k);
-            return type.orElse(null);
+        if (name == null) return null;
+        return entityTypeCache.computeIfAbsent(name.toUpperCase(Locale.ROOT), k -> {
+            final Identifier id = Identifier.tryParse(name.toLowerCase(Locale.ROOT));
+            if (id == null) return null;
+            return BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
         });
     }
 
@@ -96,9 +108,7 @@ public class FabricMiscUtil {
     }
 
     public static EntityType<?> getProperMobType(final String mob) {
-        if (mob == null) return null;
-        final Optional<EntityType<?>> type = EntityType.byString(mob.toUpperCase());
-        return type.orElse(null);
+        return getEntityType(mob);
     }
 
     public static String snakeCaseToUpperCamelCase(final String input) {

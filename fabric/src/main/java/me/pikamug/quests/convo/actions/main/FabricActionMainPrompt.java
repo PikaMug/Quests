@@ -626,7 +626,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
             final StringBuilder mobs = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final LinkedList<EntityType<?>> mobList = new LinkedList<>();
             net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.stream()
-                    .filter(et -> et != EntityType.PLAYER)
+                    .filter(et -> et != FabricMiscUtil.PLAYER)
                     .sorted(Comparator.comparing(et -> et.getDescription().getString()))
                     .forEach(mobList::add);
             for (int i = 0; i < mobList.size(); i++) {

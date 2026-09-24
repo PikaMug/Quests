@@ -10,12 +10,13 @@
 
 package me.pikamug.quests.listeners;
 
+import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.QuestsEvents;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.FabricLang;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Locale;
@@ -31,7 +32,7 @@ public class FabricChatListener {
     }
 
     private void register() {
-        QuestsEvents.registerChatAllow((player, content) -> {
+        FabricMixinEvents.registerChatAllow((player, content) -> {
             if (plugin.isLoading() || player == null || content == null) return true;
             final FabricQuester quester = plugin.getQuester(player.getUUID());
             for (final Quest quest : plugin.getLoadedQuests()) {
@@ -47,12 +48,12 @@ public class FabricChatListener {
             return true;
         });
 
-        QuestsEvents.registerChatMessage((player, content) -> {
+        FabricMixinEvents.registerChatMessage((player, content) -> {
             if (plugin.isLoading() || player == null || content == null) return;
             handleChat(player, content);
         });
 
-        QuestsEvents.registerCommandMessage((player, content) -> {
+        FabricMixinEvents.registerCommandMessage((player, content) -> {
             if (plugin.isLoading() || player == null || content == null) return;
             handleCommand(player, content);
         });
@@ -96,7 +97,17 @@ public class FabricChatListener {
         for (final Quest quest : plugin.getLoadedQuests()) {
             if (!quester.getCurrentQuests().containsKey(quest)) continue;
             final Stage stage = quester.getCurrentStage(quest);
-            if (stage == null || stage.getCommandActions().isEmpty()) continue;
+            if (stage == null) continue;
+            // Bukkit parity minus the blanket cancellation: warn the player and skip the
+            // stage's command actions, but never block unrelated server commands.
+            final boolean allowed = quest.getOptions().canAllowCommands()
+                    || lowerContent.startsWith("/quest");
+            if (!allowed) {
+                quester.sendMessage("§c" + FabricLang.get(quester.getServerPlayer(), "optCommandsDenied")
+                        .replace("<quest>", quest.getName()));
+                continue;
+            }
+            if (stage.getCommandActions().isEmpty()) continue;
             for (final Map.Entry<String, Action> entry : stage.getCommandActions().entrySet()) {
                 final String key = entry.getKey();
                 if (key == null) continue;

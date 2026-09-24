@@ -14,9 +14,15 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.components.*;
+import me.pikamug.quests.util.FabricLang;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.UUID;
 
 public class FabricQuest implements Quest {
@@ -26,6 +32,7 @@ public class FabricQuest implements Quest {
     private String description;
     private String finished;
     private String regionStart;
+    private net.minecraft.core.BlockPos blockStart;
     private LinkedList<Stage> stages = new LinkedList<>();
     private UUID npcStart;
     private String npcStartName;
@@ -45,6 +52,8 @@ public class FabricQuest implements Quest {
     @Override public void setFinished(String v) { this.finished = v; }
     @Override public String getRegionStart() { return regionStart; }
     @Override public void setRegionStart(String v) { this.regionStart = v; }
+    public net.minecraft.core.BlockPos getBlockStart() { return blockStart; }
+    public void setBlockStart(net.minecraft.core.BlockPos v) { this.blockStart = v; }
     @Override public Stage getStage(int index) {
         if (index < 0 || index >= stages.size()) return null;
         return stages.get(index);
@@ -149,27 +158,16 @@ public class FabricQuest implements Quest {
             }
         }
 
-        // Check item requirements (player must have enough of each item; remove if enabled)
+        // Check item requirements (player must have enough of each item)
         if (requirements.getItems() != null && !requirements.getItems().isEmpty()) {
             final var server = FabricQuestsPlugin.getInstance().getServer();
             final var player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
-            final boolean remove = requirements.getRemoveItems() != null
-                    && requirements.getRemoveItems().size() == requirements.getItems().size();
             for (int i = 0; i < requirements.getItems().size(); i++) {
                 final Object itemObj = requirements.getItems().get(i);
                 if (!(itemObj instanceof net.minecraft.world.item.ItemStack item)) return false;
                 if (player == null) return false;
                 final int have = me.pikamug.quests.util.FabricInventoryUtil.countItem(player, item);
                 if (have < item.getCount()) return false;
-            }
-            if (remove) {
-                for (int i = 0; i < requirements.getItems().size(); i++) {
-                    final Object itemObj = requirements.getItems().get(i);
-                    final boolean doRemove = Boolean.TRUE.equals(requirements.getRemoveItems().get(i));
-                    if (doRemove && itemObj instanceof net.minecraft.world.item.ItemStack item && player != null) {
-                        me.pikamug.quests.util.FabricInventoryUtil.removeItem(player, item);
-                    }
-                }
             }
         }
 
@@ -271,8 +269,99 @@ public class FabricQuest implements Quest {
             }
         }
         quester.stopStageTimer(this);
+        sendCompletionFeedback(quester);
         quester.saveData();
         FabricQuestsPlugin.LOGGER.info("Quest '{}' completed by {}", name, quester.getUUID());
+    }
+
+    private void sendCompletionFeedback(Quester quester) {
+        if (quester == null) return;
+        final FabricQuestsPlugin plugin = FabricQuestsPlugin.getInstance();
+        final var server = plugin.getServer();
+        final ServerPlayer player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
+        if (player != null) {
+            if (plugin.getConfigSettings().canShowQuestTitles()) {
+                player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§e" + name)));
+                player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(
+                        "§6" + FabricLang.get(player, "quest") + " " + FabricLang.get(player, "complete"))));
+                player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
+            }
+            quester.sendMessage(FabricLang.get(player, "questCompleteTitle").replace("<quest>", name));
+        }
+        quester.sendMessage("§a" + FabricLang.get(player, "questRewardsTitle"));
+        if (rewards == null) {
+            quester.sendMessage("§7- " + FabricLang.get(player, "none"));
+            return;
+        }
+        final boolean issuedReward = rewards.getQuestPoints() > 0 || rewards.getExp() > 0
+                || (rewards.getItems() != null && !rewards.getItems().isEmpty())
+                || (rewards.getCommands() != null && !rewards.getCommands().isEmpty())
+                || (rewards.getPermissions() != null && !rewards.getPermissions().isEmpty())
+                || (rewards.getCustomRewards() != null && !rewards.getCustomRewards().isEmpty());
+        if (!issuedReward) {
+            quester.sendMessage("§7- " + FabricLang.get(player, "none"));
+            return;
+        }
+        if (rewards.getDetailsOverride() != null && !rewards.getDetailsOverride().isEmpty()) {
+            for (final String s : rewards.getDetailsOverride()) {
+                quester.sendMessage("- §2" + s);
+            }
+            return;
+        }
+        if (rewards.getExp() > 0) {
+            quester.sendMessage("- §2" + rewards.getExp() + " " + FabricLang.get(player, "experience"));
+        }
+        if (rewards.getQuestPoints() > 0) {
+            quester.sendMessage("- §2" + rewards.getQuestPoints() + " " + FabricLang.get(player, "questPoints"));
+        }
+        if (rewards.getItems() != null) {
+            for (final Object itemObj : rewards.getItems()) {
+                if (itemObj instanceof net.minecraft.world.item.ItemStack item) {
+                    quester.sendMessage("- §3" + me.pikamug.quests.util.FabricItemUtil.getName(item)
+                            + " §7x " + item.getCount());
+                }
+            }
+        }
+        if (rewards.getCommands() != null && !rewards.getCommands().isEmpty()) {
+            int index = 0;
+            for (final String s : rewards.getCommands()) {
+                final String override = rewards.getCommandsOverrideDisplay() != null
+                        && rewards.getCommandsOverrideDisplay().size() > index
+                        ? rewards.getCommandsOverrideDisplay().get(index) : null;
+                quester.sendMessage("- §2" + (override != null && !override.trim().isEmpty() ? override : s));
+                index++;
+            }
+        }
+        if (rewards.getPermissions() != null && !rewards.getPermissions().isEmpty()) {
+            int index = 0;
+            for (final String s : rewards.getPermissions()) {
+                if (rewards.getPermissionWorlds() != null && rewards.getPermissionWorlds().size() > index) {
+                    quester.sendMessage("- §2" + s + " (" + rewards.getPermissionWorlds().get(index) + ")");
+                } else {
+                    quester.sendMessage("- §2" + s);
+                }
+                index++;
+            }
+        }
+        final Map<String, Map<String, Object>> customRewardMap = rewards.getCustomRewards();
+        if (customRewardMap != null && !customRewardMap.isEmpty()) {
+            final var customRewards = FabricQuestsPlugin.getInstance().getCustomRewards();
+            for (final Map.Entry<String, Map<String, Object>> entry : customRewardMap.entrySet()) {
+                for (final var custom : customRewards) {
+                    if (custom.getModuleName().equalsIgnoreCase(entry.getKey())) {
+                        String display = custom.getDisplay();
+                        if (display != null) {
+                            for (final Map.Entry<String, Object> dataEntry : entry.getValue().entrySet()) {
+                                display = display.replace("%" + dataEntry.getKey() + "%",
+                                        dataEntry.getValue().toString());
+                            }
+                            quester.sendMessage("- §6" + display);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -290,9 +379,11 @@ public class FabricQuest implements Quest {
                 stage.getFailAction().fire(quester, this);
             }
         }
-        quester.stopStageTimer(this);
-        quester.getCurrentQuests().remove(this);
-        quester.saveData();
+        final FabricQuestsPlugin failPlugin = FabricQuestsPlugin.getInstance();
+        final ServerPlayer failPlayer = failPlugin == null || failPlugin.getServer() == null ? null
+                : failPlugin.getServer().getPlayerList().getPlayer(quester.getUUID());
+        final String[] messages = {"§c" + FabricLang.get(failPlayer, "questFailed").replace("<quest>", name != null ? name : id)};
+        quester.quitQuest(this, messages);
         FabricQuestsPlugin.LOGGER.info("Quest '{}' failed by {}", name, quester.getUUID());
     }
 

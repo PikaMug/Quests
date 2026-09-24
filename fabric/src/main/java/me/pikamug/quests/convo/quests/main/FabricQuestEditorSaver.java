@@ -44,7 +44,7 @@ public final class FabricQuestEditorSaver {
 
     /**
      * @param questId the numeric id of the quest being saved
-     * @return the quest record written to {@code storage/<questId>.json} (true) or {@code false}
+     * @return the quest record written to the {@code quests.json} index (true) or {@code false}
      *         if the quest has no name set
      */
     public static boolean save(UUID uuid, String questId, FabricQuestsPlugin plugin) throws IOException {
@@ -56,12 +56,8 @@ public final class FabricQuestEditorSaver {
         if (!Files.exists(storageDir)) {
             Files.createDirectories(storageDir);
         }
-        final Path questFile = storageDir.resolve(questId + ".json");
         final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (Writer writer = Files.newBufferedWriter(questFile)) {
-            gson.toJson(questData, writer);
-        }
-        // Keep the combined index in sync so splitIndex sees the same content
+        // Keep the combined index in sync with the edited quest
         final Path index = storageDir.resolve("quests.json");
         JsonObject root = new JsonObject();
         if (Files.exists(index)) {

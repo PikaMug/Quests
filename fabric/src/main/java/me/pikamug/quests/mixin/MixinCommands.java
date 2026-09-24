@@ -11,9 +11,10 @@
 package me.pikamug.quests.mixin;
 
 import com.mojang.brigadier.CommandDispatcher;
-import me.pikamug.quests.QuestsEvents;
-import net.minecraft.commands.CommandSourceStack;
+import me.pikamug.quests.FabricMixinEvents;
+import me.pikamug.quests.FabricQuestsPlugin;
 import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,6 +27,9 @@ public abstract class MixinCommands {
     @Inject(method = "<init>(Lnet/minecraft/commands/Commands$CommandSelection;Lnet/minecraft/commands/CommandBuildContext;)V", at = @At("TAIL"))
     private void quests$onCommandRegister(Commands.CommandSelection commandSelection, CommandBuildContext buildContext, CallbackInfo ci) {
         final CommandDispatcher<CommandSourceStack> dispatcher = ((Commands) (Object) this).getDispatcher();
-        QuestsEvents.invokeCommandRegister(dispatcher);
+        FabricMixinEvents.invokeCommandRegister(dispatcher);
+        final boolean hasQuest = dispatcher.getRoot().getChildren().stream()
+                .anyMatch(node -> node.getName().equals("quests"));
+        FabricQuestsPlugin.LOGGER.info("Quests command registration: dispatcher has 'quests' node: {}", hasQuest);
     }
 }

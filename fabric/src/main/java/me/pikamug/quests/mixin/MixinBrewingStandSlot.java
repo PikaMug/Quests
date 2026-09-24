@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.mixin;
 
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +38,7 @@ public abstract class MixinBrewingStandSlot {
     @Inject(method = "onTake", at = @At("TAIL"))
     private void quests$onItemBrewed(Player player, ItemStack stack, CallbackInfo ci) {
         if (container instanceof BrewingStandBlockEntity && player instanceof ServerPlayer serverPlayer) {
-            QuestsEvents.invokeItemBrewed(serverPlayer, stack.copy());
+            FabricMixinEvents.invokeItemBrewed(serverPlayer, stack.copy());
         }
     }
 }

@@ -10,9 +10,8 @@
 
 package me.pikamug.quests.listeners.npc;
 
+import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.QuestsEvents;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
 /**
@@ -28,7 +27,7 @@ public class FabricTaterzensListener extends FabricNpcListener {
 
     @Override
     public void register() {
-        QuestsEvents.registerUseEntity((player, entity) -> {
+        FabricMixinEvents.registerUseEntity((player, entity) -> {
             if (isNpc(entity)) {
                 handleNpcInteract(player, entity);
                 return true;

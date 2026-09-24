@@ -44,7 +44,7 @@ public class FabricQuestJournal {
         this.plugin = plugin;
         this.owner = owner;
         final ServerPlayer player = FabricMiscUtil.getPlayer(owner.getUUID(), plugin);
-        final String title = FabricLang.get("journalTitle");
+        final String title = FabricLang.get(player, "journalTitle");
         journal = new ItemStack(Items.WRITTEN_BOOK);
         journal.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(
                 Filterable.passThrough(title),
@@ -55,13 +55,14 @@ public class FabricQuestJournal {
         final CompoundTag marker = new CompoundTag();
         marker.putBoolean("quests.journal", true);
         journal.set(DataComponents.CUSTOM_DATA, CustomData.of(marker));
-        journal.set(DataComponents.CUSTOM_NAME, Component.literal(title).withStyle(ChatFormatting.LIGHT_PURPLE));
+        journal.set(DataComponents.CUSTOM_NAME, Component.literal(FabricLang.get(player, "journalTitle")).withStyle(ChatFormatting.LIGHT_PURPLE));
     }
 
     public List<Component> getPages() {
         if (owner.getCurrentQuests().isEmpty()) {
-            final String title = FabricLang.get("journalTitle");
-            return Collections.singletonList(Component.literal(FabricLang.get("journalNoQuests")
+            final ServerPlayer player = FabricMiscUtil.getPlayer(owner.getUUID(), plugin);
+            final String title = FabricLang.get(player, "journalTitle");
+            return Collections.singletonList(Component.literal(FabricLang.get(player, "journalNoQuests")
                     .replace("<journal>", title)).withStyle(ChatFormatting.DARK_RED));
         }
         final List<Component> pages = new LinkedList<>();
@@ -79,7 +80,8 @@ public class FabricQuestJournal {
                         && obj.getProgress() >= obj.getGoal()) {
                     continue;
                 }
-                page.append(Component.literal("\n- " + obj.getMessage()
+                page.append(Component.literal("\n- " + FabricLang.convertString(
+                                obj.getMessage().trim().replaceAll("\\s{2,}", ""))
                         + " (" + obj.getProgress() + "/" + obj.getGoal() + ")")
                         .withStyle(ChatFormatting.GRAY));
             }

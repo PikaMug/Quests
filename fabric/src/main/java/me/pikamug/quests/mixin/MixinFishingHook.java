@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.mixin;
 
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +36,7 @@ public abstract class MixinFishingHook {
     private void quests$onFishCaught(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         final FishingHook bobber = (FishingHook) (Object) this;
         if (bobber.getPlayerOwner() instanceof ServerPlayer player) {
-            QuestsEvents.invokeFishingCatch(player);
+            FabricMixinEvents.invokeFishingCatch(player);
         }
     }
 }

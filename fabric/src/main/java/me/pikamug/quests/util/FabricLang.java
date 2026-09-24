@@ -48,15 +48,14 @@ public class FabricLang {
         final Set<String> locales = extractLocaleList();
         for (final String locale : locales) {
             final Path localeDir = langDir.resolve(locale);
-            if (!Files.exists(localeDir)) {
-                Files.createDirectories(localeDir);
-            }
+            Files.createDirectories(localeDir);
             final Path stringsFile = localeDir.resolve("strings.json");
             if (!Files.exists(stringsFile)) {
                 final InputStream in = plugin.getPluginResource("lang/" + locale + "/strings.json");
                 if (in != null) {
-                    Files.copy(in, stringsFile);
-                    in.close();
+                    try (in) {
+                        Files.copy(in, stringsFile);
+                    }
                 }
             }
         }
@@ -73,8 +72,10 @@ public class FabricLang {
                 while (entries.hasMoreElements()) {
                     final String name = entries.nextElement().getName();
                     if (name.startsWith("lang/") && name.endsWith("/strings.json")) {
-                        final String locale = name.substring(5, name.length() - 14);
-                        locales.add(locale);
+                        final int end = name.lastIndexOf('/');
+                        if (end > 5) {
+                            locales.add(name.substring(5, end));
+                        }
                     }
                 }
                 jar.close();
@@ -111,11 +112,53 @@ public class FabricLang {
     }
 
     public static String get(ServerPlayer player, String key) {
+        if (key == null) {
+            return null;
+        }
         if (player == null) {
             return get(key);
         }
-        final String raw = defaultLang.getOrDefault(key, key);
-        return convertString(raw);
+        final String rawLocale = player.clientInformation().language();
+        final int separator = rawLocale.indexOf("_");
+        if (separator == -1) {
+            return defaultLang.containsKey(key) ? convertString(defaultLang.get(key)) : key;
+        }
+        final String lang = rawLocale.substring(0, separator);
+        final String country = rawLocale.substring(separator + 1).toUpperCase(Locale.ROOT);
+        final String locale = lang + "-" + country;
+        if (plugin.getConfigSettings().canLanguageOverrideClient()
+                || locale.equals(plugin.getConfigSettings().getLanguage())) {
+            return defaultLang.containsKey(key) ? convertString(defaultLang.get(key)) : key;
+        }
+        if (!otherLang.containsKey(locale)) {
+            try {
+                loadOther(locale);
+            } catch (final IOException e) {
+                return defaultLang.containsKey(key) ? convertString(defaultLang.get(key)) : key;
+            }
+        }
+        final LinkedHashMap<String, String> map = otherLang.get(locale);
+        if (map == null || map.get(key) == null) {
+            return defaultLang.containsKey(key) ? convertString(defaultLang.get(key)) : key;
+        }
+        return convertString(map.get(key));
+    }
+
+    private static void loadOther(String locale) throws IOException {
+        final Path langFile = plugin.getPluginDataFolder().toPath().resolve("lang").resolve(locale).resolve("strings.json");
+        final LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        if (Files.exists(langFile)) {
+            try (Reader reader = Files.newBufferedReader(langFile)) {
+                final com.google.gson.JsonObject json = new com.google.gson.Gson()
+                        .fromJson(reader, com.google.gson.JsonObject.class);
+                if (json != null) {
+                    for (final String key : json.keySet()) {
+                        map.put(key, json.get(key).getAsString());
+                    }
+                }
+            }
+        }
+        otherLang.put(locale, map);
     }
 
     public static void send(ServerPlayer player, String key) {
@@ -158,28 +201,31 @@ public class FabricLang {
     public static String convertString(String input) {
         if (input == null) return null;
         String result = input;
-        result = result.replace("%reset%", ChatFormatting.RESET.toString());
+        result = result.replace("%br%", "\n");
+        result = result.replace("%tab%", "\t");
+        result = result.replace("%rtr%", "\r");
         result = result.replace("%bold%", ChatFormatting.BOLD.toString());
         result = result.replace("%italic%", ChatFormatting.ITALIC.toString());
         result = result.replace("%underline%", ChatFormatting.UNDERLINE.toString());
         result = result.replace("%strikethrough%", ChatFormatting.STRIKETHROUGH.toString());
-        result = result.replace("%obfuscated%", ChatFormatting.OBFUSCATED.toString());
+        result = result.replace("%magic%", ChatFormatting.OBFUSCATED.toString());
+        result = result.replace("%reset%", ChatFormatting.RESET.toString());
+        result = result.replace("%white%", ChatFormatting.WHITE.toString());
         result = result.replace("%black%", ChatFormatting.BLACK.toString());
-        result = result.replace("%dark_blue%", ChatFormatting.DARK_BLUE.toString());
-        result = result.replace("%dark_green%", ChatFormatting.DARK_GREEN.toString());
+        result = result.replace("%aqua%", ChatFormatting.AQUA.toString());
         result = result.replace("%dark_aqua%", ChatFormatting.DARK_AQUA.toString());
-        result = result.replace("%dark_red%", ChatFormatting.DARK_RED.toString());
-        result = result.replace("%dark_purple%", ChatFormatting.DARK_PURPLE.toString());
+        result = result.replace("%blue%", ChatFormatting.BLUE.toString());
+        result = result.replace("%dark_blue%", ChatFormatting.DARK_BLUE.toString());
         result = result.replace("%gold%", ChatFormatting.GOLD.toString());
         result = result.replace("%gray%", ChatFormatting.GRAY.toString());
         result = result.replace("%dark_gray%", ChatFormatting.DARK_GRAY.toString());
-        result = result.replace("%blue%", ChatFormatting.BLUE.toString());
+        result = result.replace("%pink%", ChatFormatting.LIGHT_PURPLE.toString());
+        result = result.replace("%purple%", ChatFormatting.DARK_PURPLE.toString());
         result = result.replace("%green%", ChatFormatting.GREEN.toString());
-        result = result.replace("%aqua%", ChatFormatting.AQUA.toString());
+        result = result.replace("%dark_green%", ChatFormatting.DARK_GREEN.toString());
         result = result.replace("%red%", ChatFormatting.RED.toString());
-        result = result.replace("%light_purple%", ChatFormatting.LIGHT_PURPLE.toString());
+        result = result.replace("%dark_red%", ChatFormatting.DARK_RED.toString());
         result = result.replace("%yellow%", ChatFormatting.YELLOW.toString());
-        result = result.replace("%white%", ChatFormatting.WHITE.toString());
         // Hex color support: %#RRGGBB%
         final Matcher matcher = hexPattern.matcher(result);
         final StringBuffer sb = new StringBuffer();

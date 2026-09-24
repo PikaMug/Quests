@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.mixin;
 
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -46,7 +46,7 @@ public abstract class MixinServerPlayerGameMode {
         final BlockState state = quests$stateBeingBroken;
         quests$stateBeingBroken = null;
         if (Boolean.TRUE.equals(cir.getReturnValue()) && state != null && player != null) {
-            QuestsEvents.invokeBlockBroken(player, pos, state);
+            FabricMixinEvents.invokeBlockBroken(player, pos, state);
         }
     }
 }

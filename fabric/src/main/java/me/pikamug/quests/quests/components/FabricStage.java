@@ -23,11 +23,9 @@ public class FabricStage implements Stage {
     private LinkedList<Object> blocksToDamage = new LinkedList<>();
     private LinkedList<Object> blocksToPlace = new LinkedList<>();
     private LinkedList<Object> blocksToUse = new LinkedList<>();
-    private LinkedList<Object> blocksToCut = new LinkedList<>();
     private LinkedList<Integer> blocksToBreakAmounts = new LinkedList<>();
     private LinkedList<Integer> blocksToPlaceAmounts = new LinkedList<>();
     private LinkedList<Integer> blocksToUseAmounts = new LinkedList<>();
-    private LinkedList<Integer> blocksToCutAmounts = new LinkedList<>();
     private LinkedList<Object> itemsToCraft = new LinkedList<>();
     private LinkedList<Object> itemsToSmelt = new LinkedList<>();
     private LinkedList<Object> itemsToEnchant = new LinkedList<>();
@@ -80,15 +78,13 @@ public class FabricStage implements Stage {
     @Override public LinkedList<?> getBlocksToDamage() { return blocksToDamage; }
     @Override public LinkedList<?> getBlocksToPlace() { return blocksToPlace; }
     @Override public LinkedList<?> getBlocksToUse() { return blocksToUse; }
-    @Override public LinkedList<?> getBlocksToCut() { return blocksToCut; }
+    @Override public LinkedList<?> getBlocksToCut() { return new LinkedList<>(); }
     public LinkedList<Integer> getBlocksToBreakAmounts() { return blocksToBreakAmounts; }
     public void setBlocksToBreakAmounts(LinkedList<Integer> v) { this.blocksToBreakAmounts = v; }
     public LinkedList<Integer> getBlocksToPlaceAmounts() { return blocksToPlaceAmounts; }
     public void setBlocksToPlaceAmounts(LinkedList<Integer> v) { this.blocksToPlaceAmounts = v; }
     public LinkedList<Integer> getBlocksToUseAmounts() { return blocksToUseAmounts; }
     public void setBlocksToUseAmounts(LinkedList<Integer> v) { this.blocksToUseAmounts = v; }
-    public LinkedList<Integer> getBlocksToCutAmounts() { return blocksToCutAmounts; }
-    public void setBlocksToCutAmounts(LinkedList<Integer> v) { this.blocksToCutAmounts = v; }
     @Override public LinkedList<?> getItemsToCraft() { return itemsToCraft; }
     @Override public LinkedList<?> getItemsToSmelt() { return itemsToSmelt; }
     @Override public LinkedList<?> getItemsToEnchant() { return itemsToEnchant; }
@@ -179,7 +175,7 @@ public class FabricStage implements Stage {
     @Override
     public boolean hasObjective() {
         return !blocksToBreak.isEmpty() || !blocksToDamage.isEmpty() || !blocksToPlace.isEmpty()
-                || !blocksToUse.isEmpty() || !blocksToCut.isEmpty() || !itemsToCraft.isEmpty()
+                || !blocksToUse.isEmpty() || !itemsToCraft.isEmpty()
                 || !itemsToSmelt.isEmpty() || !itemsToEnchant.isEmpty() || !itemsToBrew.isEmpty()
                 || !itemsToConsume.isEmpty() || !itemsToDeliver.isEmpty() || !npcsToInteract.isEmpty()
                 || !npcsToKill.isEmpty() || !mobsToKill.isEmpty() || !locationsToReach.isEmpty()
@@ -226,7 +222,6 @@ public class FabricStage implements Stage {
     public void setBlocksToDamage(LinkedList<Object> v) { this.blocksToDamage = v; }
     public void setBlocksToPlace(LinkedList<Object> v) { this.blocksToPlace = v; }
     public void setBlocksToUse(LinkedList<Object> v) { this.blocksToUse = v; }
-    public void setBlocksToCut(LinkedList<Object> v) { this.blocksToCut = v; }
     public void setItemsToCraft(LinkedList<Object> v) { this.itemsToCraft = v; }
     public void setItemsToSmelt(LinkedList<Object> v) { this.itemsToSmelt = v; }
     public void setItemsToEnchant(LinkedList<Object> v) { this.itemsToEnchant = v; }

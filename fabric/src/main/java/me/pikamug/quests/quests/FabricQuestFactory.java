@@ -13,6 +13,10 @@ package me.pikamug.quests.quests;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.util.SessionData;
 
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,23 +54,33 @@ public class FabricQuestFactory implements QuestFactory {
         final String questName = namesOfQuestsBeingEdited.isEmpty() ? null : namesOfQuestsBeingEdited.get(0);
         if (questName == null) return;
         // Remove from loaded quests
-        plugin.getLoadedQuests().removeIf(q -> questName.equals(q.getId()));
-        // Remove from file system
+        final Quest removed = plugin.getLoadedQuests().stream()
+                .filter(q -> questName.equals(q.getId()))
+                .findFirst().orElse(null);
+        plugin.getLoadedQuests().remove(removed);
+        // Remove from quests.json index
         try {
-            final java.nio.file.Path questFile = plugin.getPluginDataFolder().toPath()
-                    .resolve("storage").resolve(questName + ".json");
-            if (java.nio.file.Files.exists(questFile)) {
-                java.nio.file.Files.delete(questFile);
+            final Path index = plugin.getPluginDataFolder().toPath().resolve("storage").resolve("quests.json");
+            if (Files.exists(index)) {
+                final com.google.gson.Gson gson = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
+                final com.google.gson.JsonObject root;
+                try (Reader reader = Files.newBufferedReader(index)) {
+                    final var parsed = com.google.gson.JsonParser.parseReader(reader);
+                    root = parsed.isJsonObject() ? parsed.getAsJsonObject() : new com.google.gson.JsonObject();
+                }
+                if (root.has(questName)) {
+                    root.remove(questName);
+                    try (Writer writer = Files.newBufferedWriter(index)) {
+                        gson.toJson(root, writer);
+                    }
+                }
             }
         } catch (final Exception e) {
-            FabricQuestsPlugin.LOGGER.error("Failed to delete quest file: {}", questName, e);
+            FabricQuestsPlugin.LOGGER.error("Failed to delete quest from index: {}", questName, e);
         }
         // Remove from all questers
         for (final me.pikamug.quests.player.Quester q : plugin.getOfflineQuesters()) {
-            final Quest toRemove = plugin.getLoadedQuests().stream()
-                    .filter(quest -> questName.equals(quest.getId()))
-                    .findFirst().orElse(null);
-            q.hardRemove(toRemove);
+            q.hardRemove(removed);
         }
         namesOfQuestsBeingEdited.remove(questName);
         selectingNpcs.remove(uuid);

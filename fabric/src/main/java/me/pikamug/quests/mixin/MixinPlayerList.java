@@ -10,15 +10,17 @@
 
 package me.pikamug.quests.mixin;
 
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerList.class)
 public abstract class MixinPlayerList {
@@ -26,11 +28,18 @@ public abstract class MixinPlayerList {
     @Inject(method = "placeNewPlayer", at = @At("TAIL"))
     private void quests$onPlayerJoin(Connection connection, ServerPlayer player,
                                     CommonListenerCookie commonListenerCookie, CallbackInfo ci) {
-        QuestsEvents.invokePlayerJoin(player);
+        FabricMixinEvents.invokePlayerJoin(player);
     }
 
     @Inject(method = "remove", at = @At("HEAD"))
     private void quests$onPlayerQuit(ServerPlayer player, CallbackInfo ci) {
-        QuestsEvents.invokePlayerDisconnect(player);
+        FabricMixinEvents.invokePlayerDisconnect(player);
+    }
+
+    @Inject(method = "respawn", at = @At("TAIL"))
+    private void quests$onPlayerRespawn(ServerPlayer oldPlayer, boolean alive,
+                                        Entity.RemovalReason removalReason,
+                                        CallbackInfoReturnable<ServerPlayer> cir) {
+        FabricMixinEvents.invokePlayerRespawn(cir.getReturnValue());
     }
 }

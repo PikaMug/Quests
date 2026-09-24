@@ -44,7 +44,6 @@ public class FabricConfigSettings implements ConfigSettings {
     private boolean npcEffects = true;
     private String effect = "ENCHANTMENT_TABLE";
     private String redoEffect = "FLAME";
-    private boolean preventExploit = true;
     private boolean showCompletedObjs = true;
     private boolean showQuestReqs = true;
     private boolean showQuestTitles = true;
@@ -107,7 +106,6 @@ public class FabricConfigSettings implements ConfigSettings {
         defaults.addProperty("npcEffects", npcEffects);
         defaults.addProperty("effect", effect);
         defaults.addProperty("redoEffect", redoEffect);
-        defaults.addProperty("preventExploit", preventExploit);
         defaults.addProperty("showCompletedObjs", showCompletedObjs);
         defaults.addProperty("showQuestReqs", showQuestReqs);
         defaults.addProperty("showQuestTitles", showQuestTitles);
@@ -157,7 +155,6 @@ public class FabricConfigSettings implements ConfigSettings {
         npcEffects = getBool("npcEffects", npcEffects);
         effect = getString("effect", effect);
         redoEffect = getString("redoEffect", redoEffect);
-        preventExploit = getBool("preventExploit", preventExploit);
         showCompletedObjs = getBool("showCompletedObjs", showCompletedObjs);
         showQuestReqs = getBool("showQuestReqs", showQuestReqs);
         showQuestTitles = getBool("showQuestTitles", showQuestTitles);
@@ -242,8 +239,8 @@ public class FabricConfigSettings implements ConfigSettings {
     @Override public void setEffect(String v) { effect = v; setAndSave("effect", v); }
     @Override public String getRedoEffect() { return redoEffect; }
     @Override public void setRedoEffect(String v) { redoEffect = v; setAndSave("redoEffect", v); }
-    @Override public boolean canPreventExploit() { return preventExploit; }
-    @Override public void setPreventExploit(boolean v) { preventExploit = v; setAndSave("preventExploit", v); }
+    @Override public boolean canPreventExploit() { return true; }
+    @Override public void setPreventExploit(boolean v) { }
     @Override public boolean canShowCompletedObjs() { return showCompletedObjs; }
     @Override public void setShowCompletedObjs(boolean v) { showCompletedObjs = v; setAndSave("showCompletedObjs", v); }
     @Override public boolean canShowQuestReqs() { return showQuestReqs; }

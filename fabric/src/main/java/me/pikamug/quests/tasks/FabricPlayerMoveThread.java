@@ -43,6 +43,7 @@ public class FabricPlayerMoveThread implements Runnable {
             if (!stage.hasLocatableObjective()) continue;
 
             final var progress = quester.getQuestProgressOrDefault(quest);
+            boolean changed = false;
             for (int i = 0; i < stage.getLocationsToReach().size(); i++) {
                 final Object locObj = stage.getLocationsToReach().get(i);
                 if (locObj == null) continue;
@@ -63,9 +64,16 @@ public class FabricPlayerMoveThread implements Runnable {
                             ? stage.getRadiiToReachWithin().get(i) : 0;
                     final double dist = playerPos.distanceTo(new Vec3(x, y, z));
                     if (dist <= radius + 1) { // +1 for edge tolerance
-                        progress.getLocationsReached().set(i, true);
+                        if (progress.getLocationsReached().size() <= i) continue;
+                        if (!progress.getLocationsReached().get(i)) {
+                            progress.getLocationsReached().set(i, true);
+                            changed = true;
+                        }
                     }
                 } catch (final NumberFormatException ignored) {}
+            }
+            if (changed) {
+                quester.checkQuest(quest);
             }
         }
     }

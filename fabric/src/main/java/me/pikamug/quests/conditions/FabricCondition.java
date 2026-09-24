@@ -11,9 +11,11 @@
 package me.pikamug.quests.conditions;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.dependencies.FabricPlaceholderSupport;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricItemUtil;
+import me.pikamug.quests.util.FabricMiscUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,8 +25,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.entity.vehicle.minecart.Minecart;
 import net.minecraft.world.item.ItemStack;
-import eu.pb4.placeholders.api.Placeholders;
-import eu.pb4.placeholders.api.ServerPlaceholderContext;
 
 import java.util.LinkedList;
 import java.util.UUID;
@@ -228,8 +228,13 @@ public class FabricCondition implements Condition {
                             "Condition placeholder values outweigh identifiers: {}", i);
                     return false;
                 }
-                final String value = Placeholders.SERVER_PLACEHOLDER_PARSER
-                        .parseComponent(i, ServerPlaceholderContext.of(player).asParserContext()).getString();
+                final String value;
+                try {
+                    value = FabricPlaceholderSupport.parse(player, i);
+                } catch (final Throwable t) {
+                    FabricQuestsPlugin.LOGGER.warn("Failed to resolve placeholder '{}'", i, t);
+                    return false;
+                }
                 if (!placeholdersCheckValue.get(index).equals(value)) {
                     failed = true;
                     if (FabricQuestsPlugin.getInstance().getConfigSettings().getConsoleLogging() > 3) {
@@ -261,7 +266,7 @@ public class FabricCondition implements Condition {
         final String trimmed = name.trim();
         if (trimmed.isEmpty()) return null;
         final String id = trimmed.contains(":") ? trimmed.toLowerCase() : "minecraft:" + trimmed.toLowerCase();
-        return EntityType.byString(id).orElse(null);
+        return FabricMiscUtil.getEntityType(id);
     }
 
     @Override

@@ -541,7 +541,7 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
             BuiltInRegistries.ENTITY_TYPE.iterator().forEachRemaining(mobArr::add);
             final List<EntityType<?>> toRemove = new LinkedList<>();
             for (final EntityType<?> type : mobArr) {
-                if (type.getCategory() == MobCategory.MISC || type == EntityType.PLAYER) {
+                if (type.getCategory() == MobCategory.MISC || type == FabricMiscUtil.PLAYER) {
                     toRemove.add(type);
                 }
             }
@@ -988,7 +988,7 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
             BuiltInRegistries.ENTITY_TYPE.iterator().forEachRemaining(mobArr::add);
             final List<EntityType<?>> toRemove = new LinkedList<>();
             for (final EntityType<?> type : mobArr) {
-                if (type.getCategory() == MobCategory.MISC || type == EntityType.PLAYER) {
+                if (type.getCategory() == MobCategory.MISC || type == FabricMiscUtil.PLAYER) {
                     toRemove.add(type);
                 }
             }

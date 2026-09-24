@@ -49,98 +49,109 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
 
     @Override
     public Action loadAction(String name) throws ActionFormatException {
-        final Path file = storageDir.resolve(name + ".json");
-        if (!Files.exists(file)) return null;
-        try (Reader reader = Files.newBufferedReader(file)) {
-            final JsonObject json = gson.fromJson(reader, JsonObject.class);
-            if (json == null) return null;
-            final FabricAction action = new FabricAction();
-            action.setName(name);
-            if (json.has("message")) action.setMessage(json.get("message").getAsString());
-            if (json.has("clear-inventory")) action.setClearInv(json.get("clear-inventory").getAsBoolean());
-            if (json.has("fail-quest")) action.setFailQuest(json.get("fail-quest").getAsBoolean());
-            if (json.has("storm-duration")) action.setStormDuration(json.get("storm-duration").getAsInt());
-            if (json.has("thunder-duration")) action.setThunderDuration(json.get("thunder-duration").getAsInt());
-            if (json.has("timer")) action.setTimer(json.get("timer").getAsInt());
-            if (json.has("cancel-timer")) action.setCancelTimer(json.get("cancel-timer").getAsBoolean());
-            if (json.has("hunger")) action.setHunger(json.get("hunger").getAsInt());
-            if (json.has("saturation")) action.setSaturation(json.get("saturation").getAsInt());
-            if (json.has("health")) action.setHealth(json.get("health").getAsFloat());
-            if (json.has("commands")) {
-                final JsonArray arr = json.getAsJsonArray("commands");
-                final LinkedList<String> cmds = new LinkedList<>();
-                arr.forEach(e -> cmds.add(e.getAsString()));
-                action.setCommands(cmds);
+        final JsonObject json = indexEntry("actions.json", name);
+        if (json == null) return null;
+        return parseAction(name, json);
+    }
+
+    private JsonObject indexEntry(final String indexName, final String name) {
+        final Path indexFile = storageDir.resolve(indexName);
+        if (!Files.exists(indexFile)) return null;
+        try (Reader reader = Files.newBufferedReader(indexFile)) {
+            final JsonObject root = gson.fromJson(reader, JsonObject.class);
+            if (root != null && root.has(name) && root.get(name).isJsonObject()) {
+                return root.getAsJsonObject(name);
             }
-            if (json.has("book")) action.setBook(json.get("book").getAsString());
-            if (json.has("denizen-script")) action.setDenizenScript(json.get("denizen-script").getAsString());
-            if (json.has("explosions")) {
-                final JsonArray arr = json.getAsJsonArray("explosions");
-                final LinkedList<String> explosions = new LinkedList<>();
-                arr.forEach(e -> explosions.add(e.getAsString()));
-                action.setExplosions(explosions);
-            }
-            if (json.has("effects") && json.has("effect-locations")) {
-                final JsonArray effectsArr = json.getAsJsonArray("effects");
-                final JsonArray locationsArr = json.getAsJsonArray("effect-locations");
-                if (effectsArr.size() != locationsArr.size()) {
-                    throw new ActionFormatException("'effects' and 'effect-locations' must be lists of the same size", name);
-                }
-                final LinkedHashMap<String, String> effects = new LinkedHashMap<>();
-                for (int i = 0; i < effectsArr.size(); i++) {
-                    effects.put(locationsArr.get(i).getAsString(), effectsArr.get(i).getAsString());
-                }
-                action.setEffects(effects);
-            }
-            if (json.has("lightning-strikes")) {
-                final JsonArray arr = json.getAsJsonArray("lightning-strikes");
-                final LinkedList<String> strikes = new LinkedList<>();
-                arr.forEach(e -> strikes.add(e.getAsString()));
-                action.setLightningStrikes(strikes);
-            }
-            if (json.has("teleport-location")) {
-                action.setTeleport(json.get("teleport-location").getAsString());
-            }
-            if (json.has("potion-effect-types") && json.has("potion-effect-durations")
-                    && json.has("potion-effect-amplifiers")) {
-                final JsonArray typesArr = json.getAsJsonArray("potion-effect-types");
-                final JsonArray durationsArr = json.getAsJsonArray("potion-effect-durations");
-                final JsonArray amplifiersArr = json.getAsJsonArray("potion-effect-amplifiers");
-                if (typesArr.size() != durationsArr.size() || typesArr.size() != amplifiersArr.size()) {
-                    throw new ActionFormatException("'potion-effect-types', 'potion-effect-durations' and "
-                            + "'potion-effect-amplifiers' must be lists of the same size", name);
-                }
-                final LinkedList<MobEffectInstance> effects = new LinkedList<>();
-                for (int i = 0; i < typesArr.size(); i++) {
-                    final String typeName = typesArr.get(i).getAsString();
-                    final MobEffect effect = BuiltInRegistries.MOB_EFFECT
-                            .getValue(Identifier.tryBuild("minecraft", typeName.toLowerCase()));
-                    if (effect == null) {
-                        throw new ActionFormatException("potion-effect-types is not a list of potion effect types", name);
-                    }
-                    final Holder<MobEffect> holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);
-                    effects.add(new MobEffectInstance(holder, durationsArr.get(i).getAsInt(),
-                            amplifiersArr.get(i).getAsInt()));
-                }
-                action.setPotionEffects(effects);
-            }
-            if (json.has("items")) {
-                final JsonArray itemsArr = json.getAsJsonArray("items");
-                final LinkedList<net.minecraft.world.item.ItemStack> items = new LinkedList<>();
-                for (int i = 0; i < itemsArr.size(); i++) {
-                    if (itemsArr.get(i).isJsonObject()) {
-                        items.add(FabricItemUtil.deserializeFromJson(itemsArr.get(i).getAsJsonObject()));
-                    } else {
-                        items.add(FabricItemUtil.deserialize(itemsArr.get(i).getAsString()));
-                    }
-                }
-                action.setItems(items);
-            }
-            return action;
         } catch (final Exception e) {
-            throw new ActionFormatException("Failed to load action: " + name
-                    + (e.getMessage() != null ? " - " + e.getMessage() : ""), name);
+            plugin.getPluginLogger().error("Failed to read '{}' from {}", name, indexName, e);
         }
+        return null;
+    }
+
+    private static Action parseAction(final String name, final JsonObject json) throws ActionFormatException {
+        final FabricAction action = new FabricAction();
+        action.setName(name);
+        if (json.has("message")) action.setMessage(json.get("message").getAsString());
+        if (json.has("clear-inventory")) action.setClearInv(json.get("clear-inventory").getAsBoolean());
+        if (json.has("fail-quest")) action.setFailQuest(json.get("fail-quest").getAsBoolean());
+        if (json.has("storm-duration")) action.setStormDuration(json.get("storm-duration").getAsInt());
+        if (json.has("thunder-duration")) action.setThunderDuration(json.get("thunder-duration").getAsInt());
+        if (json.has("timer")) action.setTimer(json.get("timer").getAsInt());
+        if (json.has("cancel-timer")) action.setCancelTimer(json.get("cancel-timer").getAsBoolean());
+        if (json.has("hunger")) action.setHunger(json.get("hunger").getAsInt());
+        if (json.has("saturation")) action.setSaturation(json.get("saturation").getAsInt());
+        if (json.has("health")) action.setHealth(json.get("health").getAsFloat());
+        if (json.has("commands")) {
+            final JsonArray arr = json.getAsJsonArray("commands");
+            final LinkedList<String> cmds = new LinkedList<>();
+            arr.forEach(e -> cmds.add(e.getAsString()));
+            action.setCommands(cmds);
+        }
+        if (json.has("book")) action.setBook(json.get("book").getAsString());
+        if (json.has("denizen-script")) action.setDenizenScript(json.get("denizen-script").getAsString());
+        if (json.has("explosions")) {
+            final JsonArray arr = json.getAsJsonArray("explosions");
+            final LinkedList<String> explosions = new LinkedList<>();
+            arr.forEach(e -> explosions.add(e.getAsString()));
+            action.setExplosions(explosions);
+        }
+        if (json.has("effects") && json.has("effect-locations")) {
+            final JsonArray effectsArr = json.getAsJsonArray("effects");
+            final JsonArray locationsArr = json.getAsJsonArray("effect-locations");
+            if (effectsArr.size() != locationsArr.size()) {
+                throw new ActionFormatException("'effects' and 'effect-locations' must be lists of the same size", name);
+            }
+            final LinkedHashMap<String, String> effects = new LinkedHashMap<>();
+            for (int i = 0; i < effectsArr.size(); i++) {
+                effects.put(locationsArr.get(i).getAsString(), effectsArr.get(i).getAsString());
+            }
+            action.setEffects(effects);
+        }
+        if (json.has("lightning-strikes")) {
+            final JsonArray arr = json.getAsJsonArray("lightning-strikes");
+            final LinkedList<String> strikes = new LinkedList<>();
+            arr.forEach(e -> strikes.add(e.getAsString()));
+            action.setLightningStrikes(strikes);
+        }
+        if (json.has("teleport-location")) {
+            action.setTeleport(json.get("teleport-location").getAsString());
+        }
+        if (json.has("potion-effect-types") && json.has("potion-effect-durations")
+                && json.has("potion-effect-amplifiers")) {
+            final JsonArray typesArr = json.getAsJsonArray("potion-effect-types");
+            final JsonArray durationsArr = json.getAsJsonArray("potion-effect-durations");
+            final JsonArray amplifiersArr = json.getAsJsonArray("potion-effect-amplifiers");
+            if (typesArr.size() != durationsArr.size() || typesArr.size() != amplifiersArr.size()) {
+                throw new ActionFormatException("'potion-effect-types', 'potion-effect-durations' and "
+                        + "'potion-effect-amplifiers' must be lists of the same size", name);
+            }
+            final LinkedList<MobEffectInstance> effects = new LinkedList<>();
+            for (int i = 0; i < typesArr.size(); i++) {
+                final String typeName = typesArr.get(i).getAsString();
+                final MobEffect effect = BuiltInRegistries.MOB_EFFECT
+                        .getValue(Identifier.tryBuild("minecraft", typeName.toLowerCase()));
+                if (effect == null) {
+                    throw new ActionFormatException("potion-effect-types is not a list of potion effect types", name);
+                }
+                final Holder<MobEffect> holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);
+                effects.add(new MobEffectInstance(holder, durationsArr.get(i).getAsInt(),
+                        amplifiersArr.get(i).getAsInt()));
+            }
+            action.setPotionEffects(effects);
+        }
+        if (json.has("items")) {
+            final JsonArray itemsArr = json.getAsJsonArray("items");
+            final LinkedList<net.minecraft.world.item.ItemStack> items = new LinkedList<>();
+            for (int i = 0; i < itemsArr.size(); i++) {
+                if (itemsArr.get(i).isJsonObject()) {
+                    items.add(FabricItemUtil.deserializeFromJson(itemsArr.get(i).getAsJsonObject()));
+                } else {
+                    items.add(FabricItemUtil.deserialize(itemsArr.get(i).getAsString()));
+                }
+            }
+            action.setItems(items);
+        }
+        return action;
     }
 
     private void loadActions() {
@@ -151,16 +162,14 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
             final JsonObject json = gson.fromJson(reader, JsonObject.class);
             if (json == null) return;
             for (final String name : json.keySet()) {
-                if (json.get(name).isJsonObject()) {
-                    final Path individualFile = storageDir.resolve(name + ".json");
-                    if (!Files.exists(individualFile)) {
-                        Files.write(individualFile, gson.toJson(json.getAsJsonObject(name)).getBytes());
-                    }
-                    if (plugin.getAction(name) == null) {
-                        final Action action = loadAction(name);
+                if (json.get(name).isJsonObject() && plugin.getAction(name) == null) {
+                    try {
+                        final Action action = parseAction(name, json.getAsJsonObject(name));
                         if (action != null) {
                             plugin.getLoadedActions().add(action);
                         }
+                    } catch (final ActionFormatException e) {
+                        plugin.getPluginLogger().error("Failed to load action: {}", name, e);
                     }
                 }
             }

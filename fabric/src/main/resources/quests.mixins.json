@@ -5,6 +5,7 @@
   "mixins": [
     "MixinMinecraftServer",
     "MixinPlayerList",
+    "MixinServerPlayer",
     "MixinServerGamePacketListener",
     "MixinLivingEntity",
     "MixinCommands",

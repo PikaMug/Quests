@@ -45,89 +45,101 @@ public class FabricConditionJsonStorage implements ConditionStorageImpl {
 
     @Override
     public Condition loadCondition(String name) throws ConditionFormatException {
-        final Path file = storageDir.resolve(name + ".json");
-        if (!Files.exists(file)) return null;
-        try (Reader reader = Files.newBufferedReader(file)) {
-            final JsonObject json = gson.fromJson(reader, JsonObject.class);
-            if (json == null) return null;
-            final FabricCondition condition = new FabricCondition();
-            condition.setName(name);
-            if (json.has("fail-quest")) condition.setFailQuest(json.get("fail-quest").getAsBoolean());
-            if (json.has("ride-entity")) {
-                final JsonArray arr = json.getAsJsonArray("ride-entity");
-                final LinkedList<String> entities = new LinkedList<>();
-                arr.forEach(e -> entities.add(e.getAsString()));
-                condition.setEntitiesWhileRiding(entities);
-            }
-            if (json.has("ride-npc-uuid")) {
-                final JsonArray arr = json.getAsJsonArray("ride-npc-uuid");
-                final LinkedList<UUID> npcs = new LinkedList<>();
-                arr.forEach(e -> {
-                    try { npcs.add(UUID.fromString(e.getAsString())); } catch (final Exception ignored) {}
-                });
-                condition.setNpcsWhileRiding(npcs);
-            }
-            if (json.has("permission")) {
-                final JsonArray arr = json.getAsJsonArray("permission");
-                final LinkedList<String> perms = new LinkedList<>();
-                arr.forEach(e -> perms.add(e.getAsString()));
-                condition.setPermissions(perms);
-            }
-            if (json.has("stay-within-world")) {
-                final JsonArray arr = json.getAsJsonArray("stay-within-world");
-                final LinkedList<String> worlds = new LinkedList<>();
-                arr.forEach(e -> worlds.add(e.getAsString()));
-                condition.setWorldsWhileStayingWithin(worlds);
-            }
-            if (json.has("stay-within-ticks")) {
-                final JsonObject ticks = json.getAsJsonObject("stay-within-ticks");
-                if (ticks.has("start")) condition.setTickStartWhileStayingWithin(ticks.get("start").getAsInt());
-                if (ticks.has("end")) condition.setTickEndWhileStayingWithin(ticks.get("end").getAsInt());
-            }
-            if (json.has("stay-within-biome")) {
-                final JsonArray arr = json.getAsJsonArray("stay-within-biome");
-                final LinkedList<String> biomes = new LinkedList<>();
-                arr.forEach(e -> biomes.add(e.getAsString()));
-                condition.setBiomesWhileStayingWithin(biomes);
-            }
-            if (json.has("stay-within-region")) {
-                final JsonArray arr = json.getAsJsonArray("stay-within-region");
-                final LinkedList<String> regions = new LinkedList<>();
-                arr.forEach(e -> regions.add(e.getAsString()));
-                condition.setRegionsWhileStayingWithin(regions);
-            }
-            if (json.has("check-placeholder-id")) {
-                final JsonArray arr = json.getAsJsonArray("check-placeholder-id");
-                final LinkedList<String> ids = new LinkedList<>();
-                arr.forEach(e -> ids.add(e.getAsString()));
-                condition.setPlaceholdersCheckIdentifier(ids);
-            }
-            if (json.has("check-placeholder-value")) {
-                final JsonArray arr = json.getAsJsonArray("check-placeholder-value");
-                final LinkedList<String> vals = new LinkedList<>();
-                arr.forEach(e -> vals.add(e.getAsString()));
-                condition.setPlaceholdersCheckValue(vals);
-            }
-            if (json.has("hold-main-hand")) {
-                condition.setItemsWhileHoldingMainHand(parseItemList(json, "hold-main-hand"));
-                if (condition.getItemsWhileHoldingMainHand().isEmpty()) {
-                    throw new ConditionFormatException("'hold-main-hand' is not a list of items", name);
-                }
-            }
-            if (json.has("wear")) {
-                condition.setItemsWhileWearing(parseItemList(json, "wear"));
-                if (condition.getItemsWhileWearing().isEmpty()) {
-                    throw new ConditionFormatException("'wear' is not a list of items", name);
-                }
-            }
-            return condition;
-        } catch (final Exception e) {
-            throw new ConditionFormatException("Failed to load condition: " + name
-                    + (e.getMessage() != null ? " - " + e.getMessage() : ""), name);
-        }
+        final JsonObject json = indexEntry("conditions.json", name);
+        if (json == null) return null;
+        return parseCondition(name, json);
     }
 
-    private LinkedList<ItemStack> parseItemList(JsonObject json, String key) {
+    private JsonObject indexEntry(final String indexName, final String name) {
+        final Path indexFile = storageDir.resolve(indexName);
+        if (!Files.exists(indexFile)) return null;
+        try (Reader reader = Files.newBufferedReader(indexFile)) {
+            final JsonObject root = gson.fromJson(reader, JsonObject.class);
+            if (root != null && root.has(name) && root.get(name).isJsonObject()) {
+                return root.getAsJsonObject(name);
+            }
+        } catch (final Exception e) {
+            plugin.getPluginLogger().error("Failed to read '{}' from {}", name, indexName, e);
+        }
+        return null;
+    }
+
+    private static Condition parseCondition(final String name, final JsonObject json)
+            throws ConditionFormatException {
+        final FabricCondition condition = new FabricCondition();
+        condition.setName(name);
+        if (json.has("fail-quest")) condition.setFailQuest(json.get("fail-quest").getAsBoolean());
+        if (json.has("ride-entity")) {
+            final JsonArray arr = json.getAsJsonArray("ride-entity");
+            final LinkedList<String> entities = new LinkedList<>();
+            arr.forEach(e -> entities.add(e.getAsString()));
+            condition.setEntitiesWhileRiding(entities);
+        }
+        if (json.has("ride-npc-uuid")) {
+            final JsonArray arr = json.getAsJsonArray("ride-npc-uuid");
+            final LinkedList<UUID> npcs = new LinkedList<>();
+            arr.forEach(e -> {
+                try { npcs.add(UUID.fromString(e.getAsString())); } catch (final Exception ignored) {}
+            });
+            condition.setNpcsWhileRiding(npcs);
+        }
+        if (json.has("permission")) {
+            final JsonArray arr = json.getAsJsonArray("permission");
+            final LinkedList<String> perms = new LinkedList<>();
+            arr.forEach(e -> perms.add(e.getAsString()));
+            condition.setPermissions(perms);
+        }
+        if (json.has("stay-within-world")) {
+            final JsonArray arr = json.getAsJsonArray("stay-within-world");
+            final LinkedList<String> worlds = new LinkedList<>();
+            arr.forEach(e -> worlds.add(e.getAsString()));
+            condition.setWorldsWhileStayingWithin(worlds);
+        }
+        if (json.has("stay-within-ticks")) {
+            final JsonObject ticks = json.getAsJsonObject("stay-within-ticks");
+            if (ticks.has("start")) condition.setTickStartWhileStayingWithin(ticks.get("start").getAsInt());
+            if (ticks.has("end")) condition.setTickEndWhileStayingWithin(ticks.get("end").getAsInt());
+        }
+        if (json.has("stay-within-biome")) {
+            final JsonArray arr = json.getAsJsonArray("stay-within-biome");
+            final LinkedList<String> biomes = new LinkedList<>();
+            arr.forEach(e -> biomes.add(e.getAsString()));
+            condition.setBiomesWhileStayingWithin(biomes);
+        }
+        if (json.has("stay-within-region")) {
+            final JsonArray arr = json.getAsJsonArray("stay-within-region");
+            final LinkedList<String> regions = new LinkedList<>();
+            arr.forEach(e -> regions.add(e.getAsString()));
+            condition.setRegionsWhileStayingWithin(regions);
+        }
+        if (json.has("check-placeholder-id")) {
+            final JsonArray arr = json.getAsJsonArray("check-placeholder-id");
+            final LinkedList<String> ids = new LinkedList<>();
+            arr.forEach(e -> ids.add(e.getAsString()));
+            condition.setPlaceholdersCheckIdentifier(ids);
+        }
+        if (json.has("check-placeholder-value")) {
+            final JsonArray arr = json.getAsJsonArray("check-placeholder-value");
+            final LinkedList<String> vals = new LinkedList<>();
+            arr.forEach(e -> vals.add(e.getAsString()));
+            condition.setPlaceholdersCheckValue(vals);
+        }
+        if (json.has("hold-main-hand")) {
+            condition.setItemsWhileHoldingMainHand(parseItemList(json, "hold-main-hand"));
+            if (condition.getItemsWhileHoldingMainHand().isEmpty()) {
+                throw new ConditionFormatException("'hold-main-hand' is not a list of items", name);
+            }
+        }
+        if (json.has("wear")) {
+            condition.setItemsWhileWearing(parseItemList(json, "wear"));
+            if (condition.getItemsWhileWearing().isEmpty()) {
+                throw new ConditionFormatException("'wear' is not a list of items", name);
+            }
+        }
+        return condition;
+    }
+
+    private static LinkedList<ItemStack> parseItemList(JsonObject json, String key) {
         final LinkedList<ItemStack> list = new LinkedList<>();
         final JsonArray arr = json.getAsJsonArray(key);
         for (int i = 0; i < arr.size(); i++) {
@@ -148,16 +160,14 @@ public class FabricConditionJsonStorage implements ConditionStorageImpl {
             final JsonObject json = gson.fromJson(reader, JsonObject.class);
             if (json == null) return;
             for (final String name : json.keySet()) {
-                if (json.get(name).isJsonObject()) {
-                    final Path individualFile = storageDir.resolve(name + ".json");
-                    if (!Files.exists(individualFile)) {
-                        Files.write(individualFile, gson.toJson(json.getAsJsonObject(name)).getBytes());
-                    }
-                    if (plugin.getCondition(name) == null) {
-                        final Condition condition = loadCondition(name);
+                if (json.get(name).isJsonObject() && plugin.getCondition(name) == null) {
+                    try {
+                        final Condition condition = parseCondition(name, json.getAsJsonObject(name));
                         if (condition != null) {
                             plugin.getLoadedConditions().add(condition);
                         }
+                    } catch (final ConditionFormatException e) {
+                        plugin.getPluginLogger().error("Failed to load condition: {}", name, e);
                     }
                 }
             }

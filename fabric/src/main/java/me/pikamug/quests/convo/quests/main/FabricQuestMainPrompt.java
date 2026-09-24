@@ -28,8 +28,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
@@ -44,6 +42,10 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
     }
 
     private final int size = 14;
+
+    private static boolean questIdExists(final FabricQuestsPlugin plugin, final String questId) {
+        return plugin.getLoadedQuests().stream().anyMatch(q -> questId.equals(q.getId()));
+    }
 
     @Override
     public int getSize() {
@@ -255,6 +257,7 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
             break;
         case 5:
             if (sender instanceof ServerPlayer) {
+                plugin.getSelectedBlockStarts().put(uuid, null);
                 new FabricQuestBlockStartPrompt(uuid).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("consoleError")));
@@ -543,16 +546,25 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
             }
             if (input.equalsIgnoreCase(FabricLang.get("cmdDone")) || input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
                 if (input.equalsIgnoreCase(FabricLang.get("cmdDone"))) {
-                    final BlockPos blockPos = sender.blockPosition();
-                    SessionData.set(uuid, Key.Q_START_BLOCK, blockPos);
+                    final BlockPos selected = plugin.getSelectedBlockStarts().get(uuid);
+                    if (selected == null) {
+                        sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW
+                                + FabricLang.get("questEditorNoStartBlockSelected")));
+                        new FabricQuestBlockStartPrompt(uuid).start();
+                        return;
+                    }
+                    SessionData.set(uuid, Key.Q_START_BLOCK, selected);
                 }
+                plugin.getSelectedBlockStarts().remove(uuid);
                 new FabricQuestMainPrompt(uuid).start();
                 return;
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.Q_START_BLOCK, null);
+                plugin.getSelectedBlockStarts().remove(uuid);
                 new FabricQuestMainPrompt(uuid).start();
                 return;
             }
+            sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + getQueryText()));
             new FabricQuestBlockStartPrompt(uuid).start();
         }
     }
@@ -795,8 +807,7 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                         String format = "%0" + padding + "d";
                         int num = 1;
                         String customNum = String.format(locale, format, num);
-                        final Path storageDir = plugin.getPluginDataFolder().toPath().resolve("storage");
-                        while (Files.exists(storageDir.resolve(customNum + ".json"))) {
+                        while (questIdExists(plugin, customNum)) {
                             num++;
                             customNum = String.format(locale, format, num);
                         }

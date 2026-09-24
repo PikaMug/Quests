@@ -12,25 +12,24 @@ package me.pikamug.quests.mixin;
 
 import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.FurnaceResultSlot;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.level.portal.TeleportTransition;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/**
- * Fires when a smelted item is taken from a furnace/blast furnace/smoker result slot.
- * Mirrors Bukkit's furnace result-slot handling for the SMELT_ITEM objective.
- */
-@Mixin(FurnaceResultSlot.class)
-public abstract class MixinFurnaceResultSlot {
+@Mixin(ServerPlayer.class)
+public abstract class MixinServerPlayer {
 
-    @Inject(method = "onTake", at = @At("TAIL"))
-    private void quests$onItemSmelted(Player player, ItemStack stack, CallbackInfo ci) {
-        if (player instanceof ServerPlayer serverPlayer) {
-            FabricMixinEvents.invokeItemSmelted(serverPlayer, stack.copy());
-        }
+    @Inject(method = "die", at = @At("HEAD"))
+    private void quests$onPlayerDeath(DamageSource damageSource, CallbackInfo ci) {
+        FabricMixinEvents.invokePlayerDeath((ServerPlayer) (Object) this, damageSource);
+    }
+
+    @Inject(method = "teleport", at = @At("HEAD"))
+    private void quests$onPlayerChangeDimension(TeleportTransition transition, CallbackInfoReturnable<ServerPlayer> cir) {
+        FabricMixinEvents.invokePlayerChangeDimension((ServerPlayer) (Object) this);
     }
 }

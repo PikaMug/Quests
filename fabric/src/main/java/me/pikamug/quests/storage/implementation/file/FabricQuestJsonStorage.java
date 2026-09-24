@@ -48,24 +48,66 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (!Files.exists(storageDir)) {
             Files.createDirectories(storageDir);
         }
+        removeLegacyIndividualFiles();
         loadQuests();
     }
 
     @Override
     public void close() {}
 
+    /**
+     * Deletes quest/action/condition files written as individual {@code storage/<name>.json}
+     * entries by older builds of this port. Those files were pure duplicates of the entries
+     * in the {@code quests.json}, {@code actions.json} and {@code conditions.json} index files
+     * and should never have been generated (see the Bukkit module for parity).
+     */
+    private void removeLegacyIndividualFiles() {
+        try (var stream = Files.list(storageDir)) {
+            stream.filter(p -> p.toString().endsWith(".json"))
+                    .filter(p -> !INDEX_FILES.contains(p.getFileName().toString()))
+                    .forEach(p -> {
+                        try {
+                            Files.delete(p);
+                            plugin.getPluginLogger().info("Removed legacy individual storage file {}", p.getFileName());
+                        } catch (final Exception e) {
+                            plugin.getPluginLogger().error("Failed to remove legacy storage file {}", p, e);
+                        }
+                    });
+        } catch (final Exception e) {
+            plugin.getPluginLogger().error("Failed to list storage directory", e);
+        }
+    }
+
     @Override
     public Quest loadQuest(String name) throws QuestFormatException {
-        final Path file = storageDir.resolve(name + ".json");
-        if (!Files.exists(file)) return null;
-        try (Reader reader = Files.newBufferedReader(file)) {
-            final JsonObject json = gson.fromJson(reader, JsonObject.class);
-            if (json == null) return null;
-            return parseQuest(name, json);
+        final JsonObject json = indexEntry("quests.json", name);
+        if (json == null) return null;
+        return parseQuest(name, json);
+    }
+
+    private JsonObject indexEntry(final String indexName, final String name) {
+        final Path indexFile = storageDir.resolve(indexName);
+        if (!Files.exists(indexFile)) return null;
+        try (Reader reader = Files.newBufferedReader(indexFile)) {
+            final JsonObject root = gson.fromJson(reader, JsonObject.class);
+            if (root != null && root.has(name) && root.get(name).isJsonObject()) {
+                return root.getAsJsonObject(name);
+            }
         } catch (final Exception e) {
-            throw new QuestFormatException("Failed to load quest: " + name
-                    + (e.getMessage() != null ? " - " + e.getMessage() : ""), name);
+            plugin.getPluginLogger().error("Failed to read '{}' from {}", name, indexName, e);
         }
+        return null;
+    }
+
+    /**
+     * Returns the raw quest definition stored in the {@code quests.json} index for the given
+     * quest id, or {@code null} if no such entry exists.
+     *
+     * @param name the quest id to look up
+     * @return the quest JSON, or {@code null}
+     */
+    public JsonObject getQuestData(final String name) {
+        return indexEntry("quests.json", name);
     }
 
     private Quest parseQuest(String name, JsonObject json) {
@@ -75,6 +117,14 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (json.has("ask-message")) quest.setDescription(json.get("ask-message").getAsString());
         if (json.has("finish-message")) quest.setFinished(json.get("finish-message").getAsString());
         if (json.has("region")) quest.setRegionStart(json.get("region").getAsString());
+        if (json.has("block-start-x") && json.has("block-start-y") && json.has("block-start-z")) {
+            try {
+                quest.setBlockStart(new net.minecraft.core.BlockPos(
+                        json.get("block-start-x").getAsInt(),
+                        json.get("block-start-y").getAsInt(),
+                        json.get("block-start-z").getAsInt()));
+            } catch (final Exception ignored) {}
+        }
         if (json.has("npc-giver-uuid")) {
             try {
                 quest.setNpcStart(UUID.fromString(json.get("npc-giver-uuid").getAsString()));
@@ -147,7 +197,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         parseBlockList(json, "damage-block-names", "damage-block-amounts", stage, "damage");
         parseBlockList(json, "place-block-names", "place-block-amounts", stage, "place");
         parseBlockList(json, "use-block-names", "use-block-amounts", stage, "use");
-        parseBlockList(json, "cut-block-names", "cut-block-amounts", stage, "cut");
+        // Note: cut-block objectives are intentionally not supported in this port
         // Item objectives
         parseItemList(json, "items-to-craft", stage, "craft");
         parseItemList(json, "items-to-smelt", stage, "smelt");
@@ -400,10 +450,6 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                     stage.setBlocksToUse(list);
                     stage.setBlocksToUseAmounts(amounts);
                 }
-                case "cut" -> {
-                    stage.setBlocksToCut(list);
-                    stage.setBlocksToCutAmounts(amounts);
-                }
             }
         }
     }
@@ -599,41 +645,26 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
 
     public void loadQuests() {
         if (!Files.exists(storageDir)) return;
-        splitIndex("quests.json");
-        try (var stream = Files.list(storageDir)) {
-            stream.filter(p -> p.toString().endsWith(".json")).forEach(p -> {
-                final String name = p.getFileName().toString().replace(".json", "");
-                if (INDEX_FILES.contains(name)) return;
-                try {
-                    final Quest quest = loadQuest(name);
-                    if (quest != null) {
-                        plugin.getLoadedQuests().add(quest);
-                    }
-                } catch (final Exception e) {
-                    plugin.getPluginLogger().error("Failed to load quest from {}", p, e);
-                }
-            });
-        } catch (final Exception e) {
-            plugin.getPluginLogger().error("Failed to list quest files", e);
-        }
-    }
-
-    private void splitIndex(final String indexName) {
-        final Path indexFile = storageDir.resolve(indexName);
+        final Path indexFile = storageDir.resolve("quests.json");
         if (!Files.exists(indexFile)) return;
         try (Reader reader = Files.newBufferedReader(indexFile)) {
             final JsonObject json = gson.fromJson(reader, JsonObject.class);
             if (json == null) return;
             for (final String name : json.keySet()) {
-                if (json.get(name).isJsonObject()) {
-                    final Path individualFile = storageDir.resolve(name + ".json");
-                    if (!Files.exists(individualFile)) {
-                        Files.write(individualFile, gson.toJson(json.getAsJsonObject(name)).getBytes());
+                if (json.get(name).isJsonObject() && plugin.getLoadedQuests().stream()
+                        .noneMatch(q -> name.equals(q.getId()))) {
+                    try {
+                        final Quest quest = parseQuest(name, json.getAsJsonObject(name));
+                        if (quest != null) {
+                            plugin.getLoadedQuests().add(quest);
+                        }
+                    } catch (final Exception e) {
+                        plugin.getPluginLogger().error("Failed to load quest '{}'", name, e);
                     }
                 }
             }
         } catch (final Exception e) {
-            plugin.getPluginLogger().error("Failed to split quest index {}", indexName, e);
+            plugin.getPluginLogger().error("Failed to load quests index", e);
         }
     }
 

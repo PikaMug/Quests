@@ -36,7 +36,7 @@ public class FabricActionTimer implements Runnable {
             quest.failQuest(quester);
             quester.updateJournal();
         } else {
-            quester.sendMessage(FabricLang.get("timerMessage")
+            quester.sendMessage(FabricLang.get(quester.getServerPlayer(), "timerMessage")
                     .replace("<time>", FabricMiscUtil.formatTime(time * 1000L))
                     .replace("<quest>", quest.getName()));
         }

@@ -10,13 +10,18 @@
 
 package me.pikamug.quests.listeners;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.convo.misc.FabricQuestAcceptPrompt;
+import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
+import me.pikamug.quests.quests.FabricQuest;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricMiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,8 +30,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
-
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 public class FabricBlockListener {
 
@@ -39,14 +42,14 @@ public class FabricBlockListener {
 
     private void register() {
         // Block damaged (START_DESTROY_BLOCK). The mixin only fires for ServerPlayer.
-        QuestsEvents.registerAttackBlock(this::onBlockDamage);
+        FabricMixinEvents.registerAttackBlock(this::onBlockDamage);
 
         // Block used (right-click). The mixin only fires for ServerPlayer.
-        QuestsEvents.registerUseBlock(this::onBlockUse);
+        FabricMixinEvents.registerUseBlock(this::onBlockUse);
 
         // Blocks actually broken / placed. Both mixins only fire for ServerPlayer.
-        QuestsEvents.registerBlockBroken(this::onBlockBroken);
-        QuestsEvents.registerBlockPlaced(this::onBlockPlaced);
+        FabricMixinEvents.registerBlockBroken(this::onBlockBroken);
+        FabricMixinEvents.registerBlockPlaced(this::onBlockPlaced);
     }
 
     private void onBlockDamage(ServerPlayer player, BlockPos pos) {
@@ -86,7 +89,7 @@ public class FabricBlockListener {
             // BREAK_BLOCK
             if (!stage.getBlocksToBreak().isEmpty()) {
                 if (quest.getOptions().canIgnoreSilkTouch() && hasSilkTouch(tool)) {
-                    quester.sendMessage(FabricLang.get("optionSilkTouchFail")
+                    quester.sendMessage(FabricLang.get(quester.getServerPlayer(), "optionSilkTouchFail")
                             .replace("<quest>", quest.getName()));
                 } else {
                     for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
@@ -146,6 +149,71 @@ public class FabricBlockListener {
         if (plugin.isLoading() || hand != InteractionHand.MAIN_HAND) return;
         final FabricQuester quester = plugin.getQuester(player.getUUID());
         final BlockState state = player.level().getBlockState(pos);
+
+        boolean hasObjective = false;
+        for (final Quest quest : plugin.getLoadedQuests()) {
+            if (quester.getCurrentQuests().containsKey(quest)
+                    && quester.getCurrentStage(quest).containsObjective(ObjectiveType.USE_BLOCK)) {
+                hasObjective = true;
+                break;
+            }
+        }
+
+        if (!hasObjective) {
+            // Block-start selection: right-click a block while editing the "start block" option
+            if (plugin.isSelectingBlockStart(player.getUUID())) {
+                plugin.getSelectedBlockStarts().put(player.getUUID(), pos);
+                quester.sendMessage("§6" + FabricLang.get(quester.getServerPlayer(), "questSelectedLocation") + " §b"
+                        + player.level().dimension().identifier() + ": " + pos.getX() + ", "
+                        + pos.getY() + ", " + pos.getZ());
+                return;
+            }
+
+            // Right-clicking a quest's start block offers the quest
+            for (final Quest quest : plugin.getLoadedQuests()) {
+                final FabricQuest fabricQuest = (FabricQuest) quest;
+                if (fabricQuest.getBlockStart() == null || !fabricQuest.getBlockStart().equals(pos)) continue;
+                if (plugin.getConfigSettings().getMaxQuests() > 0
+                        && quester.getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()) {
+                    quester.sendMessage("§e" + FabricLang.get(quester.getServerPlayer(), "questMaxAllowed").replace("<number>",
+                            String.valueOf(plugin.getConfigSettings().getMaxQuests())));
+                } else {
+                    if (quester.getCompletedQuests().contains(fabricQuest)) {
+                        if (fabricQuest.getPlanner().getCooldown() > -1
+                                && quester.getRemainingCooldown(fabricQuest) > 0) {
+                            quester.sendMessage("§e" + FabricLang.get(quester.getServerPlayer(), "questTooEarly")
+                                    .replace("<quest>", fabricQuest.getName())
+                                    .replace("<time>", FabricMiscUtil.getTime(
+                                            quester.getRemainingCooldown(fabricQuest))));
+                            continue;
+                        } else if (fabricQuest.getPlanner().getCooldown() < 0) {
+                            quester.sendMessage("§e" + FabricLang.get(quester.getServerPlayer(), "questAlreadyCompleted")
+                                    .replace("<quest>", fabricQuest.getName()));
+                            continue;
+                        }
+                    }
+                    for (final Quest currentQuest : quester.getCurrentQuests().keySet()) {
+                        if (currentQuest.getId().equals(fabricQuest.getId())) {
+                            quester.sendMessage("§c" + FabricLang.get(quester.getServerPlayer(), "questAlreadyOn"));
+                            return;
+                        }
+                    }
+                    quester.setQuestIdToTake(fabricQuest.getId());
+                    if (!plugin.getConfigSettings().canConfirmAccept()) {
+                        quester.takeQuest(fabricQuest, false);
+                    } else {
+                        final Quest toTake = plugin.getQuestById(quester.getQuestIdToTake());
+                        final String content = "§6- §5" + (toTake != null ? toTake.getName() : "?")
+                                + "§6 -\n\n§r" + (toTake != null ? toTake.getDescription() : "");
+                        for (final String msg : content.split("<br>")) {
+                            quester.sendMessage(msg);
+                        }
+                        new FabricQuestAcceptPrompt(player.getUUID(), plugin).start();
+                    }
+                }
+                break;
+            }
+        }
 
         for (final Quest quest : plugin.getLoadedQuests()) {
             if (!quester.getCurrentQuests().containsKey(quest)) continue;

@@ -10,8 +10,8 @@
 
 package me.pikamug.quests.listeners;
 
+import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.QuestsEvents;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
@@ -29,11 +29,11 @@ public class FabricItemListener {
     }
 
     private void register() {
-        QuestsEvents.registerItemCrafted(this::onCraftItem);
-        QuestsEvents.registerItemSmelted(this::onSmeltItem);
-        QuestsEvents.registerItemEnchanted(this::onEnchantItem);
-        QuestsEvents.registerItemBrewed(this::onBrewItem);
-        QuestsEvents.registerItemConsumed(this::onConsumeItem);
+        FabricMixinEvents.registerItemCrafted(this::onCraftItem);
+        FabricMixinEvents.registerItemSmelted(this::onSmeltItem);
+        FabricMixinEvents.registerItemEnchanted(this::onEnchantItem);
+        FabricMixinEvents.registerItemBrewed(this::onBrewItem);
+        FabricMixinEvents.registerItemConsumed(this::onConsumeItem);
     }
 
     private void onCraftItem(ServerPlayer player, ItemStack crafted) {
@@ -43,11 +43,13 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToCraft().isEmpty()) {
+                final var progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToCraft().size(); i++) {
                     final Object goal = stage.getItemsToCraft().get(i);
                     if (goal != null && FabricItemUtil.matches(crafted, (ItemStack) goal)) {
-                        quester.getQuestProgressOrDefault(quest).getItemsCrafted().set(i,
-                                quester.getQuestProgressOrDefault(quest).getItemsCrafted().get(i) + 1);
+                        final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
+                        progress.getItemsCrafted().set(i,
+                                Math.min(crafted.getCount() + progress.getItemsCrafted().get(i), goalAmount));
                         quester.checkQuest(quest);
                     }
                 }
@@ -62,11 +64,13 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToSmelt().isEmpty()) {
+                final var progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToSmelt().size(); i++) {
                     final Object goal = stage.getItemsToSmelt().get(i);
                     if (goal != null && FabricItemUtil.matches(smelted, (ItemStack) goal)) {
-                        quester.getQuestProgressOrDefault(quest).getItemsSmelted().set(i,
-                                quester.getQuestProgressOrDefault(quest).getItemsSmelted().get(i) + 1);
+                        final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
+                        progress.getItemsSmelted().set(i,
+                                Math.min(smelted.getCount() + progress.getItemsSmelted().get(i), goalAmount));
                         quester.checkQuest(quest);
                     }
                 }
@@ -81,11 +85,13 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToEnchant().isEmpty()) {
+                final var progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToEnchant().size(); i++) {
                     final Object goal = stage.getItemsToEnchant().get(i);
                     if (goal != null && FabricItemUtil.matches(enchanted, (ItemStack) goal)) {
-                        quester.getQuestProgressOrDefault(quest).getItemsEnchanted().set(i,
-                                quester.getQuestProgressOrDefault(quest).getItemsEnchanted().get(i) + 1);
+                        final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
+                        progress.getItemsEnchanted().set(i,
+                                Math.min(enchanted.getCount() + progress.getItemsEnchanted().get(i), goalAmount));
                         quester.checkQuest(quest);
                     }
                 }
@@ -100,11 +106,13 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToBrew().isEmpty()) {
+                final var progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToBrew().size(); i++) {
                     final Object goal = stage.getItemsToBrew().get(i);
                     if (goal != null && FabricItemUtil.matches(brewed, (ItemStack) goal)) {
-                        quester.getQuestProgressOrDefault(quest).getItemsBrewed().set(i,
-                                quester.getQuestProgressOrDefault(quest).getItemsBrewed().get(i) + 1);
+                        final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
+                        progress.getItemsBrewed().set(i,
+                                Math.min(brewed.getCount() + progress.getItemsBrewed().get(i), goalAmount));
                         quester.checkQuest(quest);
                     }
                 }
@@ -119,11 +127,12 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToConsume().isEmpty()) {
+                final var progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToConsume().size(); i++) {
                     final Object goal = stage.getItemsToConsume().get(i);
                     if (goal != null && FabricItemUtil.matches(consumed, (ItemStack) goal)) {
-                        quester.getQuestProgressOrDefault(quest).getItemsConsumed().set(i,
-                                quester.getQuestProgressOrDefault(quest).getItemsConsumed().get(i) + 1);
+                        progress.getItemsConsumed().set(i,
+                                Math.min(consumed.getCount() + progress.getItemsConsumed().get(i), 64));
                         quester.checkQuest(quest);
                     }
                 }

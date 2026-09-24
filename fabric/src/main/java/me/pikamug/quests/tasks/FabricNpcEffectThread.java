@@ -42,7 +42,7 @@ public class FabricNpcEffectThread implements Runnable {
 
             // Show particles to nearby questers
             for (final ServerPlayer player : plugin.getServer().getPlayerList().getPlayers()) {
-                if (player.position().distanceTo(npcPos) > 16) continue;
+                if (player.position().distanceToSqr(npcPos) > 24) continue;
                 final FabricQuester quester = plugin.getQuester(player.getUUID());
                 for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     // Check if this NPC is relevant to the quest

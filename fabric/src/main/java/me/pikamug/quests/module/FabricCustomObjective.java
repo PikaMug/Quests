@@ -202,6 +202,8 @@ public class FabricCustomObjective implements CustomObjective {
                     FabricQuestsEventBus.fire(new FabricQuesterPreUpdateObjectiveEvent(plugin, quester, quest,
                             customObjCounts.get(index), goal));
                     if (customObjCounts.get(index) >= goal) {
+                        // This objective has been completed in this stage.
+                        quester.checkQuest(quest);
                         // Multiplayer
                         final int finalIndex = index;
                         quester.dispatchMultiplayerObjectives(quest, quester.getCurrentStage(quest), (final Quester q) -> {
@@ -209,6 +211,7 @@ public class FabricCustomObjective implements CustomObjective {
                                     = (FabricQuestProgress) q.getQuestProgressOrDefault(quest);
                             final int old = qProgress.getCustomObjectiveCounts().get(finalIndex);
                             qProgress.getCustomObjectiveCounts().set(finalIndex, old + count);
+                            q.checkQuest(quest);
                             return null;
                         });
                     }

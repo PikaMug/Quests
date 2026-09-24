@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.mixin;
 
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ResultSlot;
@@ -30,7 +30,7 @@ public abstract class MixinResultSlot {
     @Inject(method = "onTake", at = @At("TAIL"))
     private void quests$onItemCrafted(Player player, ItemStack stack, CallbackInfo ci) {
         if (player instanceof ServerPlayer serverPlayer) {
-            QuestsEvents.invokeItemCrafted(serverPlayer, stack.copy());
+            FabricMixinEvents.invokeItemCrafted(serverPlayer, stack.copy());
         }
     }
 }

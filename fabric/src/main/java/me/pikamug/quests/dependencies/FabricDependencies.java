@@ -10,17 +10,12 @@
 
 package me.pikamug.quests.dependencies;
 
-import de.z0rdak.yawp.api.core.ILevelRegionApi;
-import de.z0rdak.yawp.api.core.RegionManager;
-import de.z0rdak.yawp.core.region.IMarkableRegion;
 import me.pikamug.quests.FabricQuestsPlugin;
 import net.fabricmc.loader.api.FabricLoader;
-import net.luckperms.api.LuckPermsProvider;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class FabricDependencies implements Dependencies {
@@ -31,6 +26,9 @@ public class FabricDependencies implements Dependencies {
     private boolean hasOpenParties = false;
     private boolean hasLuckPerms = false;
     private boolean hasYawp = false;
+    private FabricLuckPermsAccessor luckPerms;
+    private FabricYawpAccessor yawp;
+    private FabricOpenPartiesAccessor openParties;
 
     public FabricDependencies(final FabricQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -58,6 +56,35 @@ public class FabricDependencies implements Dependencies {
         }
         if (hasYawp) {
             FabricQuestsPlugin.LOGGER.info("Detected {} support", "Yet Another World Protector");
+        }
+
+        // Optional mods must never be hard-linked at class-load: the JVM
+        // resolves their types eagerly, so dangling references crash the
+        // server even when the mod is absent. Accessors are only constructed
+        // here, guarded by the mod check above.
+        if (hasLuckPerms) {
+            try {
+                luckPerms = new FabricLuckPermsAccessor();
+            } catch (final Throwable t) {
+                hasLuckPerms = false;
+                FabricQuestsPlugin.LOGGER.warn("Failed to initialize LuckPerms support", t);
+            }
+        }
+        if (hasYawp) {
+            try {
+                yawp = new FabricYawpAccessor();
+            } catch (final Throwable t) {
+                hasYawp = false;
+                FabricQuestsPlugin.LOGGER.warn("Failed to initialize YAWP support", t);
+            }
+        }
+        if (hasOpenParties) {
+            try {
+                openParties = new FabricOpenPartiesAccessor();
+            } catch (final Throwable t) {
+                hasOpenParties = false;
+                FabricQuestsPlugin.LOGGER.warn("Failed to initialize Open Parties and Claims support", t);
+            }
         }
     }
 
@@ -115,23 +142,51 @@ public class FabricDependencies implements Dependencies {
      */
     public List<String> getRegionsAt(ServerPlayer player) {
         final List<String> regions = new LinkedList<>();
-        if (!hasYawp || player == null) {
+        if (yawp == null || player == null) {
             return regions;
         }
         try {
-            final Optional<ILevelRegionApi> api = RegionManager.get().getDimRegionApi(player.level().dimension());
-            if (api.isPresent()) {
-                for (final IMarkableRegion region : api.get().getRegionsAt(player.blockPosition())) {
-                    final String name = region.getName();
-                    if (name != null) {
-                        regions.add(name);
-                    }
-                }
-            }
+            return yawp.getRegionsAt(player);
         } catch (final Exception e) {
             FabricQuestsPlugin.LOGGER.warn("Failed to resolve YAWP regions at player position", e);
+            return regions;
         }
-        return regions;
+    }
+
+    /**
+     * Returns the UUIDs of the player's party members via Open Parties and
+     * Claims, excluding the player themselves. Returns an empty list when the
+     * mod is not installed or the player has no party.
+     */
+    public List<UUID> getPartyMemberUuids(UUID memberId) {
+        final List<UUID> uuids = new LinkedList<>();
+        if (openParties == null || memberId == null || plugin.getServer() == null) {
+            return uuids;
+        }
+        try {
+            return openParties.getPartyMemberUuids(plugin.getServer(), memberId);
+        } catch (final Exception e) {
+            FabricQuestsPlugin.LOGGER.warn("Failed to resolve party members for {}", memberId, e);
+            return uuids;
+        }
+    }
+
+    /**
+     * Returns the online {@link ServerPlayer}s in the player's party via Open
+     * Parties and Claims, excluding the player themselves. Returns an empty
+     * list when the mod is not installed or the player has no party.
+     */
+    public List<ServerPlayer> getOnlinePartyMembers(UUID memberId) {
+        final List<ServerPlayer> members = new LinkedList<>();
+        if (openParties == null || memberId == null || plugin.getServer() == null) {
+            return members;
+        }
+        try {
+            return openParties.getOnlinePartyMembers(plugin.getServer(), memberId);
+        } catch (final Exception e) {
+            FabricQuestsPlugin.LOGGER.warn("Failed to resolve online party members for {}", memberId, e);
+            return members;
+        }
     }
 
     /**
@@ -144,14 +199,11 @@ public class FabricDependencies implements Dependencies {
      * @return {@code true} if the player is granted the permission
      */
     public boolean hasPermission(UUID uuid, String permission) {
-        if (!hasLuckPerms || uuid == null || permission == null) {
+        if (luckPerms == null || uuid == null || permission == null) {
             return false;
         }
         try {
-            final net.luckperms.api.model.user.User user =
-                    LuckPermsProvider.get().getUserManager().getUser(uuid);
-            return user != null && user.getCachedData().getPermissionData()
-                    .checkPermission(permission).asBoolean();
+            return luckPerms.hasPermission(uuid, permission);
         } catch (final Exception e) {
             return false;
         }
@@ -163,12 +215,11 @@ public class FabricDependencies implements Dependencies {
      * reward silently does nothing without a permission plugin).
      */
     public void grantPermission(UUID uuid, String permission) {
-        if (!hasLuckPerms || uuid == null || permission == null) {
+        if (luckPerms == null || uuid == null || permission == null) {
             return;
         }
         try {
-            LuckPermsProvider.get().getUserManager().modifyUser(uuid, user ->
-                    user.data().add(net.luckperms.api.node.Node.builder(permission).build()));
+            luckPerms.grantPermission(uuid, permission);
         } catch (final Exception e) {
             FabricQuestsPlugin.LOGGER.warn("Failed to grant permission '{}' to {}", permission, uuid, e);
         }

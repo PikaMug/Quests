@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.mixin;
 
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,16 +28,16 @@ public abstract class MixinMinecraftServer {
     private void quests$onServerStarted(CallbackInfo ci) {
         if (quests$started) return;
         quests$started = true;
-        QuestsEvents.invokeServerStarted((MinecraftServer) (Object) this);
+        FabricMixinEvents.invokeServerStarted((MinecraftServer) (Object) this);
     }
 
     @Inject(method = "stopServer", at = @At("HEAD"))
     private void quests$onServerStopping(CallbackInfo ci) {
-        QuestsEvents.invokeServerStopping((MinecraftServer) (Object) this);
+        FabricMixinEvents.invokeServerStopping((MinecraftServer) (Object) this);
     }
 
     @Inject(method = "tickServer", at = @At("TAIL"))
     private void quests$onServerTick(BooleanSupplier hasTimeLeft, CallbackInfo ci) {
-        QuestsEvents.invokeServerTick((MinecraftServer) (Object) this);
+        FabricMixinEvents.invokeServerTick((MinecraftServer) (Object) this);
     }
 }

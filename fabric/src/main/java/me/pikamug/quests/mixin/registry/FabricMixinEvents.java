@@ -29,16 +29,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Hook registry replacing Fabric API callbacks with direct game hooks.
  *
- * <p>Quests used to depend on <code>net.fabricmc.fabric-api</code> (lifecycle, networking, message,
- * player, command and combat events). The built jar no longer bundles those classes and the Fabric API
- * mod is not installed on the server, so all callbacks are instead emitted from {@code quests.mixins.json}
+ * <p>Quests prefers not to depend on <code>net.fabricmc.fabric-api</code> (lifecycle, networking, message,
+ * player, command and combat events), so all callbacks are instead emitted from {@code quests.mixins.json}
  * mixins that target the vanilla server classes directly. Mixins fire on the server thread only.</p>
  *
  * <p>Registering a handler is thread-safe; dispatch to <code>CopyOnWriteArrayList</code> backing stores.</p>
  */
-public final class QuestsEvents {
+public final class FabricMixinEvents {
 
-    private QuestsEvents() {
+    private FabricMixinEvents() {
     }
 
     // --- functional interfaces ---------------------------------------------
@@ -63,6 +62,18 @@ public final class QuestsEvents {
         void onPlayerDisconnect(ServerPlayer player);
     }
 
+    public interface PlayerDeathHandler {
+        void onPlayerDeath(ServerPlayer player, DamageSource damageSource);
+    }
+
+    public interface PlayerRespawnHandler {
+        void onPlayerRespawn(ServerPlayer player);
+    }
+
+    public interface PlayerChangeDimensionHandler {
+        void onPlayerChangeDimension(ServerPlayer player);
+    }
+
     /**
      * Right-click (interact) an entity. Returning {@code true} consumes the interaction.
      */
@@ -80,6 +91,13 @@ public final class QuestsEvents {
 
     public interface AttackBlockHandler {
         void onAttackBlock(ServerPlayer player, BlockPos pos);
+    }
+
+    /**
+     * Left-click on empty air (arm swing), used for compass item resets.
+     */
+    public interface SwingAirHandler {
+        void onSwingAir(ServerPlayer player);
     }
 
     public interface BlockBrokenHandler {
@@ -144,10 +162,14 @@ public final class QuestsEvents {
     private static final List<ServerTickHandler> SERVER_TICK = new CopyOnWriteArrayList<>();
     private static final List<PlayerJoinHandler> PLAYER_JOIN = new CopyOnWriteArrayList<>();
     private static final List<PlayerDisconnectHandler> PLAYER_DISCONNECT = new CopyOnWriteArrayList<>();
+    private static final List<PlayerDeathHandler> PLAYER_DEATH = new CopyOnWriteArrayList<>();
+    private static final List<PlayerRespawnHandler> PLAYER_RESPAWN = new CopyOnWriteArrayList<>();
+    private static final List<PlayerChangeDimensionHandler> PLAYER_CHANGE_DIMENSION = new CopyOnWriteArrayList<>();
     private static final List<UseEntityHandler> USE_ENTITY = new CopyOnWriteArrayList<>();
     private static final List<UseItemHandler> USE_ITEM = new CopyOnWriteArrayList<>();
     private static final List<UseBlockHandler> USE_BLOCK = new CopyOnWriteArrayList<>();
     private static final List<AttackBlockHandler> ATTACK_BLOCK = new CopyOnWriteArrayList<>();
+    private static final List<SwingAirHandler> SWING_AIR = new CopyOnWriteArrayList<>();
     private static final List<BlockBrokenHandler> BLOCK_BROKEN = new CopyOnWriteArrayList<>();
     private static final List<BlockPlacedHandler> BLOCK_PLACED = new CopyOnWriteArrayList<>();
     private static final List<EntityKilledHandler> ENTITY_KILLED = new CopyOnWriteArrayList<>();
@@ -184,6 +206,18 @@ public final class QuestsEvents {
         PLAYER_DISCONNECT.add(handler);
     }
 
+    public static void registerPlayerDeath(final PlayerDeathHandler handler) {
+        PLAYER_DEATH.add(handler);
+    }
+
+    public static void registerPlayerRespawn(final PlayerRespawnHandler handler) {
+        PLAYER_RESPAWN.add(handler);
+    }
+
+    public static void registerPlayerChangeDimension(final PlayerChangeDimensionHandler handler) {
+        PLAYER_CHANGE_DIMENSION.add(handler);
+    }
+
     public static void registerUseEntity(final UseEntityHandler handler) {
         USE_ENTITY.add(handler);
     }
@@ -198,6 +232,10 @@ public final class QuestsEvents {
 
     public static void registerAttackBlock(final AttackBlockHandler handler) {
         ATTACK_BLOCK.add(handler);
+    }
+
+    public static void registerSwingAir(final SwingAirHandler handler) {
+        SWING_AIR.add(handler);
     }
 
     public static void registerBlockBroken(final BlockBrokenHandler handler) {
@@ -286,6 +324,27 @@ public final class QuestsEvents {
         }
     }
 
+    public static void invokePlayerDeath(final ServerPlayer player, final DamageSource damageSource) {
+        if (player == null || damageSource == null) return;
+        for (final PlayerDeathHandler handler : PLAYER_DEATH) {
+            handler.onPlayerDeath(player, damageSource);
+        }
+    }
+
+    public static void invokePlayerRespawn(final ServerPlayer player) {
+        if (player == null) return;
+        for (final PlayerRespawnHandler handler : PLAYER_RESPAWN) {
+            handler.onPlayerRespawn(player);
+        }
+    }
+
+    public static void invokePlayerChangeDimension(final ServerPlayer player) {
+        if (player == null) return;
+        for (final PlayerChangeDimensionHandler handler : PLAYER_CHANGE_DIMENSION) {
+            handler.onPlayerChangeDimension(player);
+        }
+    }
+
     public static boolean invokeUseEntity(final ServerPlayer player, final Entity entity) {
         if (player == null || entity == null) return false;
         boolean handled = false;
@@ -313,6 +372,13 @@ public final class QuestsEvents {
         if (player == null || pos == null) return;
         for (final AttackBlockHandler handler : ATTACK_BLOCK) {
             handler.onAttackBlock(player, pos);
+        }
+    }
+
+    public static void invokeSwingAir(final ServerPlayer player) {
+        if (player == null) return;
+        for (final SwingAirHandler handler : SWING_AIR) {
+            handler.onSwingAir(player);
         }
     }
 

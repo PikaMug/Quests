@@ -10,8 +10,6 @@
 
 package me.pikamug.quests.storage.implementation.jar;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -30,16 +28,13 @@ import me.pikamug.quests.quests.components.FabricStage;
 import me.pikamug.quests.quests.components.Requirements;
 import me.pikamug.quests.quests.components.Rewards;
 import me.pikamug.quests.storage.implementation.ModuleStorageImpl;
+import me.pikamug.quests.storage.implementation.file.FabricQuestJsonStorage;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -53,7 +48,6 @@ public class FabricModuleJarStorage implements ModuleStorageImpl {
 
     private final FabricQuestsPlugin plugin;
     private final List<URLClassLoader> moduleLoaders = new ArrayList<>();
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public FabricModuleJarStorage(FabricQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -75,20 +69,17 @@ public class FabricModuleJarStorage implements ModuleStorageImpl {
                 loadModule(jar);
             }
         }
-        // Apply custom sections from quest files now that modules are registered
-        final Path storageDir = plugin.getPluginDataFolder().toPath().resolve("storage");
+        // Apply custom sections from quest index entries now that modules are registered
+        final FabricQuestJsonStorage questLoader = (FabricQuestJsonStorage) plugin.getQuestLoader();
         for (final Quest quest : plugin.getLoadedQuests()) {
-            final Path file = storageDir.resolve(quest.getId() + ".json");
-            if (!Files.exists(file)) continue;
-            try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
-                final JsonObject json = gson.fromJson(reader, JsonObject.class);
-                if (json != null) {
-                    loadCustomSections(quest, json, quest.getId());
-                }
+            final JsonObject json = questLoader.getQuestData(quest.getId());
+            if (json == null) continue;
+            try {
+                loadCustomSections(quest, json, quest.getId());
             } catch (final QuestFormatException | StageFormatException ex) {
                 plugin.getPluginLogger().error("Unable to load custom sections", ex);
             } catch (final Exception ex) {
-                plugin.getPluginLogger().error("Unable to load module data from {}", file, ex);
+                plugin.getPluginLogger().error("Unable to load module data for quest {}", quest.getId(), ex);
             }
         }
     }

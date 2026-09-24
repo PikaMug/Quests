@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.mixin;
 
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Fires when the server applies an enchantment via the enchanting table button.
@@ -36,11 +36,11 @@ public abstract class MixinEnchantmentMenu {
     private Container enchantSlots;
 
     @Inject(method = "clickMenuButton", at = @At("TAIL"))
-    private void quests$onItemEnchanted(Player player, int button, CallbackInfo ci) {
+    private void quests$onItemEnchanted(Player player, int button, CallbackInfoReturnable<Boolean> cir) {
         final ItemStack item = enchantSlots.getItem(0);
         if (!item.isEmpty() && EnchantmentHelper.hasAnyEnchantments(item)
                 && player instanceof ServerPlayer serverPlayer) {
-            QuestsEvents.invokeItemEnchanted(serverPlayer, item.copy());
+            FabricMixinEvents.invokeItemEnchanted(serverPlayer, item.copy());
         }
     }
 }

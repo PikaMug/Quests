@@ -249,7 +249,7 @@ public class FabricAction implements Action {
             for (final String locStr : lightningStrikes) {
                 final LocPos loc = parseLocation(server, locStr);
                 if (loc == null) continue;
-                final LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(loc.level(), EntitySpawnReason.TRIGGERED);
+                final LightningBolt bolt = FabricMiscUtil.LIGHTNING_BOLT.create(loc.level(), EntitySpawnReason.TRIGGERED);
                 if (bolt != null) {
                     bolt.setPos(loc.x(), loc.y(), loc.z());
                     loc.level().addFreshEntity(bolt);

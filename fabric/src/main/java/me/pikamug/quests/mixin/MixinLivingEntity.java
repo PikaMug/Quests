@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.mixin;
 
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,7 +36,7 @@ public abstract class MixinLivingEntity {
         final Entity killer = damageSource.getEntity();
         if (killer == null) return;
         if (victim.level() instanceof ServerLevel serverLevel) {
-            QuestsEvents.invokeEntityKilled(serverLevel, killer, victim, damageSource);
+            FabricMixinEvents.invokeEntityKilled(serverLevel, killer, victim, damageSource);
         }
     }
 
@@ -44,7 +44,7 @@ public abstract class MixinLivingEntity {
     private void quests$onItemConsumed(CallbackInfo ci) {
         if ((Object) this instanceof ServerPlayer player
                 && (useItem.has(DataComponents.FOOD) || useItem.has(DataComponents.POTION_CONTENTS))) {
-            QuestsEvents.invokeItemConsumed(player, useItem.copy());
+            FabricMixinEvents.invokeItemConsumed(player, useItem.copy());
         }
     }
 }

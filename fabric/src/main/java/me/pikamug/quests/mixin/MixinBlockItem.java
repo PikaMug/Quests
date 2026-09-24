@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.mixin;
 
-import me.pikamug.quests.QuestsEvents;
+import me.pikamug.quests.FabricMixinEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BlockItem;
@@ -36,7 +36,7 @@ public abstract class MixinBlockItem {
         if (context.getPlayer() instanceof ServerPlayer player) {
             final BlockPos pos = context.getClickedPos();
             final BlockState placed = context.getLevel().getBlockState(pos);
-            QuestsEvents.invokeBlockPlaced(player, pos, placed);
+            FabricMixinEvents.invokeBlockPlaced(player, pos, placed);
         }
     }
 }
