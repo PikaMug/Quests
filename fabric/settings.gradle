@@ -6,6 +6,12 @@ pluginManagement {
     }
 }
 
+// Auto-provisions missing JDK toolchains (e.g. the Java 25 toolchain declared in build.gradle)
+// via the foojay Disco API, so the build does not depend on any machine-specific JAVA_HOME path.
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
 dependencyResolutionManagement {
     repositories {
         mavenCentral()

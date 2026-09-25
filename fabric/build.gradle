@@ -46,6 +46,17 @@ dependencies {
     shaded(project(":api"))
     shaded("com.github.Browsit.ConversationAPI:conversation-api:3ad4823656")
     shaded("com.github.Browsit.ConversationAPI:conversation-impl:3ad4823656")
+
+    // ConversationAPI-Fabric adapter: provides MinecraftServer audiences for the Conversations API and
+    // the chat-forwarding mixin, for parity with how the Bukkit module shades conversation-bukkit.
+    // Requires the upstream 26.2 port to be published; transitive deps are supplied explicitly below.
+    shaded("com.github.Browsit.ConversationAPI-Fabric:fabricConversationsMod:master-SNAPSHOT") {
+        transitive = false
+    }
+    // AudienceProvider bridge that FabricServerAudiences.of(server) needs. Pin to the MC 26.2 build.
+    shaded("net.kyori:adventure-platform-fabric:5.10.1") {
+        transitive = false
+    }
 }
 
 // The shaded libraries are needed on the compile classpath but only bundled via shadowJar.
@@ -59,13 +70,16 @@ processResources {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    // Built against Java 25. The JDK is auto-provisioned through the Foojay resolver registered in
+    // settings.gradle, so no machine-specific JAVA_HOME/local JDK directory is required.
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
     withSourcesJar()
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.release = 17
+    options.release = 25
     options.encoding = "UTF-8"
     options.compilerArgs.add("-proc:none")
 }
@@ -74,8 +88,16 @@ tasks.withType(JavaCompile).configureEach {
 shadowJar {
     archiveClassifier.set("")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    configurations = [project.configurations.shaded]
+    // Add shaded jars by hand so their mod metadata can be stripped: a bundled mod's fabric.mod.json,
+    // mixin descriptors and access wideners must not leak into Quests' own metadata.
+    configurations = []
+    from(project.configurations.shaded) {
+        exclude("fabric.mod.json")
+        exclude("*mixins*.json")
+        exclude("*.accesswidener")
+    }
     relocate("org.browsit.conversations", "me.pikamug.quests.libs.conversations")
+    relocate("net.kyori.adventure.platform.fabric", "me.pikamug.quests.libs.adventure.platform.fabric")
     relocate("com.zaxxer.hikari", "me.pikamug.quests.libs.hikari")
     relocate("com.mysql", "me.pikamug.quests.libs.mysql")
     exclude("META-INF/*.MF")
