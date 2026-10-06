@@ -12,21 +12,29 @@ package me.pikamug.quests;
 
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.FabricActionFactory;
+import me.pikamug.quests.commands.FabricCommandManager;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.conditions.FabricConditionFactory;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.config.FabricConfigSettings;
 import me.pikamug.quests.dependencies.FabricDependencies;
+import me.pikamug.quests.FabricMixinEvents;
+import me.pikamug.quests.listeners.FabricBlockListener;
+import me.pikamug.quests.listeners.FabricChatListener;
+import me.pikamug.quests.listeners.FabricEntityListener;
+import me.pikamug.quests.listeners.FabricItemListener;
+import me.pikamug.quests.listeners.FabricPlayerListener;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.CustomReward;
 import me.pikamug.quests.player.FabricQuester;
+import me.pikamug.quests.player.QuestProgress;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.FabricQuestFactory;
+import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.statistics.FabricMetrics;
 import me.pikamug.quests.storage.FabricStorageFactory;
 import me.pikamug.quests.storage.QuesterStorage;
-import me.pikamug.quests.statistics.FabricMetrics;
 import me.pikamug.quests.storage.implementation.file.FabricActionJsonStorage;
 import me.pikamug.quests.storage.implementation.file.FabricConditionJsonStorage;
 import me.pikamug.quests.storage.implementation.file.FabricQuestJsonStorage;
@@ -34,12 +42,7 @@ import me.pikamug.quests.storage.implementation.jar.FabricModuleJarStorage;
 import me.pikamug.quests.tasks.FabricNpcEffectThread;
 import me.pikamug.quests.tasks.FabricPlayerMoveThread;
 import me.pikamug.quests.tasks.FabricScheduler;
-import me.pikamug.quests.commands.FabricCommandManager;
-import me.pikamug.quests.listeners.FabricBlockListener;
-import me.pikamug.quests.listeners.FabricChatListener;
-import me.pikamug.quests.listeners.FabricEntityListener;
-import me.pikamug.quests.listeners.FabricItemListener;
-import me.pikamug.quests.listeners.FabricPlayerListener;
+import me.pikamug.quests.util.ConsoleVt;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.FabricQuestsLogger;
@@ -47,9 +50,19 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests {
@@ -75,6 +88,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
     private Collection<Condition> conditions = ConcurrentHashMap.newKeySet();
     private Collection<UUID> questNpcUuids = ConcurrentHashMap.newKeySet();
     private final Map<UUID, net.minecraft.core.BlockPos> tempBlocks = new ConcurrentHashMap<>();
+    private final Map<UUID, net.minecraft.core.BlockPos> selectedBlockStarts = new ConcurrentHashMap<>();
     private FabricQuestFactory questFactory;
     private FabricActionFactory actionFactory;
     private FabricConditionFactory conditionFactory;
@@ -86,18 +100,27 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
     public void onInitializeServer() {
         instance = this;
 
-        QuestsEvents.registerServerStarted(server -> {
+        ConsoleVt.enable();
+
+        // Register commands before the server constructs its CommandDispatcher,
+        // otherwise the Commands-construction event fires before any listener exists.
+        new FabricCommandManager(this);
+
+        FabricMixinEvents.registerServerStarted(server -> {
             this.server = server;
             onEnable();
         });
 
-        QuestsEvents.registerServerStopping(server -> {
+        FabricMixinEvents.registerServerStopping(server -> {
             onDisable();
         });
     }
 
     private void onEnable() {
         /*----> WARNING: ORDER OF STEPS MATTERS <----*/
+
+        // 0 - Conversations are initialized by the embedded conversation-fabric mod itself
+        // (SERVER_STARTED -> FabricConversations.init), so Quests only consumes the API.
 
         // 1 - Initialize variables
         actionLoader = new FabricActionJsonStorage(this);
@@ -154,11 +177,8 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
             new me.pikamug.quests.listeners.npc.FabricTaterzensListener(this);
         }
 
-        // 8 - Register commands
-        new FabricCommandManager(this);
-
         // 9 - Register tick events
-        QuestsEvents.registerServerTick(this::onTick);
+        FabricMixinEvents.registerServerTick(this::onTick);
 
         if (configSettings.getStrictPlayerMovement() > 0) {
             final long ticks = configSettings.getStrictPlayerMovement();
@@ -323,6 +343,48 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         return (FabricQuester) questers.computeIfAbsent(id, uuid -> new FabricQuester(this, uuid));
     }
 
+    /**
+     * Loads a player's stored data from the active storage implementation and
+     * applies it to the live {@link Quester} so no progress is lost across
+     * restarts or reloads.
+     *
+     * @param uuid the player to load data for
+     */
+    public void applyLoadedQuester(final UUID uuid) {
+        if (uuid == null) {
+            return;
+        }
+        try {
+            final Quester loaded = getStorage().loadQuester(uuid).get();
+            if (loaded == null) {
+                return;
+            }
+            final FabricQuester live = getQuester(uuid);
+            if (live == loaded) {
+                // Storage implementation (e.g. SQL) already mutated the live quester
+                return;
+            }
+            live.setLastKnownName(loaded.getLastKnownName());
+            live.setQuestPoints(loaded.getQuestPoints());
+            live.setCurrentQuests(loaded.getCurrentQuests());
+            live.setCompletedQuests(loaded.getCompletedQuests());
+            live.setCompletedTimes(loaded.getCompletedTimes());
+            live.setAmountsCompleted(loaded.getAmountsCompleted());
+            if (loaded instanceof FabricQuester fabricLoaded) {
+                for (final Map.Entry<Quest, QuestProgress> e : fabricLoaded.getProgressData().entrySet()) {
+                    live.setQuestProgress(e.getKey(), e.getValue());
+                }
+            }
+            live.setHasData(fabricLoadedHasData(loaded));
+        } catch (final Exception e) {
+            LOGGER.error("Failed to load quester data for {}", uuid, e);
+        }
+    }
+
+    private static boolean fabricLoadedHasData(final Quester loaded) {
+        return loaded instanceof FabricQuester fabricLoaded && fabricLoaded.hasData();
+    }
+
     @Override
     public Collection<Quester> getOnlineQuesters() {
         final Set<Quester> online = ConcurrentHashMap.newKeySet();
@@ -425,6 +487,14 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         return tempBlocks;
     }
 
+    public Map<UUID, net.minecraft.core.BlockPos> getSelectedBlockStarts() {
+        return selectedBlockStarts;
+    }
+
+    public boolean isSelectingBlockStart(final UUID uuid) {
+        return selectedBlockStarts.containsKey(uuid);
+    }
+
     @Override
     public FabricActionFactory getActionFactory() {
         return actionFactory;
@@ -445,6 +515,10 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
 
     public QuesterStorage getStorage() {
         return storage;
+    }
+
+    public FabricQuestJsonStorage getQuestLoader() {
+        return questLoader;
     }
 
     public boolean isEnabled() {
@@ -523,11 +597,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         FabricScheduler.runLater(() -> {
             if (server != null) {
                 for (final net.minecraft.server.level.ServerPlayer p : server.getPlayerList().getPlayers()) {
-                    final Quester quester = new FabricQuester(FabricQuestsPlugin.this, p.getUUID());
-                    if (!quester.hasData()) {
-                        quester.saveData();
-                    }
-                    questers.put(p.getUUID(), quester);
+                    applyLoadedQuester(p.getUUID());
                 }
             }
             loading = false;
@@ -556,13 +626,9 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
                 actionLoader.init();
                 questLoader.init();
                 for (final Quester quester : questers.values()) {
-                    final Quester loaded = getStorage().loadQuester(quester.getUUID()).get();
-                    if (loaded == null) {
-                        LOGGER.error("Unable to load quester of UUID {}", quester.getUUID());
-                        continue;
-                    }
-                    for (final Quest quest : loaded.getCurrentQuests().keySet()) {
-                        loaded.checkQuest(quest);
+                    applyLoadedQuester(quester.getUUID());
+                    for (final Quest quest : quester.getCurrentQuests().keySet()) {
+                        quester.checkQuest(quest);
                     }
                 }
                 customLoader.init();

@@ -58,11 +58,12 @@ public class FabricCommandManager {
 
     private final FabricQuestsPlugin plugin;
 
-    private final SuggestionProvider<CommandSourceStack> questSuggestions = (context, builder) ->
-            SharedSuggestionProvider.suggest(plugin.getLoadedQuests().stream().map(Quest::getName), builder);
+    private final SuggestionProvider<CommandSourceStack> questSuggestions;
 
     public FabricCommandManager(FabricQuestsPlugin plugin) {
         this.plugin = plugin;
+        questSuggestions = (context, builder) ->
+                SharedSuggestionProvider.suggest(plugin.getLoadedQuests().stream().map(Quest::getName), builder);
         register();
     }
 

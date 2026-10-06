@@ -22,8 +22,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- The Gradle wrapper script (the root project lives in fabric/); override (e.g. `../fabric/gradlew`) on POSIX CI. -->
         <gradle.executable>${project.basedir}/../fabric/gradlew.bat</gradle.executable>
-        <!-- Gradle must run on a JDK supporting Java level 25 (see fabric/build.gradle). -->
-        <gradle.java.home>C:\Program Files\Zulu\zulu-25</gradle.java.home>
+        <!-- No JAVA_HOME is pinned here: the fabric module's committed gradle/gradle-daemon-jvm.properties
+             (plus the Foojay toolchain resolver) makes Gradle self-select an auto-provisioned JVM 25 regardless
+             of the launcher JVM, so no machine-specific JDK directory is baked into the build. -->
         <!-- Output of the Gradle shadowJar task for the fabric module (see fabric/build.gradle). -->
         <gradle.jar.path>${project.basedir}/../fabric/build/libs/Quests-Fabric-${project.version}.jar</gradle.jar.path>
     </properties>
@@ -52,9 +53,6 @@
                                 <argument>shadowJar</argument>
                                 <argument>--no-daemon</argument>
                             </arguments>
-                            <environmentVariables>
-                                <JAVA_HOME>${gradle.java.home}</JAVA_HOME>
-                            </environmentVariables>
                         </configuration>
                     </execution>
                 </executions>

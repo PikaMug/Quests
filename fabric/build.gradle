@@ -15,6 +15,7 @@ base {
 
 configurations {
     shaded
+    bundledMods
 }
 
 repositories {
@@ -44,17 +45,32 @@ dependencies {
 
     // Bundled (and relocated) into the final jar.
     shaded(project(":api"))
-    shaded("com.github.Browsit.ConversationAPI:conversation-api:3ad4823656")
-    shaded("com.github.Browsit.ConversationAPI:conversation-impl:3ad4823656")
 
-    // ConversationAPI-Fabric adapter: provides MinecraftServer audiences for the Conversations API and
-    // the chat-forwarding mixin, for parity with how the Bukkit module shades conversation-bukkit.
-    // Requires the upstream 26.2 port to be published; transitive deps are supplied explicitly below.
-    shaded("com.github.Browsit.ConversationAPI-Fabric:fabricConversationsMod:master-SNAPSHOT") {
+    // ConversationAPI-Fabric adapter, embedded in the Quests jar as a loader-registered nested mod
+    // (fabric.mod.json "jars"), so net.kyori* adventure stays owned by that project rather than being
+    // re-homed into Quests. Normal users install only Quests; the loader announces both it and the
+    // adventure-platform-fabric mod that accompanies it. The JitPack coordinate is pinned to the
+    // upstream commit whose loader floor was lowered to >=0.19.2 and which bundles conversation-api/impl.
+    // The adapter jar ships org.browsit.conversations.api.* inside its own nested jars, which javac
+    // cannot see, so the API is also declared here (JitPack "com.github.Browsit.ConversationAPI"). It is
+    // compile-only: at runtime those classes come from the embedded conversation-fabric mod.
+    compileOnly("com.github.Browsit.ConversationAPI:api:909d27ea60") {
         transitive = false
     }
-    // AudienceProvider bridge that FabricServerAudiences.of(server) needs. Pin to the MC 26.2 build.
-    shaded("net.kyori:adventure-platform-fabric:5.10.1") {
+    // conversation-api's public methods (e.g. TimeClause.create, title, prompt) expose net.kyori
+    // adventure types in their signatures, so javac needs adventure-api purely to resolve those
+    // overloads. Compile-only: adventure is never bundled here - it arrives at runtime from the
+    // embedded adventure-platform-fabric mod (see "jars" in fabric.mod.json).
+    compileOnly("net.kyori:adventure-api:4.17.0") {
+        transitive = false
+    }
+    compileOnly("com.github.Browsit:ConversationAPI-Fabric:5b00d52") {
+        transitive = false
+    }
+    bundledMods("com.github.Browsit:ConversationAPI-Fabric:5b00d52") {
+        transitive = false
+    }
+    bundledMods("net.kyori:adventure-platform-fabric:7.1.1") {
         transitive = false
     }
 }
@@ -65,7 +81,9 @@ sourceSets.main.compileClasspath += configurations.shaded
 processResources {
     inputs.property("version", project.version)
     filesMatching("fabric.mod.json") {
-        expand("version": project.version)
+        // Plain token replacement: the Groovy template engine treats "$" in inner-class names
+        // like "Sound$Emitter" as a property reference, so "expand" can't be used here.
+        filter { line -> line.replace("\${version}", project.version as String) }
     }
 }
 
@@ -89,24 +107,35 @@ shadowJar {
     archiveClassifier.set("")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     // Add shaded jars by hand so their mod metadata can be stripped: a bundled mod's fabric.mod.json,
-    // mixin descriptors and access wideners must not leak into Quests' own metadata.
+    // mixin descriptors and access wideners must not leak into Quests' own metadata. Each shaded jar is
+    // expanded into a file tree so its classes are merged (and relocated) instead of nested whole.
     configurations = []
-    from(project.configurations.shaded) {
+    from({
+        project.configurations.shaded.collect { zipTree(it) }
+    }) {
         exclude("fabric.mod.json")
         exclude("*mixins*.json")
         exclude("*.accesswidener")
+        exclude("org/jetbrains/annotations/**")
     }
-    relocate("org.browsit.conversations", "me.pikamug.quests.libs.conversations")
-    relocate("net.kyori.adventure.platform.fabric", "me.pikamug.quests.libs.adventure.platform.fabric")
     relocate("com.zaxxer.hikari", "me.pikamug.quests.libs.hikari")
     relocate("com.mysql", "me.pikamug.quests.libs.mysql")
     exclude("META-INF/*.MF")
     exclude("LICENSE")
     exclude("module-info.class")
-    dependencies {
-        exclude(dependency("org.jetbrains:annotations"))
-    }
     mergeServiceFiles()
+    // Nested loader-registered mods (see "jars" in fabric.mod.json): conversation-fabric and the
+    // adventure-platform-fabric it depends on, copied verbatim so each keeps its own fabric.mod.json.
+    into("META-INF/jars") {
+        from(project.configurations.bundledMods)
+        // Rename the bundled mods to stable filenames so fabric.mod.json's "jars" entries do not
+        // depend on the upstream artifact's own name/version (e.g. JitPack "ConversationAPI-Fabric-<sha>.jar").
+        rename { name ->
+            if (name.startsWith("ConversationAPI-Fabric") || name.startsWith("fabricConversationsMod")) "conversation-fabric.jar"
+            else if (name.startsWith("adventure-platform-fabric")) "adventure-platform-fabric.jar"
+            else name
+        }
+    }
 }
 
 tasks.jar {
