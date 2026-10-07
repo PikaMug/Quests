@@ -198,6 +198,22 @@ public class FabricLang {
         return null;
     }
 
+    /**
+     * Get prefixed key for lang value
+     *
+     * @param value The lang string
+     * @param keyPrefix String that the key starts with
+     * @return full key or "NULL" as String
+     */
+    public static String getKeyFromPrefix(final String keyPrefix, final String value) {
+        for (final Map.Entry<String, String> entry : defaultLang.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(value) && entry.getKey().toUpperCase().startsWith(keyPrefix)) {
+                return entry.getKey();
+            }
+        }
+        return "NULL";
+    }
+
     public static String convertString(String input) {
         if (input == null) return null;
         String result = input;

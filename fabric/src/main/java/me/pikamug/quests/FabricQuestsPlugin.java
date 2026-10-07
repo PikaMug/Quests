@@ -12,13 +12,12 @@ package me.pikamug.quests;
 
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.FabricActionFactory;
-import me.pikamug.quests.commands.FabricCommandManager;
+import me.pikamug.quests.listeners.FabricCommandManager;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.conditions.FabricConditionFactory;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.config.FabricConfigSettings;
 import me.pikamug.quests.dependencies.FabricDependencies;
-import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.listeners.FabricBlockListener;
 import me.pikamug.quests.listeners.FabricChatListener;
 import me.pikamug.quests.listeners.FabricEntityListener;
