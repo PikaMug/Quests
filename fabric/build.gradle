@@ -49,28 +49,24 @@ dependencies {
     // ConversationAPI-Fabric adapter, embedded in the Quests jar as a loader-registered nested mod
     // (fabric.mod.json "jars"), so net.kyori* adventure stays owned by that project rather than being
     // re-homed into Quests. Normal users install only Quests; the loader announces both it and the
-    // adventure-platform-fabric mod that accompanies it. The JitPack coordinate is pinned to the
-    // upstream commit whose loader floor was lowered to >=0.19.2 and which bundles conversation-api/impl.
-    // The adapter jar ships org.browsit.conversations.api.* inside its own nested jars, which javac
-    // cannot see, so the API is also declared here (JitPack "com.github.Browsit.ConversationAPI"). It is
-    // compile-only: at runtime those classes come from the embedded conversation-fabric mod.
+    // adventure-platform-fabric mod that accompanies it. (JitPack pin restored after the TEMP LOCAL
+    // TEST below is verified: com.github.Browsit:ConversationAPI-Fabric:<sha>, transitive=false so
+    // the adapter's POM runtime deps stay off the classpath and out of META-INF/jars.) The adapter
+    // TEMP LOCAL TEST: verify the ChatMessageMixin @Shadow fix before pushing upstream.
+    def conversationFabricJar = file("../../ConversationAPI-Fabric/build/libs/fabricConversationsMod-1.0-SNAPSHOT.jar")
+    compileOnly(files(conversationFabricJar))
+    bundledMods(files(conversationFabricJar))
+    // The adapter jar nests api in META-INF/jars, which javac does not unpack, so the API itself is
+    // declared separately (JitPack "com.github.Browsit.ConversationAPI"). Compile-only: at runtime
+    // those classes come from the embedded conversation-fabric mod.
     compileOnly("com.github.Browsit.ConversationAPI:api:909d27ea60") {
         transitive = false
     }
     // conversation-api's public methods (e.g. TimeClause.create, title, prompt) expose net.kyori
     // adventure types in their signatures, so javac needs adventure-api purely to resolve those
     // overloads. Compile-only: adventure is never bundled here - it arrives at runtime from the
-    // embedded adventure-platform-fabric mod (see "jars" in fabric.mod.json).
+    // embedded adventure-platform-fabric mod (see "jars" in the adapter's fabric.mod.json).
     compileOnly("net.kyori:adventure-api:4.17.0") {
-        transitive = false
-    }
-    compileOnly("com.github.Browsit:ConversationAPI-Fabric:5b00d52") {
-        transitive = false
-    }
-    bundledMods("com.github.Browsit:ConversationAPI-Fabric:5b00d52") {
-        transitive = false
-    }
-    bundledMods("net.kyori:adventure-platform-fabric:7.1.1") {
         transitive = false
     }
 }

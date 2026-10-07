@@ -21,8 +21,7 @@
     "quests.mixins.json"
   ],
   "jars": [
-    { "file": "META-INF/jars/conversation-fabric.jar" },
-    { "file": "META-INF/jars/adventure-platform-fabric.jar" }
+    { "file": "META-INF/jars/conversation-fabric.jar" }
   ],
   "depends": {
     "fabricloader": ">=0.19.2",

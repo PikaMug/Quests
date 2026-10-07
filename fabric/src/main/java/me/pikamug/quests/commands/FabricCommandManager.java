@@ -69,7 +69,7 @@ public class FabricCommandManager {
 
     private void register() {
         FabricMixinEvents.registerCommandRegister(dispatcher -> {
-            final LiteralCommandNode<CommandSourceStack> questNode = dispatcher.register(
+            dispatcher.register(
                     Commands.literal("quest")
                             .requires(Commands.hasPermission(Commands.LEVEL_ALL))
                             .executes(ctx -> handleQuest(ctx.getSource()))
@@ -78,7 +78,15 @@ public class FabricCommandManager {
                                     .executes(ctx -> handleQuestDetail(ctx.getSource(),
                                             StringArgumentType.getString(ctx, "quest"))))
             );
-            dispatcher.register(Commands.literal("q").redirect(questNode));
+            dispatcher.register(
+                    Commands.literal("q")
+                            .requires(Commands.hasPermission(Commands.LEVEL_ALL))
+                            .executes(ctx -> handleQuest(ctx.getSource()))
+                            .then(Commands.argument("quest", StringArgumentType.greedyString())
+                                    .suggests(questSuggestions)
+                                    .executes(ctx -> handleQuestDetail(ctx.getSource(),
+                                            StringArgumentType.getString(ctx, "quest"))))
+            );
 
             final LiteralCommandNode<CommandSourceStack> questsNode = dispatcher.register(
                     Commands.literal("quests")
