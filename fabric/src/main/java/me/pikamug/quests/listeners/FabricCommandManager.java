@@ -169,7 +169,16 @@ public class FabricCommandManager {
                                     .executes(ctx -> questsHandler.check(ctx.getSource(), rawArgs(ctx.getInput())))
                             )
             );
-            dispatcher.register(Commands.literal("qs").redirect(questsNode));
+            // Aliases are registered as executes+redirect: Brigadier 1.3's parseNodes only pulls the
+            // redirect target's command when trailing input exists, so a bare redirect node resolves to
+            // nothing. The executes covers the no-argument form; the redirect forwards subcommands, whose
+            // per-node requires predicates still gate execution through the redirected parse.
+            dispatcher.register(
+                    Commands.literal("qs")
+                            .requires(Commands.hasPermission(Commands.LEVEL_ALL))
+                            .executes(ctx -> questsHandler.check(ctx.getSource(), rawArgs(ctx.getInput())))
+                            .redirect(questsNode)
+            );
 
             final LiteralCommandNode<CommandSourceStack> qaNode = dispatcher.register(
                     Commands.literal("questadmin")
@@ -310,7 +319,12 @@ public class FabricCommandManager {
                                             rawArgs(ctx.getInput())))
                             )
             );
-            dispatcher.register(Commands.literal("qa").redirect(qaNode));
+            dispatcher.register(
+                    Commands.literal("qa")
+                            .requires(s -> questadminHandler.hasAdminRoot(s))
+                            .executes(ctx -> questadminHandler.check(ctx.getSource(), rawArgs(ctx.getInput())))
+                            .redirect(qaNode)
+            );
         });
     }
 }

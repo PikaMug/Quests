@@ -46,27 +46,19 @@ dependencies {
     // Bundled (and relocated) into the final jar.
     shaded(project(":api"))
 
-    // ConversationAPI-Fabric adapter, embedded in the Quests jar as a loader-registered nested mod
-    // (fabric.mod.json "jars"), so net.kyori* adventure stays owned by that project rather than being
-    // re-homed into Quests. Normal users install only Quests; the loader announces both it and the
-    // adventure-platform-fabric mod that accompanies it. (JitPack pin restored after the TEMP LOCAL
-    // TEST below is verified: com.github.Browsit:ConversationAPI-Fabric:<sha>, transitive=false so
-    // the adapter's POM runtime deps stay off the classpath and out of META-INF/jars.) The adapter
-    // TEMP LOCAL TEST: verify the ChatMessageMixin @Shadow fix before pushing upstream.
-    def conversationFabricJar = file("../../ConversationAPI-Fabric/build/libs/fabricConversationsMod-1.0-SNAPSHOT.jar")
-    compileOnly(files(conversationFabricJar))
-    bundledMods(files(conversationFabricJar))
-    // The adapter jar nests api in META-INF/jars, which javac does not unpack, so the API itself is
-    // declared separately (JitPack "com.github.Browsit.ConversationAPI"). Compile-only: at runtime
-    // those classes come from the embedded conversation-fabric mod.
-    compileOnly("com.github.Browsit.ConversationAPI:api:909d27ea60") {
+    // ConversationAPI-Fabric adapter (adventureless), embedded in the Quests jar as a loader-registered
+    // nested mod (fabric.mod.json "jars"). JitPack pin: com.github.Browsit:ConversationAPI-Fabric-adventureless:<sha>,
+    // transitive=false so the adapter's POM runtime deps stay off the classpath and out of META-INF/jars.
+    compileOnly("com.github.Browsit:ConversationAPI-Fabric-adventureless:2221c5c65a") {
         transitive = false
     }
-    // conversation-api's public methods (e.g. TimeClause.create, title, prompt) expose net.kyori
-    // adventure types in their signatures, so javac needs adventure-api purely to resolve those
-    // overloads. Compile-only: adventure is never bundled here - it arrives at runtime from the
-    // embedded adventure-platform-fabric mod (see "jars" in the adapter's fabric.mod.json).
-    compileOnly("net.kyori:adventure-api:4.17.0") {
+    bundledMods("com.github.Browsit:ConversationAPI-Fabric-adventureless:2221c5c65a") {
+        transitive = false
+    }
+    // The adapter jar nests api in META-INF/jars, which javac does not unpack, so the API itself is
+    // declared separately (JitPack "com.github.Browsit.ConversationAPI-adventureless"). Compile-only:
+    // at runtime those classes come from the embedded conversation-fabric mod.
+    compileOnly("com.github.Browsit.ConversationAPI-adventureless:api:b592cbd22126de7f78a890571809cce6ef52e0bf") {
         transitive = false
     }
 }
@@ -120,15 +112,14 @@ shadowJar {
     exclude("LICENSE")
     exclude("module-info.class")
     mergeServiceFiles()
-    // Nested loader-registered mods (see "jars" in fabric.mod.json): conversation-fabric and the
-    // adventure-platform-fabric it depends on, copied verbatim so each keeps its own fabric.mod.json.
+    // Nested loader-registered mod (see "jars" in fabric.mod.json): conversation-fabric, copied
+    // verbatim so it keeps its own fabric.mod.json.
     into("META-INF/jars") {
         from(project.configurations.bundledMods)
-        // Rename the bundled mods to stable filenames so fabric.mod.json's "jars" entries do not
-        // depend on the upstream artifact's own name/version (e.g. JitPack "ConversationAPI-Fabric-<sha>.jar").
+        // Rename the bundled mod to a stable filename so fabric.mod.json's "jars" entry does not
+        // depend on the upstream artifact's own name/version (e.g. JitPack uses the repo name).
         rename { name ->
             if (name.startsWith("ConversationAPI-Fabric") || name.startsWith("fabricConversationsMod")) "conversation-fabric.jar"
-            else if (name.startsWith("adventure-platform-fabric")) "adventure-platform-fabric.jar"
             else name
         }
     }
