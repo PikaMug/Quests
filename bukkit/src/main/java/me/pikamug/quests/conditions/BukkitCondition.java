@@ -295,8 +295,7 @@ public class BukkitCondition implements Condition {
                     plugin.getLogger().warning("Invalid entry for condition biome checks: " + b);
                     continue;
                 }
-                final String playerBiome = player.getWorld().getBiome(player.getLocation().getBlockX(),
-                                player.getLocation().getBlockZ()).name();
+                final String playerBiome = player.getLocation().getBlock().getBiome().name();
                 if (playerBiome.equalsIgnoreCase(properBiome.name())) {
                     atLeastOne = true;
                     break;
