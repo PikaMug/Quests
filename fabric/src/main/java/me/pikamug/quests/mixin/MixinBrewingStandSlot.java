@@ -37,7 +37,8 @@ public abstract class MixinBrewingStandSlot {
 
     @Inject(method = "onTake", at = @At("TAIL"))
     private void quests$onItemBrewed(Player player, ItemStack stack, CallbackInfo ci) {
-        if (container instanceof BrewingStandBlockEntity && player instanceof ServerPlayer serverPlayer) {
+        if (container instanceof BrewingStandBlockEntity && player instanceof ServerPlayer) {
+            ServerPlayer serverPlayer = (ServerPlayer) player;
             FabricMixinEvents.invokeItemBrewed(serverPlayer, stack.copy());
         }
     }

@@ -44,7 +44,8 @@ public class FabricActionFactory implements ActionFactory {
 
     @Override
     public void loadData(UUID uuid, Action action) {
-        if (!(action instanceof FabricAction fabAction)) return;
+        if (!(action instanceof FabricAction)) return;
+        FabricAction fabAction = (FabricAction) action;
         if (fabAction.getName() != null) {
             SessionData.set(uuid, Key.A_NAME, fabAction.getName());
         }
@@ -189,10 +190,13 @@ public class FabricActionFactory implements ActionFactory {
             if (SessionData.get(uuid, Key.A_POTION_STRENGTH) != null) {
                 section.add("potion-effect-amplifiers", gson.toJsonTree(SessionData.get(uuid, Key.A_POTION_STRENGTH)));
             }
-            if (SessionData.get(uuid, Key.A_ITEMS) != null && SessionData.get(uuid, Key.A_ITEMS) instanceof LinkedList<?> itemList) {
+            if (SessionData.get(uuid, Key.A_ITEMS) != null && SessionData.get(uuid, Key.A_ITEMS) instanceof LinkedList) {
+                @SuppressWarnings("unchecked")
+                LinkedList<?> itemList = (LinkedList<?>) SessionData.get(uuid, Key.A_ITEMS);
                 final com.google.gson.JsonArray itemsJson = new com.google.gson.JsonArray();
                 for (final Object stack : itemList) {
-                    if (stack instanceof ItemStack itemStack) {
+                    if (stack instanceof ItemStack) {
+                        ItemStack itemStack = (ItemStack) stack;
                         itemsJson.add(FabricItemUtil.serializeToJson(itemStack));
                     }
                 }

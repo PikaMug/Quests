@@ -36,13 +36,17 @@ public abstract class MixinAbstractContainerMenu {
     @Inject(method = "clicked", at = @At("HEAD"), cancellable = true)
     private void quests$onMenuClicked(int slot, int button, ContainerInput input, Player player,
             CallbackInfo ci) {
-        if (!(player instanceof ServerPlayer serverPlayer)) return;
+        if (!(player instanceof ServerPlayer)) return;
+        ServerPlayer serverPlayer = (ServerPlayer) player;
         final Object self = this;
-        if (!(self instanceof AbstractContainerMenu menu)) return;
+        if (!(self instanceof AbstractContainerMenu)) return;
+        AbstractContainerMenu menu = (AbstractContainerMenu) self;
 
-        if (menu instanceof ChestMenu chestMenu) {
+        if (menu instanceof ChestMenu) {
+            ChestMenu chestMenu = (ChestMenu) menu;
             final Container container = chestMenu.getContainer();
-            if (container instanceof FabricQuestMenu.QuestMenuContainer questMenu) {
+            if (container instanceof FabricQuestMenu.QuestMenuContainer) {
+                FabricQuestMenu.QuestMenuContainer questMenu = (FabricQuestMenu.QuestMenuContainer) container;
                 questMenu.select(serverPlayer, slot);
                 serverPlayer.closeContainer();
                 ci.cancel();

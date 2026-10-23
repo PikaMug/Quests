@@ -119,7 +119,8 @@ public class FabricQuestCommandHandler {
                     }
                 }
                 for (final Object item : reqs.getItems()) {
-                    if (item instanceof ItemStack is) {
+                    if (item instanceof ItemStack) {
+                        ItemStack is = (ItemStack) item;
                         if (hasItem(player, is)) {
                             player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- "
                                     + ChatFormatting.GREEN + FabricItemUtil.getDisplayString(is)));

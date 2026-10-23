@@ -96,7 +96,8 @@ public final class FabricQuestEditorSaver {
         if (SessionData.get(uuid, Key.Q_REGION) != null) {
             json.addProperty("region", (String) SessionData.get(uuid, Key.Q_REGION));
         }
-        if (SessionData.get(uuid, Key.Q_GUIDISPLAY) instanceof ItemStack display) {
+        if (SessionData.get(uuid, Key.Q_GUIDISPLAY) instanceof ItemStack) {
+            ItemStack display = (ItemStack) SessionData.get(uuid, Key.Q_GUIDISPLAY);
             json.add("gui-display", FabricItemUtil.serializeToJson(display));
         }
 
@@ -135,7 +136,9 @@ public final class FabricQuestEditorSaver {
         addBooleanArray(json, "remove-items", SessionData.get(uuid, Key.REQ_ITEMS_REMOVE));
         final Object fail = SessionData.get(uuid, Key.REQ_FAIL_MESSAGE);
         if (fail != null) {
-            if (fail instanceof List<?> list) {
+            if (fail instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<?> list = (List<?>) fail;
                 addStringArray(json, "fail-requirement-message", list);
             } else {
                 json.addProperty("fail-requirement-message", fail.toString());
@@ -274,7 +277,11 @@ public final class FabricQuestEditorSaver {
 
     private static void addTriggeredActions(JsonObject json, String eventsKey, String triggersKey,
                                             Object events, Object triggers) {
-        if (events instanceof List<?> actions && triggers instanceof List<?> phraseList) {
+        if (events instanceof List && triggers instanceof List) {
+            @SuppressWarnings("unchecked")
+            List<?> actions = (List<?>) events;
+            @SuppressWarnings("unchecked")
+            List<?> phraseList = (List<?>) triggers;
             final JsonArray ev = new JsonArray();
             for (final Object a : actions) {
                 ev.add(nameOf(a));
@@ -291,10 +298,12 @@ public final class FabricQuestEditorSaver {
     }
 
     private static String nameOf(Object value) {
-        if (value instanceof Action action) {
+        if (value instanceof Action) {
+            Action action = (Action) value;
             return action.getName();
         }
-        if (value instanceof Condition condition) {
+        if (value instanceof Condition) {
+            Condition condition = (Condition) value;
             return condition.getName();
         }
         return value.toString();
@@ -313,31 +322,40 @@ public final class FabricQuestEditorSaver {
     }
 
     private static void addInt(JsonObject json, String key, Object value) {
-        if (value instanceof Number n) {
+        if (value instanceof Number) {
+            Number n = (Number) value;
             json.addProperty(key, n.intValue());
         }
     }
 
     private static void addLong(JsonObject json, String key, Object value) {
-        if (value instanceof Number n) {
+        if (value instanceof Number) {
+            Number n = (Number) value;
             json.addProperty(key, n.longValue());
         }
     }
 
     private static void addDouble(JsonObject json, String key, Object value) {
-        if (value instanceof Number n) {
+        if (value instanceof Number) {
+            Number n = (Number) value;
             json.addProperty(key, n.doubleValue());
         }
     }
 
     private static void addBoolean(JsonObject json, String key, Object value) {
-        if (value instanceof Boolean b) {
+        if (value instanceof Boolean) {
+            Boolean b = (Boolean) value;
             json.addProperty(key, b);
         }
     }
 
     private static void addStringArray(JsonObject json, String key, Object value) {
-        if (!(value instanceof List<?> list) || list.isEmpty()) {
+        if (!(value instanceof List)) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        List<?> list = (List<?>) value;
+        if (list.isEmpty()) {
             return;
         }
         final JsonArray array = new JsonArray();
@@ -352,12 +370,18 @@ public final class FabricQuestEditorSaver {
     }
 
     private static void addIntArray(JsonObject json, String key, Object value) {
-        if (!(value instanceof List<?> list) || list.isEmpty()) {
+        if (!(value instanceof List)) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        List<?> list = (List<?>) value;
+        if (list.isEmpty()) {
             return;
         }
         final JsonArray array = new JsonArray();
         for (final Object o : list) {
-            if (o instanceof Number n) {
+            if (o instanceof Number) {
+                Number n = (Number) o;
                 array.add(n.intValue());
             }
         }
@@ -367,12 +391,18 @@ public final class FabricQuestEditorSaver {
     }
 
     private static void addBooleanArray(JsonObject json, String key, Object value) {
-        if (!(value instanceof List<?> list) || list.isEmpty()) {
+        if (!(value instanceof List)) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        List<?> list = (List<?>) value;
+        if (list.isEmpty()) {
             return;
         }
         final JsonArray array = new JsonArray();
         for (final Object o : list) {
-            if (o instanceof Boolean b) {
+            if (o instanceof Boolean) {
+                Boolean b = (Boolean) o;
                 array.add(b);
             }
         }
@@ -382,12 +412,18 @@ public final class FabricQuestEditorSaver {
     }
 
     private static void addItemArray(JsonObject json, String key, Object value) {
-        if (!(value instanceof List<?> list) || list.isEmpty()) {
+        if (!(value instanceof List)) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        List<?> list = (List<?>) value;
+        if (list.isEmpty()) {
             return;
         }
         final JsonArray array = new JsonArray();
         for (final Object o : list) {
-            if (o instanceof ItemStack stack) {
+            if (o instanceof ItemStack) {
+                ItemStack stack = (ItemStack) o;
                 array.add(FabricItemUtil.serializeToJson(stack));
             }
         }

@@ -279,7 +279,8 @@ public class FabricQuesterJsonStorage implements QuesterStorageImpl {
         }
         json.add("amountsCompleted", amountsCompleted);
         final JsonObject progress = new JsonObject();
-        if (quester instanceof FabricQuester fabricQuester) {
+        if (quester instanceof FabricQuester) {
+            FabricQuester fabricQuester = (FabricQuester) quester;
             for (final Map.Entry<Quest, QuestProgress> e : fabricQuester.getProgressData().entrySet()) {
                 if (e.getKey() != null && e.getValue() != null) {
                     progress.add(e.getKey().getId(), serializeProgress(e.getValue()));

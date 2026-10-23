@@ -12,7 +12,7 @@ package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.BukkitQuestsSubCommand;
-import me.pikamug.quests.convo.quests.menu.QuestMenuPrompt;
+import me.pikamug.quests.convo.quests.menu.BukkitQuestMenuPrompt;
 import me.pikamug.quests.events.command.BukkitQuestsCommandPreEditorEvent;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.util.BukkitLang;
@@ -79,7 +79,7 @@ public class BukkitQuestsEditorCommand extends BukkitQuestsSubCommand {
                     return;
                 }
                 SessionData.clear(uuid);
-                new QuestMenuPrompt(uuid).start();
+                new BukkitQuestMenuPrompt(uuid).start();
             }
         } else {
             cs.sendMessage(ChatColor.RED + BukkitLang.get(cs, "noPermission"));

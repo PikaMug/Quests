@@ -11,6 +11,7 @@
 package me.pikamug.quests.listeners.npc;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
@@ -51,7 +52,11 @@ public abstract class FabricNpcListener {
                 boolean matched = false;
                 for (int i = 0; i < stage.getNpcsToInteract().size(); i++) {
                     if (npcUuid.equals(stage.getNpcsToInteract().get(i))) {
-                        quester.getQuestProgressOrDefault(quest).getNpcsInteracted().set(i, true);
+                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        if (!progress.getNpcsInteracted().get(i)) {
+                            progress.getNpcsInteracted().set(i, true);
+                            quester.finishObjective(quest, ObjectiveType.TALK_TO_NPC, i);
+                        }
                         matched = true;
                     }
                 }

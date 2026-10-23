@@ -279,7 +279,8 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("eventEditorMustAddEffects")));
                     new ActionEffectSoundListPrompt(uuid).start();
                 } else {
-                    if (sender instanceof ServerPlayer) {
+            if (sender instanceof ServerPlayer) {
+                ServerPlayer player = (ServerPlayer) sender;
                         final MinecraftServer server = plugin.getServer();
                         if (server == null) {
                             sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("unknownError")));

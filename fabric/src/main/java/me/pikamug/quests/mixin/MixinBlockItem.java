@@ -33,7 +33,8 @@ public abstract class MixinBlockItem {
     private void quests$onBlockPlaced(BlockPlaceContext context, BlockState state,
             CallbackInfoReturnable<Boolean> cir) {
         if (!Boolean.TRUE.equals(cir.getReturnValue())) return;
-        if (context.getPlayer() instanceof ServerPlayer player) {
+        if (context.getPlayer() instanceof ServerPlayer) {
+            ServerPlayer player = (ServerPlayer) context.getPlayer();
             final BlockPos pos = context.getClickedPos();
             final BlockState placed = context.getLevel().getBlockState(pos);
             FabricMixinEvents.invokeBlockPlaced(player, pos, placed);

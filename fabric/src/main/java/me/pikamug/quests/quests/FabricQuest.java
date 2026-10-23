@@ -164,7 +164,8 @@ public class FabricQuest implements Quest {
             final var player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
             for (int i = 0; i < requirements.getItems().size(); i++) {
                 final Object itemObj = requirements.getItems().get(i);
-                if (!(itemObj instanceof net.minecraft.world.item.ItemStack item)) return false;
+                if (!(itemObj instanceof net.minecraft.world.item.ItemStack)) return false;
+                net.minecraft.world.item.ItemStack item = (net.minecraft.world.item.ItemStack) itemObj;
                 if (player == null) return false;
                 final int have = me.pikamug.quests.util.FabricInventoryUtil.countItem(player, item);
                 if (have < item.getCount()) return false;
@@ -239,7 +240,8 @@ public class FabricQuest implements Quest {
 
             if (rewards.getItems() != null && !rewards.getItems().isEmpty() && player != null) {
                 for (final Object itemObj : rewards.getItems()) {
-                    if (itemObj instanceof net.minecraft.world.item.ItemStack item) {
+                    if (itemObj instanceof net.minecraft.world.item.ItemStack) {
+                        net.minecraft.world.item.ItemStack item = (net.minecraft.world.item.ItemStack) itemObj;
                         me.pikamug.quests.util.FabricInventoryUtil.addItem(player, item);
                     }
                 }
@@ -281,16 +283,16 @@ public class FabricQuest implements Quest {
         final ServerPlayer player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
         if (player != null) {
             if (plugin.getConfigSettings().canShowQuestTitles()) {
-                player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§e" + name)));
+                player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§e" + name)));
                 player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(
-                        "§6" + FabricLang.get(player, "quest") + " " + FabricLang.get(player, "complete"))));
+                        "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§6" + FabricLang.get(player, "quest") + " " + FabricLang.get(player, "complete"))));
                 player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
             }
             quester.sendMessage(FabricLang.get(player, "questCompleteTitle").replace("<quest>", name));
         }
-        quester.sendMessage("§a" + FabricLang.get(player, "questRewardsTitle"));
+        quester.sendMessage("ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§a" + FabricLang.get(player, "questRewardsTitle"));
         if (rewards == null) {
-            quester.sendMessage("§7- " + FabricLang.get(player, "none"));
+            quester.sendMessage("ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§7- " + FabricLang.get(player, "none"));
             return;
         }
         final boolean issuedReward = rewards.getQuestPoints() > 0 || rewards.getExp() > 0
@@ -299,26 +301,29 @@ public class FabricQuest implements Quest {
                 || (rewards.getPermissions() != null && !rewards.getPermissions().isEmpty())
                 || (rewards.getCustomRewards() != null && !rewards.getCustomRewards().isEmpty());
         if (!issuedReward) {
-            quester.sendMessage("§7- " + FabricLang.get(player, "none"));
+            quester.sendMessage("ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§7- " + FabricLang.get(player, "none"));
             return;
         }
         if (rewards.getDetailsOverride() != null && !rewards.getDetailsOverride().isEmpty()) {
             for (final String s : rewards.getDetailsOverride()) {
-                quester.sendMessage("- §2" + s);
+                quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + s);
             }
             return;
         }
         if (rewards.getExp() > 0) {
-            quester.sendMessage("- §2" + rewards.getExp() + " " + FabricLang.get(player, "experience"));
+            quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + rewards.getExp() + " " + FabricLang.get(player, "experience"));
         }
         if (rewards.getQuestPoints() > 0) {
-            quester.sendMessage("- §2" + rewards.getQuestPoints() + " " + FabricLang.get(player, "questPoints"));
+            quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + rewards.getQuestPoints() + " " + FabricLang.get(player, "questPoints"));
         }
         if (rewards.getItems() != null) {
             for (final Object itemObj : rewards.getItems()) {
-                if (itemObj instanceof net.minecraft.world.item.ItemStack item) {
-                    quester.sendMessage("- §3" + me.pikamug.quests.util.FabricItemUtil.getName(item)
-                            + " §7x " + item.getCount());
+                if (itemObj instanceof net.minecraft.world.item.ItemStack) {
+                    net.minecraft.world.item.ItemStack item = (net.minecraft.world.item.ItemStack) itemObj;
+                    String name = me.pikamug.quests.util.FabricItemUtil.getName(item);
+                    if (name == null || name.trim().isEmpty() || name.equals("Air")) {
+                    }
+                    quester.sendMessage("- " + name + " x " + item.getCount());
                 }
             }
         }
@@ -328,7 +333,7 @@ public class FabricQuest implements Quest {
                 final String override = rewards.getCommandsOverrideDisplay() != null
                         && rewards.getCommandsOverrideDisplay().size() > index
                         ? rewards.getCommandsOverrideDisplay().get(index) : null;
-                quester.sendMessage("- §2" + (override != null && !override.trim().isEmpty() ? override : s));
+                quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + (override != null && !override.trim().isEmpty() ? override : s));
                 index++;
             }
         }
@@ -336,9 +341,9 @@ public class FabricQuest implements Quest {
             int index = 0;
             for (final String s : rewards.getPermissions()) {
                 if (rewards.getPermissionWorlds() != null && rewards.getPermissionWorlds().size() > index) {
-                    quester.sendMessage("- §2" + s + " (" + rewards.getPermissionWorlds().get(index) + ")");
+                    quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + s + " (" + rewards.getPermissionWorlds().get(index) + ")");
                 } else {
-                    quester.sendMessage("- §2" + s);
+                    quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + s);
                 }
                 index++;
             }
@@ -355,7 +360,7 @@ public class FabricQuest implements Quest {
                                 display = display.replace("%" + dataEntry.getKey() + "%",
                                         dataEntry.getValue().toString());
                             }
-                            quester.sendMessage("- §6" + display);
+                            quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§6" + display);
                         }
                         break;
                     }
@@ -382,7 +387,7 @@ public class FabricQuest implements Quest {
         final FabricQuestsPlugin failPlugin = FabricQuestsPlugin.getInstance();
         final ServerPlayer failPlayer = failPlugin == null || failPlugin.getServer() == null ? null
                 : failPlugin.getServer().getPlayerList().getPlayer(quester.getUUID());
-        final String[] messages = {"§c" + FabricLang.get(failPlayer, "questFailed").replace("<quest>", name != null ? name : id)};
+        final String[] messages = {"ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§c" + FabricLang.get(failPlayer, "questFailed").replace("<quest>", name != null ? name : id)};
         quester.quitQuest(this, messages);
         FabricQuestsPlugin.LOGGER.info("Quest '{}' failed by {}", name, quester.getUUID());
     }

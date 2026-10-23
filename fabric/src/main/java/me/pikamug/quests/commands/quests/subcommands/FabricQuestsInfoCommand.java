@@ -58,12 +58,13 @@ public class FabricQuestsInfoCommand extends FabricQuestsSubCommand {
 
     @Override
     public int execute(final CommandSourceStack source, final String[] args) {
+        reply(source,() -> Component.literal(ChatFormatting.YELLOW + "Quests "
+                + ChatFormatting.GOLD + FabricQuestsPlugin.VERSION
+                + ChatFormatting.GRAY + " (Fabric)"), false);
         reply(source,() -> Component.literal(ChatFormatting.GOLD
-                + lang(source, "developedBy") + " " + ChatFormatting.DARK_GREEN + "PikaMug & contributors"), false);
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questsPluginName") + " "
-                + ChatFormatting.DARK_PURPLE + "5.3.3"), false);
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "numQuestsLoaded")
-                + " " + ChatFormatting.DARK_PURPLE + String.valueOf(plugin.getLoadedQuests().size())), false);
+                + lang(source, "developedBy") + " PikaMug & contributors"), false);
+        reply(source,() -> Component.literal(ChatFormatting.DARK_AQUA + "" + ChatFormatting.UNDERLINE
+                + "https://github.com/PikaMug/Quests"), false);
         return Command.SINGLE_SUCCESS;
     }
 }

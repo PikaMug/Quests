@@ -14,7 +14,8 @@ public class FabricQuestsLogger extends Logger {
     }
 
     public void info(final String format, final Object... args) {
-        if (args.length > 0 && args[args.length - 1] instanceof Throwable t) {
+        if (args.length > 0 && args[args.length - 1] instanceof Throwable) {
+            Throwable t = (Throwable) args[args.length - 1];
             if (args.length == 1) {
                 logger.info(format, t);
             } else {
@@ -29,7 +30,8 @@ public class FabricQuestsLogger extends Logger {
     }
 
     public void warn(final String format, final Object... args) {
-        if (args.length > 0 && args[args.length - 1] instanceof Throwable t) {
+        if (args.length > 0 && args[args.length - 1] instanceof Throwable) {
+            Throwable t = (Throwable) args[args.length - 1];
             if (args.length == 1) {
                 logger.warn(format, t);
             } else {
@@ -44,7 +46,8 @@ public class FabricQuestsLogger extends Logger {
     }
 
     public void error(final String format, final Object... args) {
-        if (args.length > 0 && args[args.length - 1] instanceof Throwable t) {
+        if (args.length > 0 && args[args.length - 1] instanceof Throwable) {
+            Throwable t = (Throwable) args[args.length - 1];
             if (args.length == 1) {
                 logger.error(format, t);
             } else {
@@ -59,7 +62,8 @@ public class FabricQuestsLogger extends Logger {
     }
 
     public void debug(final String format, final Object... args) {
-        if (args.length > 0 && args[args.length - 1] instanceof Throwable t) {
+        if (args.length > 0 && args[args.length - 1] instanceof Throwable) {
+            Throwable t = (Throwable) args[args.length - 1];
             if (args.length == 1) {
                 logger.debug(format, t);
             } else {

@@ -35,7 +35,8 @@ public abstract class MixinFishingHook {
                             + "Lit/unimi/dsi/fastutil/objects/ObjectArrayList;"))
     private void quests$onFishCaught(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
         final FishingHook bobber = (FishingHook) (Object) this;
-        if (bobber.getPlayerOwner() instanceof ServerPlayer player) {
+        if (bobber.getPlayerOwner() instanceof ServerPlayer) {
+            ServerPlayer player = (ServerPlayer) bobber.getPlayerOwner();
             FabricMixinEvents.invokeFishingCatch(player);
         }
     }

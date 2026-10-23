@@ -29,7 +29,11 @@ import java.util.UUID;
 
 public class FabricQuestJsonStorage implements QuestStorageImpl {
 
-    private static final Set<String> INDEX_FILES = Set.of("quests.json", "actions.json", "conditions.json");
+    private static final Set<String> INDEX_FILES = new java.util.HashSet<String>() {{
+        add("quests.json");
+        add("actions.json");
+        add("conditions.json");
+    }};
 
     private final FabricQuestsPlugin plugin;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -617,7 +621,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         final LinkedList<ItemStack> list = new LinkedList<>();
         arr.forEach(e -> {
             if (e.isJsonObject()) {
-                list.add(FabricItemUtil.deserializeFromJson(e.getAsJsonObject()));
+                list.add(FabricItemUtil.deserializeFromJson(e));
             } else {
                 list.add(FabricItemUtil.deserialize(e.getAsString()));
             }

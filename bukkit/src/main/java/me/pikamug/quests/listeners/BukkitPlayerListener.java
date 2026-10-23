@@ -11,7 +11,7 @@
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
+import me.pikamug.quests.convo.misc.BukkitQuestAcceptPrompt;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.BukkitQuester;
 import me.pikamug.quests.player.Quester;
@@ -422,7 +422,7 @@ public class BukkitPlayerListener implements Listener {
                                                 for (final String msg : s.split("<br>")) {
                                                     BukkitLang.send(player, msg);
                                                 }
-                                                new QuestAcceptPrompt(player.getUniqueId(), plugin).start();
+                                                new BukkitQuestAcceptPrompt(player.getUniqueId(), plugin).start();
                                                 //plugin.getConversationFactory().buildConversation(player).begin();
                                             }
                                             break;

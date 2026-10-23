@@ -12,7 +12,7 @@ package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.BukkitQuestsSubCommand;
-import me.pikamug.quests.convo.conditions.menu.ConditionMenuPrompt;
+import me.pikamug.quests.convo.conditions.menu.BukkitConditionMenuPrompt;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.SessionData;
 import org.browsit.conversations.api.Conversations;
@@ -71,7 +71,7 @@ public class BukkitQuestsConditionsCommand extends BukkitQuestsSubCommand {
                     return;
                 }
                 SessionData.clear(uuid);
-                new ConditionMenuPrompt(uuid).start();
+                new BukkitConditionMenuPrompt(uuid).start();
             }
             // TODO - determine how to run from console
 

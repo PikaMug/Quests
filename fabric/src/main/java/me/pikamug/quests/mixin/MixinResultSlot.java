@@ -29,7 +29,8 @@ public abstract class MixinResultSlot {
 
     @Inject(method = "onTake", at = @At("TAIL"))
     private void quests$onItemCrafted(Player player, ItemStack stack, CallbackInfo ci) {
-        if (player instanceof ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer) {
+            ServerPlayer serverPlayer = (ServerPlayer) player;
             FabricMixinEvents.invokeItemCrafted(serverPlayer, stack.copy());
         }
     }

@@ -11,8 +11,8 @@
 package me.pikamug.quests.quests;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.quests.main.QuestMainPrompt;
-import me.pikamug.quests.convo.quests.stages.QuestStageMenuPrompt;
+import me.pikamug.quests.convo.quests.main.BukkitQuestMainPrompt;
+import me.pikamug.quests.convo.quests.stages.BukkitQuestStageMenuPrompt;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.quests.components.BukkitStage;
@@ -108,7 +108,7 @@ public class BukkitQuestFactory implements QuestFactory {
     }
 
     public void returnToMenu(final UUID uuid) {
-        new QuestMainPrompt(uuid).start();
+        new BukkitQuestMainPrompt(uuid).start();
     }
 
     public void loadQuest(final UUID uuid, final Quest quest) {
@@ -650,7 +650,7 @@ public class BukkitQuestFactory implements QuestFactory {
         final ConfigurationSection stages = section.createSection("stages");
         final ConfigurationSection ordered = stages.createSection("ordered");
         String pref;
-        for (int i = 1; i <= new QuestStageMenuPrompt(uuid).getStages(); i++) {
+        for (int i = 1; i <= new BukkitQuestStageMenuPrompt(uuid).getStages(); i++) {
             pref = "stage" + i;
             final ConfigurationSection stage = ordered.createSection("" + i);
             stage.set("break-block-names", SessionData.get(uuid, pref + Key.S_BREAK_NAMES) != null

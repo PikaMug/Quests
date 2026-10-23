@@ -11,7 +11,7 @@
 package me.pikamug.quests.conditions;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.conditions.main.ConditionMainPrompt;
+import me.pikamug.quests.convo.conditions.main.BukkitConditionMainPrompt;
 import me.pikamug.quests.interfaces.ReloadCallback;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
@@ -53,7 +53,7 @@ public class BukkitConditionFactory implements ConditionFactory {
     }
     
     public void returnToMenu(final UUID uuid) {
-        new ConditionMainPrompt(uuid).start();
+        new BukkitConditionMainPrompt(uuid).start();
     }
     
     public void loadData(final UUID uuid, final Condition condition) {

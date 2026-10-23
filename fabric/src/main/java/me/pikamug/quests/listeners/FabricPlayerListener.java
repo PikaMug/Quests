@@ -2,6 +2,7 @@ package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
@@ -208,7 +209,8 @@ public class FabricPlayerListener {
                     if (!stage.getItemDeliveryTargets().get(i).equals(entity.getUUID())) continue;
                     npcMatched = true;
                     final Object goalObj = stage.getItemsToDeliver().get(i);
-                    if (!(goalObj instanceof ItemStack goal)) continue;
+                    if (!(goalObj instanceof ItemStack)) continue;
+                    ItemStack goal = (ItemStack) goalObj;
                     if (FabricItemUtil.compareItems(goal, hand, true) != 0) continue;
                     delivered = true;
                     deliverToNPC(player, quester, quest, stage, i, goal, hand);
@@ -225,7 +227,11 @@ public class FabricPlayerListener {
                 for (int i = 0; i < stage.getNpcsToInteract().size(); i++) {
                     final UUID npcUuid = stage.getNpcsToInteract().get(i);
                     if (entity.getUUID().equals(npcUuid)) {
-                        quester.getQuestProgressOrDefault(quest).getNpcsInteracted().set(i, true);
+                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        if (!progress.getNpcsInteracted().get(i)) {
+                            progress.getNpcsInteracted().set(i, true);
+                            quester.finishObjective(quest, ObjectiveType.TALK_TO_NPC, i);
+                        }
                         matched = true;
                     }
                 }
@@ -249,6 +255,9 @@ public class FabricPlayerListener {
         }
 
         if (newProgress >= goalAmount) {
+            if (amount < goalAmount) {
+                quester.finishObjective(quest, ObjectiveType.DELIVER_ITEM, index);
+            }
             quester.checkQuest(quest);
         } else {
             final var messages = stage.getDeliverMessages();

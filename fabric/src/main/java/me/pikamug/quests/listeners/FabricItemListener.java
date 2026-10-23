@@ -12,6 +12,7 @@ package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
@@ -48,8 +49,11 @@ public class FabricItemListener {
                     final Object goal = stage.getItemsToCraft().get(i);
                     if (goal != null && FabricItemUtil.matches(crafted, (ItemStack) goal)) {
                         final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
-                        progress.getItemsCrafted().set(i,
-                                Math.min(crafted.getCount() + progress.getItemsCrafted().get(i), goalAmount));
+                        final int before = progress.getItemsCrafted().get(i);
+                        progress.getItemsCrafted().set(i, Math.min(crafted.getCount() + before, goalAmount));
+                        if (before < goalAmount && progress.getItemsCrafted().get(i) >= goalAmount) {
+                            quester.finishObjective(quest, ObjectiveType.CRAFT_ITEM, i);
+                        }
                         quester.checkQuest(quest);
                     }
                 }
@@ -69,8 +73,11 @@ public class FabricItemListener {
                     final Object goal = stage.getItemsToSmelt().get(i);
                     if (goal != null && FabricItemUtil.matches(smelted, (ItemStack) goal)) {
                         final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
-                        progress.getItemsSmelted().set(i,
-                                Math.min(smelted.getCount() + progress.getItemsSmelted().get(i), goalAmount));
+                        final int before = progress.getItemsSmelted().get(i);
+                        progress.getItemsSmelted().set(i, Math.min(smelted.getCount() + before, goalAmount));
+                        if (before < goalAmount && progress.getItemsSmelted().get(i) >= goalAmount) {
+                            quester.finishObjective(quest, ObjectiveType.SMELT_ITEM, i);
+                        }
                         quester.checkQuest(quest);
                     }
                 }
@@ -90,8 +97,11 @@ public class FabricItemListener {
                     final Object goal = stage.getItemsToEnchant().get(i);
                     if (goal != null && FabricItemUtil.matches(enchanted, (ItemStack) goal)) {
                         final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
-                        progress.getItemsEnchanted().set(i,
-                                Math.min(enchanted.getCount() + progress.getItemsEnchanted().get(i), goalAmount));
+                        final int before = progress.getItemsEnchanted().get(i);
+                        progress.getItemsEnchanted().set(i, Math.min(enchanted.getCount() + before, goalAmount));
+                        if (before < goalAmount && progress.getItemsEnchanted().get(i) >= goalAmount) {
+                            quester.finishObjective(quest, ObjectiveType.ENCHANT_ITEM, i);
+                        }
                         quester.checkQuest(quest);
                     }
                 }
@@ -111,8 +121,11 @@ public class FabricItemListener {
                     final Object goal = stage.getItemsToBrew().get(i);
                     if (goal != null && FabricItemUtil.matches(brewed, (ItemStack) goal)) {
                         final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
-                        progress.getItemsBrewed().set(i,
-                                Math.min(brewed.getCount() + progress.getItemsBrewed().get(i), goalAmount));
+                        final int before = progress.getItemsBrewed().get(i);
+                        progress.getItemsBrewed().set(i, Math.min(brewed.getCount() + before, goalAmount));
+                        if (before < goalAmount && progress.getItemsBrewed().get(i) >= goalAmount) {
+                            quester.finishObjective(quest, ObjectiveType.BREW_ITEM, i);
+                        }
                         quester.checkQuest(quest);
                     }
                 }
@@ -131,8 +144,12 @@ public class FabricItemListener {
                 for (int i = 0; i < stage.getItemsToConsume().size(); i++) {
                     final Object goal = stage.getItemsToConsume().get(i);
                     if (goal != null && FabricItemUtil.matches(consumed, (ItemStack) goal)) {
-                        progress.getItemsConsumed().set(i,
-                                Math.min(consumed.getCount() + progress.getItemsConsumed().get(i), 64));
+                        final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
+                        final int before = progress.getItemsConsumed().get(i);
+                        progress.getItemsConsumed().set(i, Math.min(consumed.getCount() + before, goalAmount));
+                        if (before < goalAmount && progress.getItemsConsumed().get(i) >= goalAmount) {
+                            quester.finishObjective(quest, ObjectiveType.CONSUME_ITEM, i);
+                        }
                         quester.checkQuest(quest);
                     }
                 }

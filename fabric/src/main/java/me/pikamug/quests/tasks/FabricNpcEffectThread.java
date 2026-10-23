@@ -69,7 +69,8 @@ public class FabricNpcEffectThread implements Runnable {
                 if (npc != null) {
                     final Method getEntity = npc.getClass().getMethod("getEntity");
                     final Object entity = getEntity.invoke(npc);
-                    if (entity instanceof net.minecraft.world.entity.Entity mcEntity) {
+                    if (entity instanceof net.minecraft.world.entity.Entity) {
+                        net.minecraft.world.entity.Entity mcEntity = (net.minecraft.world.entity.Entity) entity;
                         return mcEntity.position();
                     }
                 }
@@ -83,7 +84,8 @@ public class FabricNpcEffectThread implements Runnable {
                 if (npc != null) {
                     final Method getEntity = npc.getClass().getMethod("npcEntity");
                     final Object entity = getEntity.invoke(npc);
-                    if (entity instanceof net.minecraft.world.entity.Entity mcEntity) {
+                    if (entity instanceof net.minecraft.world.entity.Entity) {
+                        net.minecraft.world.entity.Entity mcEntity = (net.minecraft.world.entity.Entity) entity;
                         return mcEntity.position();
                     }
                 }

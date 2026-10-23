@@ -119,6 +119,7 @@ public abstract class MixinServerGamePacketListener {
             final Entity entity = player.level().getEntity(packet.entityId());
             if (entity != null) {
                 if (entity instanceof ItemFrame && FabricItemUtil.isJournal(player.getMainHandItem())) {
+                    ItemFrame itemFrame = (ItemFrame) entity;
                     player.sendSystemMessage(Component.literal("§c" + FabricLang.get(player, "journalDenied")
                             .replace("<journal>", FabricLang.get(player, "journalTitle"))));
                     ci.cancel();

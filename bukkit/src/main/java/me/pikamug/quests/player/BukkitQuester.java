@@ -21,8 +21,8 @@ import me.pikamug.quests.Quests;
 import me.pikamug.quests.conditions.BukkitCondition;
 import me.pikamug.quests.config.BukkitConfigSettings;
 import me.pikamug.quests.config.ConfigSettings;
-import me.pikamug.quests.convo.misc.QuestAbandonPrompt;
-import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
+import me.pikamug.quests.convo.misc.BukkitQuestAbandonPrompt;
+import me.pikamug.quests.convo.misc.BukkitQuestAcceptPrompt;
 import me.pikamug.quests.dependencies.BukkitDependencies;
 import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.entity.BukkitCountableMob;
@@ -107,7 +107,6 @@ public class BukkitQuester implements Quester {
     protected int questPoints = 0;
     private String compassTargetQuestId;
     private long lastNotifiedCondition = 0L;
-
     protected ConcurrentHashMap<WrappedTask, Quest> timers = new ConcurrentHashMap<>();
     protected ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
 
@@ -525,8 +524,9 @@ public class BukkitQuester implements Quester {
             return false;
         }
         if (canAcceptOffer(quest, giveReason)) {
-            if (getPlayer() != null) {
-                if (!Conversations.getConversationOf(getPlayer().getUniqueId()).isPresent()) {
+            final Player player = getPlayer();
+            if (player != null) {
+                if (!Conversations.getConversationOf(player.getUniqueId()).isPresent()) {
                     setQuestIdToTake(quest.getId());
                     final String s = ChatColor.GOLD + BukkitConfigUtil.parseString(BukkitLang.get("questObjectivesTitle")
                             + "\n" + ChatColor.RESET + quest.getDescription(), quest, getPlayer());
@@ -536,11 +536,11 @@ public class BukkitQuester implements Quester {
                     if (!plugin.getConfigSettings().canConfirmAccept()) {
                         takeQuest(quest, false);
                     } else {
-                        new QuestAcceptPrompt(getPlayer().getUniqueId(), plugin).start();
+                        new BukkitQuestAcceptPrompt(player.getUniqueId(), plugin).start();
                     }
                     return true;
                 } else {
-                    sendMessage(ChatColor.YELLOW + BukkitLang.get(getPlayer(), "alreadyConversing"));
+                    sendMessage(ChatColor.YELLOW + BukkitLang.get(player, "alreadyConversing"));
                 }
             }
         }
@@ -894,11 +894,11 @@ public class BukkitQuester implements Quester {
             if (settings.canConfirmAbandon()) {
                 /*final ConversationFactory cf = new ConversationFactory(plugin).withModality(false)
                         .withPrefix(context -> ChatColor.GRAY.toString())
-                        .withFirstPrompt(new QuestAbandonPrompt(plugin)).withTimeout(settings.getAcceptTimeout())
+                        .withFirstPrompt(new BukkitQuestAbandonPrompt(plugin)).withTimeout(settings.getAcceptTimeout())
                         .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
                         .addConversationAbandonedListener(plugin.getConvoListener());
                 cf.buildConversation(getPlayer()).begin();*/
-                new QuestAbandonPrompt(getUUID(), plugin).start();
+                new BukkitQuestAbandonPrompt(getUUID(), plugin).start();
             } else {
                 quitQuest(quest, messages);
             }

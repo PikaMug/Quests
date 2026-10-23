@@ -59,7 +59,9 @@ public class FabricEntityListener {
                     if (!sheep.isSheared()) {
                         deferredShearCheck(serverPlayer, serverPlayer.level(), entity);
                     }
-                } else if (entity instanceof TamableAnimal tamed && !tamed.isTame()) {
+                } else if (entity instanceof TamableAnimal) {
+                    TamableAnimal tamed = (TamableAnimal) entity;
+                    if (!tamed.isTame()) {
                     deferredTameCheck(serverPlayer, serverPlayer.level(), entity);
                 }
             }
@@ -84,7 +86,13 @@ public class FabricEntityListener {
                 for (int i = 0; i < stage.getNpcsToKill().size(); i++) {
                     if (stage.getNpcsToKill().get(i).equals(victim.getUUID())) {
                         final var progress = quester.getQuestProgressOrDefault(quest);
-                        progress.getNpcsNumKilled().set(i, progress.getNpcsNumKilled().get(i) + 1);
+                        final int goal = (stage.getNpcNumToKill() != null && stage.getNpcNumToKill().size() > i)
+                                ? stage.getNpcNumToKill().get(i) : 1;
+                        final int before = progress.getNpcsNumKilled().get(i);
+                        progress.getNpcsNumKilled().set(i, before + 1);
+                        if (before < goal && progress.getNpcsNumKilled().get(i) >= goal) {
+                            quester.finishObjective(quest, ObjectiveType.KILL_NPC, i);
+                        }
                         matched = true;
                     }
                 }
@@ -96,7 +104,12 @@ public class FabricEntityListener {
             if (victim instanceof ServerPlayer && stage.getPlayersToKill() != null
                     && stage.getPlayersToKill() > 0) {
                 final var progress = quester.getQuestProgressOrDefault(quest);
-                progress.setPlayersKilled(progress.getPlayersKilled() + 1);
+                final int beforeKill = progress.getPlayersKilled();
+                progress.setPlayersKilled(beforeKill + 1);
+                if (beforeKill < stage.getPlayersToKill()
+                        && progress.getPlayersKilled() >= stage.getPlayersToKill()) {
+                    quester.finishObjective(quest, ObjectiveType.KILL_PLAYER, 0);
+                }
                 quester.checkQuest(quest);
                 dispatchPlayerKill(quester, quest);
                 continue;
@@ -108,7 +121,13 @@ public class FabricEntityListener {
                     if (matchesEntityName(stage.getMobsToKill().get(i), victim.getType())
                             && isWithinKillLocation(stage, i, victim.getX(), victim.getY(), victim.getZ(), level)) {
                         final var progress = quester.getQuestProgressOrDefault(quest);
-                        progress.getMobNumKilled().set(i, progress.getMobNumKilled().get(i) + 1);
+                        final int goal = (stage.getMobNumToKill() != null && stage.getMobNumToKill().size() > i)
+                                ? stage.getMobNumToKill().get(i) : 1;
+                        final int before = progress.getMobNumKilled().get(i);
+                        progress.getMobNumKilled().set(i, before + 1);
+                        if (before < goal && progress.getMobNumKilled().get(i) >= goal) {
+                            quester.finishObjective(quest, ObjectiveType.KILL_MOB, i);
+                        }
                         matched = true;
                     }
                 }
@@ -130,7 +149,11 @@ public class FabricEntityListener {
                 if (qProgress.getMobNumKilled().size() <= i) continue;
                 final int qGoal = (qStage.getMobNumToKill() != null && qStage.getMobNumToKill().size() > i)
                         ? qStage.getMobNumToKill().get(i) : 1;
-                qProgress.getMobNumKilled().set(i, Math.min(qProgress.getMobNumKilled().get(i) + 1, qGoal));
+                final int qBefore = qProgress.getMobNumKilled().get(i);
+                qProgress.getMobNumKilled().set(i, Math.min(qBefore + 1, qGoal));
+                if (qBefore < qGoal && qProgress.getMobNumKilled().get(i) >= qGoal) {
+                    ((FabricQuester) q).finishObjective(cq, ObjectiveType.KILL_MOB, i);
+                }
                 if (q.testComplete(cq)) q.checkQuest(cq);
             }
             return null;
@@ -147,7 +170,11 @@ public class FabricEntityListener {
                 if (qProgress.getNpcsNumKilled().size() <= i) continue;
                 final int qGoal = (qStage.getNpcNumToKill() != null && qStage.getNpcNumToKill().size() > i)
                         ? qStage.getNpcNumToKill().get(i) : 1;
-                qProgress.getNpcsNumKilled().set(i, Math.min(qProgress.getNpcsNumKilled().get(i) + 1, qGoal));
+                final int qBefore = qProgress.getNpcsNumKilled().get(i);
+                qProgress.getNpcsNumKilled().set(i, Math.min(qBefore + 1, qGoal));
+                if (qBefore < qGoal && qProgress.getNpcsNumKilled().get(i) >= qGoal) {
+                    ((FabricQuester) q).finishObjective(cq, ObjectiveType.KILL_NPC, i);
+                }
                 if (q.testComplete(cq)) q.checkQuest(cq);
             }
             return null;
@@ -159,7 +186,11 @@ public class FabricEntityListener {
             final Stage qStage = q.getCurrentStage(cq);
             if (qStage == null || qStage.getPlayersToKill() == null || qStage.getPlayersToKill() <= 0) return null;
             final var qProgress = q.getQuestProgressOrDefault(cq);
-            qProgress.setPlayersKilled(Math.min(qProgress.getPlayersKilled() + 1, qStage.getPlayersToKill()));
+            final int qBefore = qProgress.getPlayersKilled();
+            qProgress.setPlayersKilled(Math.min(qBefore + 1, qStage.getPlayersToKill()));
+            if (qBefore < qStage.getPlayersToKill() && qProgress.getPlayersKilled() >= qStage.getPlayersToKill()) {
+                ((FabricQuester) q).finishObjective(cq, ObjectiveType.KILL_PLAYER, 0);
+            }
             if (q.testComplete(cq)) q.checkQuest(cq);
             return null;
         });
@@ -191,17 +222,26 @@ public class FabricEntityListener {
     }
 
     private ServerPlayer resolveKillerPlayer(ServerLevel level, Entity killer) {
-        if (killer instanceof ServerPlayer player) return player;
-        if (killer instanceof TamableAnimal animal && animal.isTame()
-                && animal.getOwnerReference() != null
-                && animal.getOwnerReference().getUUID() != null) {
-            return level.getServer().getPlayerList().getPlayer(animal.getOwnerReference().getUUID());
+        if (killer instanceof ServerPlayer) return (ServerPlayer) killer;
+        if (killer instanceof TamableAnimal) {
+            TamableAnimal animal = (TamableAnimal) killer;
+            if (animal.isTame()
+                    && animal.getOwnerReference() != null
+                    && animal.getOwnerReference().getUUID() != null) {
+                return level.getServer().getPlayerList().getPlayer(animal.getOwnerReference().getUUID());
+            }
         }
-        if (killer instanceof Projectile projectile && projectile.getOwner() instanceof ServerPlayer player) {
-            return player;
+        if (killer instanceof Projectile) {
+            Projectile projectile = (Projectile) killer;
+            if (projectile.getOwner() instanceof ServerPlayer) {
+                return (ServerPlayer) projectile.getOwner();
+            }
         }
-        if (killer instanceof net.minecraft.world.entity.item.PrimedTnt tnt && tnt.getOwner() != null) {
-            return resolveKillerPlayer(level, tnt.getOwner());
+        if (killer instanceof net.minecraft.world.entity.item.PrimedTnt) {
+            net.minecraft.world.entity.item.PrimedTnt tnt = (net.minecraft.world.entity.item.PrimedTnt) killer;
+            if (tnt.getOwner() != null) {
+                return resolveKillerPlayer(level, tnt.getOwner());
+            }
         }
         return null;
     }
@@ -221,7 +261,8 @@ public class FabricEntityListener {
     private void deferredMilkCheck(ServerPlayer player, Level level, Entity entity) {
         final UUID playerId = player.getUUID();
         FabricScheduler.runLater(() -> {
-            if (!(level instanceof ServerLevel serverLevel)) return;
+            if (!(level instanceof ServerLevel)) return;
+            ServerLevel serverLevel = (ServerLevel) level;
             final ServerPlayer p = serverLevel.getServer().getPlayerList().getPlayer(playerId);
             if (p == null) return;
             if (p.getMainHandItem().getItem() == Items.MILK_BUCKET) {
@@ -237,7 +278,11 @@ public class FabricEntityListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null || stage.getCowsToMilk() == null || stage.getCowsToMilk() <= 0) continue;
             final var progress = quester.getQuestProgressOrDefault(quest);
-            progress.setCowsMilked(progress.getCowsMilked() + 1);
+            final int beforeMilk = progress.getCowsMilked();
+            progress.setCowsMilked(beforeMilk + 1);
+            if (beforeMilk < stage.getCowsToMilk() && progress.getCowsMilked() >= stage.getCowsToMilk()) {
+                quester.finishObjective(quest, ObjectiveType.MILK_COW, 0);
+            }
             quester.checkQuest(quest);
         }
     }
@@ -250,7 +295,11 @@ public class FabricEntityListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null || stage.getFishToCatch() == null || stage.getFishToCatch() <= 0) continue;
             final var progress = quester.getQuestProgressOrDefault(quest);
-            progress.setFishCaught(progress.getFishCaught() + 1);
+            final int beforeFish = progress.getFishCaught();
+            progress.setFishCaught(beforeFish + 1);
+            if (beforeFish < stage.getFishToCatch() && progress.getFishCaught() >= stage.getFishToCatch()) {
+                quester.finishObjective(quest, ObjectiveType.CATCH_FISH, 0);
+            }
             quester.checkQuest(quest);
         }
     }
@@ -259,12 +308,16 @@ public class FabricEntityListener {
         final UUID playerId = player.getUUID();
         final UUID entityId = entity.getUUID();
         FabricScheduler.runLater(() -> {
-            if (!(level instanceof ServerLevel serverLevel)) return;
+            if (!(level instanceof ServerLevel)) return;
+            ServerLevel serverLevel = (ServerLevel) level;
             final ServerPlayer p = serverLevel.getServer().getPlayerList().getPlayer(playerId);
             if (p == null) return;
             final Entity e = serverLevel.getEntity(entityId);
-            if (e instanceof Sheep sheep && sheep.isSheared()) {
-                applySheepSheared(p, sheep.getColor().getName(), sheep.getColor().name());
+            if (e instanceof Sheep) {
+                Sheep sheep = (Sheep) e;
+                if (sheep.isSheared()) {
+                    applySheepSheared(p, sheep.getColor().getName(), sheep.getColor().name());
+                }
             }
         }, 1);
     }
@@ -283,7 +336,13 @@ public class FabricEntityListener {
                 if (lowercase.equals(colorName.toLowerCase(java.util.Locale.ENGLISH))
                         || lowercase.equals(colorEnumName.toLowerCase(java.util.Locale.ENGLISH))) {
                     final var progress = quester.getQuestProgressOrDefault(quest);
-                    progress.getSheepSheared().set(i, progress.getSheepSheared().get(i) + 1);
+                    final int shearGoal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
+                            ? stage.getSheepNumToShear().get(i) : 1;
+                    final int before = progress.getSheepSheared().get(i);
+                    progress.getSheepSheared().set(i, before + 1);
+                    if (before < shearGoal && progress.getSheepSheared().get(i) >= shearGoal) {
+                        quester.finishObjective(quest, ObjectiveType.SHEAR_SHEEP, i);
+                    }
                     matched = true;
                 }
             }
@@ -295,14 +354,18 @@ public class FabricEntityListener {
         final UUID playerId = player.getUUID();
         final UUID entityId = entity.getUUID();
         FabricScheduler.runLater(() -> {
-            if (!(level instanceof ServerLevel serverLevel)) return;
+            if (!(level instanceof ServerLevel)) return;
+            ServerLevel serverLevel = (ServerLevel) level;
             final ServerPlayer p = serverLevel.getServer().getPlayerList().getPlayer(playerId);
             if (p == null) return;
             final Entity e = serverLevel.getEntity(entityId);
-            if (e instanceof TamableAnimal animal && animal.isTame()
+            if (e instanceof TamableAnimal) {
+                TamableAnimal animal = (TamableAnimal) e;
+                if (animal.isTame()
                     && animal.getOwnerReference() != null
                     && playerId.equals(animal.getOwnerReference().getUUID())) {
-                applyMobTamed(p, animal.getType());
+                    applyMobTamed(p, animal.getType());
+                }
             }
         }, 1);
     }
@@ -317,7 +380,13 @@ public class FabricEntityListener {
             for (int i = 0; i < stage.getMobsToTame().size(); i++) {
                 if (matchesEntityName(stage.getMobsToTame().get(i), type)) {
                     final var progress = quester.getQuestProgressOrDefault(quest);
-                    progress.getMobsTamed().set(i, progress.getMobsTamed().get(i) + 1);
+                    final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
+                            ? stage.getMobNumToTame().get(i) : 1;
+                    final int before = progress.getMobsTamed().get(i);
+                    progress.getMobsTamed().set(i, before + 1);
+                    if (before < goal && progress.getMobsTamed().get(i) >= goal) {
+                        quester.finishObjective(quest, ObjectiveType.TAME_MOB, i);
+                    }
                     matched = true;
                 }
             }

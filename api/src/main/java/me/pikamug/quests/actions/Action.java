@@ -73,9 +73,5 @@ public interface Action extends Comparable<Action> {
 
     void setBook(final String book);
 
-    String getDenizenScript();
-
-    void setDenizenScript(final String scriptName);
-
     void fire(final Quester quester, final Quest quest);
 }

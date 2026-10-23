@@ -11,7 +11,7 @@
 package me.pikamug.quests.actions;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.actions.main.ActionMainPrompt;
+import me.pikamug.quests.convo.actions.main.BukkitActionMainPrompt;
 import me.pikamug.quests.entity.BukkitQuestMob;
 import me.pikamug.quests.entity.QuestMob;
 import me.pikamug.quests.interfaces.ReloadCallback;
@@ -107,7 +107,7 @@ public class BukkitActionFactory implements ActionFactory {
     }
     
     public void returnToMenu(final UUID uuid) {
-        new ActionMainPrompt(uuid).start();
+        new BukkitActionMainPrompt(uuid).start();
     }
     
     public void loadData(final UUID uuid, final Action action) {

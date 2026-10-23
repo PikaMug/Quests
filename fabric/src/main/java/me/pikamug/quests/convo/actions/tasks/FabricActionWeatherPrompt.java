@@ -161,6 +161,7 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
         case 3:
             final MinecraftServer server = plugin.getServer();
             if (server != null && sender instanceof ServerPlayer) {
+                ServerPlayer player = (ServerPlayer) sender;
                 final ServerLevel overworld = server.overworld();
                 selectedLightningLocations.put(uuid, BlockPos.ZERO);
                 new ActionLightningPrompt(uuid).start();

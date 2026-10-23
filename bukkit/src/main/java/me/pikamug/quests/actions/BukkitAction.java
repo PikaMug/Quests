@@ -298,7 +298,7 @@ public class BukkitAction implements Action {
 
     @Override
     public String getDenizenScript() {
-        return book;
+        return denizenScript;
     }
 
     @Override
@@ -309,6 +309,7 @@ public class BukkitAction implements Action {
     public void fire(final Quester quester, final Quest quest) {
         final BukkitQuester bukkitQuester = (BukkitQuester)quester;
         final Player player = bukkitQuester.getPlayer();
+        if (player == null) return;
         if (message != null) {
             player.sendMessage(BukkitConfigUtil.parseStringWithPossibleLineBreaks(message, quest, player));
         }

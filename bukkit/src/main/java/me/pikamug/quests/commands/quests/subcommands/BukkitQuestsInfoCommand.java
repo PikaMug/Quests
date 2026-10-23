@@ -56,8 +56,9 @@ public class BukkitQuestsInfoCommand extends BukkitQuestsSubCommand {
     @Override
     public void execute(final CommandSender cs, final String[] args) {
         if (cs.hasPermission("quests.info")) {
-            cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD + plugin.getDescription().getVersion());
-            cs.sendMessage(ChatColor.GOLD + BukkitLang.get(cs, "developedBy") + " " + "PikaMug & contributors");
+            cs.sendMessage(ChatColor.YELLOW + "Quests " + ChatColor.GOLD + plugin.getDescription().getVersion()
+                    + ChatColor.GRAY + " (Bukkit)");
+            cs.sendMessage(ChatColor.GOLD + BukkitLang.get(cs, "developedBy") + " PikaMug & contributors");
             cs.sendMessage(ChatColor.DARK_AQUA + "" + ChatColor.UNDERLINE + "https://github.com/PikaMug/Quests");
         }
     }

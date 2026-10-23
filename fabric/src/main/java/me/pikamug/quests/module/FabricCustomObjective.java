@@ -15,6 +15,7 @@ import me.pikamug.quests.events.FabricQuestsEventBus;
 import me.pikamug.quests.events.quester.FabricQuesterPostUpdateObjectiveEvent;
 import me.pikamug.quests.events.quester.FabricQuesterPreUpdateObjectiveEvent;
 import me.pikamug.quests.player.FabricQuestProgress;
+import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
@@ -194,6 +195,10 @@ public class FabricCustomObjective implements CustomObjective {
                         }
                         final int old = customObjCounts.get(index);
                         customObjCounts.set(index, old + count);
+                        final int indexGoal = quester.getCurrentStage(quest).getCustomObjectiveCounts().get(index);
+                        if (old < indexGoal && customObjCounts.get(index) >= indexGoal) {
+                            ((FabricQuester) quester).finishObjective(quest, me.pikamug.quests.enums.ObjectiveType.CUSTOM, index);
+                        }
                         break;
                     }
                 }
@@ -211,6 +216,7 @@ public class FabricCustomObjective implements CustomObjective {
                                     = (FabricQuestProgress) q.getQuestProgressOrDefault(quest);
                             final int old = qProgress.getCustomObjectiveCounts().get(finalIndex);
                             qProgress.getCustomObjectiveCounts().set(finalIndex, old + count);
+                            ((FabricQuester) q).finishObjective(quest, me.pikamug.quests.enums.ObjectiveType.CUSTOM, finalIndex);
                             q.checkQuest(quest);
                             return null;
                         });

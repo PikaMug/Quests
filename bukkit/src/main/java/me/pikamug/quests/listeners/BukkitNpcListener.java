@@ -11,8 +11,8 @@
 package me.pikamug.quests.listeners;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.convo.misc.NpcOfferQuestPrompt;
-import me.pikamug.quests.convo.misc.QuestAcceptPrompt;
+import me.pikamug.quests.convo.misc.BukkitNpcOfferQuestPrompt;
+import me.pikamug.quests.convo.misc.BukkitQuestAcceptPrompt;
 import me.pikamug.quests.dependencies.npc.BukkitNpcDependency;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.BukkitQuestProgress;
@@ -243,7 +243,7 @@ public abstract class BukkitNpcListener implements Listener {
                                 for (final String msg : extracted(quester).split("<br>")) {
                                     player.sendMessage(msg);
                                 }
-                                new QuestAcceptPrompt(player.getUniqueId(), plugin).start();
+                                new BukkitQuestAcceptPrompt(player.getUniqueId(), plugin).start();
                             }
                         }
                     }
@@ -251,7 +251,7 @@ public abstract class BukkitNpcListener implements Listener {
                     if (hasAtLeastOneGUI) {
                         quester.showGUIDisplay(npcId, npcQuests);
                     } else {
-                        new NpcOfferQuestPrompt(player.getUniqueId(), plugin, npcQuests, npcDependency.getName(npcId)).start();
+                        new BukkitNpcOfferQuestPrompt(player.getUniqueId(), plugin, npcQuests, npcDependency.getName(npcId)).start();
                     }
                 } else {
                     BukkitLang.send(player, ChatColor.YELLOW + BukkitLang.get(player, "noMoreQuest"));

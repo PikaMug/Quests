@@ -88,7 +88,6 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
             action.setCommands(cmds);
         }
         if (json.has("book")) action.setBook(json.get("book").getAsString());
-        if (json.has("denizen-script")) action.setDenizenScript(json.get("denizen-script").getAsString());
         if (json.has("explosions")) {
             final JsonArray arr = json.getAsJsonArray("explosions");
             final LinkedList<String> explosions = new LinkedList<>();

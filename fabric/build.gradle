@@ -75,9 +75,30 @@ processResources {
     }
 }
 
+// Bake the project version
+def versionSourceTemplate = file("src/main/java/me/pikamug/quests/FabricQuestsPlugin.java")
+def generatedVersionSource = layout.buildDirectory.dir("generated/sources/questsVersion")
+
+tasks.register("generateVersionSource") {
+    inputs.file(versionSourceTemplate)
+    inputs.property("version", project.version as String)
+    outputs.dir(generatedVersionSource)
+    doLast {
+        def dir = generatedVersionSource.get().asFile
+        dir.mkdirs()
+        def out = new File(dir, "FabricQuestsPlugin.java")
+        out.text = versionSourceTemplate.text.replace("\${version}", project.version as String)
+    }
+}
+
+sourceSets.main.java.srcDir(generatedVersionSource)
+sourceSets.main.java.exclude("me/pikamug/quests/FabricQuestsPlugin.java")
+
+tasks.named("compileJava") {
+    dependsOn("generateVersionSource")
+}
+
 java {
-    // Built against Java 25. The JDK is auto-provisioned through the Foojay resolver registered in
-    // settings.gradle, so no machine-specific JAVA_HOME/local JDK directory is required.
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
     }

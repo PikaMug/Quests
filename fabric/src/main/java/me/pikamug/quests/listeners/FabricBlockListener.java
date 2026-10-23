@@ -31,6 +31,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.LinkedList;
+
 public class FabricBlockListener {
 
     private final FabricQuestsPlugin plugin;
@@ -66,8 +68,12 @@ public class FabricBlockListener {
             if (!stage.getBlocksToDamage().isEmpty()) {
                 for (int i = 0; i < stage.getBlocksToDamage().size(); i++) {
                     if (matchesBlock(state, stage.getBlocksToDamage().get(i))) {
-                        quester.getQuestProgressOrDefault(quest).getBlocksDamaged().set(i,
-                                quester.getQuestProgressOrDefault(quest).getBlocksDamaged().get(i) + 1);
+                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        final int before = progress.getBlocksDamaged().get(i);
+                        progress.getBlocksDamaged().set(i, before + 1);
+                        if (before < 1 && progress.getBlocksDamaged().get(i) >= 1) {
+                            quester.finishObjective(quest, ObjectiveType.DAMAGE_BLOCK, i);
+                        }
                         quester.checkQuest(quest);
                     }
                 }
@@ -94,7 +100,14 @@ public class FabricBlockListener {
                 } else {
                     for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
                         if (matchesBlock(state, stage.getBlocksToBreak().get(i))) {
-                            progress.getBlocksBroken().set(i, progress.getBlocksBroken().get(i) + 1);
+                            final LinkedList<Integer> amounts = stage.getBlocksToBreakAmounts();
+                            final int goal = (amounts != null && !amounts.isEmpty() && amounts.size() > i)
+                                    ? amounts.get(i) : 1;
+                            final int before = progress.getBlocksBroken().get(i);
+                            progress.getBlocksBroken().set(i, before + 1);
+                            if (before < goal && progress.getBlocksBroken().get(i) >= goal) {
+                                quester.finishObjective(quest, ObjectiveType.BREAK_BLOCK, i);
+                            }
                             quester.checkQuest(quest);
                         }
                     }
@@ -127,7 +140,14 @@ public class FabricBlockListener {
             if (!stage.getBlocksToPlace().isEmpty()) {
                 for (int i = 0; i < stage.getBlocksToPlace().size(); i++) {
                     if (matchesBlock(state, stage.getBlocksToPlace().get(i))) {
-                        progress.getBlocksPlaced().set(i, progress.getBlocksPlaced().get(i) + 1);
+                        final LinkedList<Integer> amounts = stage.getBlocksToPlaceAmounts();
+                        final int goal = (amounts != null && !amounts.isEmpty() && amounts.size() > i)
+                                ? amounts.get(i) : 1;
+                        final int before = progress.getBlocksPlaced().get(i);
+                        progress.getBlocksPlaced().set(i, before + 1);
+                        if (before < goal && progress.getBlocksPlaced().get(i) >= goal) {
+                            quester.finishObjective(quest, ObjectiveType.PLACE_BLOCK, i);
+                        }
                         quester.checkQuest(quest);
                     }
                 }
@@ -224,8 +244,15 @@ public class FabricBlockListener {
             if (!stage.getBlocksToUse().isEmpty()) {
                 for (int i = 0; i < stage.getBlocksToUse().size(); i++) {
                     if (matchesBlock(state, stage.getBlocksToUse().get(i))) {
-                        quester.getQuestProgressOrDefault(quest).getBlocksUsed().set(i,
-                                quester.getQuestProgressOrDefault(quest).getBlocksUsed().get(i) + 1);
+                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        final LinkedList<Integer> amounts = stage.getBlocksToUseAmounts();
+                        final int goal = (amounts != null && !amounts.isEmpty() && amounts.size() > i)
+                                ? amounts.get(i) : 1;
+                        final int before = progress.getBlocksUsed().get(i);
+                        progress.getBlocksUsed().set(i, before + 1);
+                        if (before < goal && progress.getBlocksUsed().get(i) >= goal) {
+                            quester.finishObjective(quest, ObjectiveType.USE_BLOCK, i);
+                        }
                         quester.checkQuest(quest);
                     }
                 }

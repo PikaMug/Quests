@@ -43,7 +43,8 @@ public class FabricConditionFactory implements ConditionFactory {
 
     @Override
     public void loadData(UUID uuid, Condition condition) {
-        if (!(condition instanceof FabricCondition fabCondition)) return;
+        if (!(condition instanceof FabricCondition)) return;
+        FabricCondition fabCondition = (FabricCondition) condition;
         if (fabCondition.getName() != null) {
             SessionData.set(uuid, Key.C_NAME, fabCondition.getName());
         }
@@ -185,10 +186,13 @@ public class FabricConditionFactory implements ConditionFactory {
 
     private void writeItems(UUID uuid, JsonObject section, String key, String nodeKey) {
         final Object data = SessionData.get(uuid, key);
-        if (data instanceof LinkedList<?> itemList) {
+        if (data instanceof LinkedList) {
             final com.google.gson.JsonArray itemsJson = new com.google.gson.JsonArray();
+            @SuppressWarnings("unchecked")
+            LinkedList<?> itemList = (LinkedList<?>) data;
             for (final Object stack : itemList) {
-                if (stack instanceof ItemStack itemStack) {
+                if (stack instanceof ItemStack) {
+                    ItemStack itemStack = (ItemStack) stack;
                     itemsJson.add(FabricItemUtil.serializeToJson(itemStack));
                 }
             }

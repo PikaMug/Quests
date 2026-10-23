@@ -19,7 +19,10 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.tasks.FabricActionTimer;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -27,19 +30,22 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.food.FoodData;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.WeatherData;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -50,113 +56,273 @@ public class FabricAction implements Action {
     private String message;
     private boolean clearInv = false;
     private boolean failQuest = false;
+    protected LinkedList<FabricLocation> explosions = new LinkedList<>();
+    protected Map<FabricLocation, SoundEvent> effects = new HashMap<>();
+    protected LinkedList<ItemStack> items = new LinkedList<>();
+    protected ServerLevel stormWorld = null;
     private int stormDuration = 0;
+    protected ServerLevel thunderWorld = null;
     private int thunderDuration = 0;
     private int timer = 0;
     private boolean cancelTimer = false;
     private LinkedList<QuestMob> mobSpawns = new LinkedList<>();
+    private LinkedList<FabricLocation> lightningStrikes = new LinkedList<>();
     private LinkedList<String> commands = new LinkedList<>();
-    private LinkedList<MobEffectInstance> potionEffects = new LinkedList<>();
-    private LinkedList<ItemStack> items = new LinkedList<>();
-    private int hunger = 0;
-    private int saturation = 0;
-    private float health = 0;
-    private String book;
-    private String denizenScript;
-    private LinkedList<String> explosions = new LinkedList<>();
-    private Map<String, String> effects = new LinkedHashMap<>();
-    private LinkedList<String> lightningStrikes = new LinkedList<>();
-    private String teleport;
-
-    @Override public String getName() { return name; }
-    @Override public void setName(String v) { this.name = v; }
-    @Override public String getMessage() { return message; }
-    @Override public void setMessage(String v) { this.message = v; }
-    @Override public boolean isClearInv() { return clearInv; }
-    @Override public void setClearInv(boolean v) { this.clearInv = v; }
-    @Override public boolean isFailQuest() { return failQuest; }
-    @Override public void setFailQuest(boolean v) { this.failQuest = v; }
-    @Override public int getStormDuration() { return stormDuration; }
-    @Override public void setStormDuration(int v) { this.stormDuration = v; }
-    @Override public int getThunderDuration() { return thunderDuration; }
-    @Override public void setThunderDuration(int v) { this.thunderDuration = v; }
-    @Override public int getTimer() { return timer; }
-    @Override public void setTimer(int v) { this.timer = v; }
-    @Override public boolean isCancelTimer() { return cancelTimer; }
-    @Override public void setCancelTimer(boolean v) { this.cancelTimer = v; }
-    @Override public LinkedList<QuestMob> getMobSpawns() { return mobSpawns; }
-    @Override public void setMobSpawns(LinkedList<QuestMob> v) { this.mobSpawns = v; }
-    @Override public LinkedList<String> getCommands() { return commands; }
-    @Override public void setCommands(LinkedList<String> v) { this.commands = v; }
-
-    public LinkedList<MobEffectInstance> getPotionEffects() { return potionEffects; }
-    public void setPotionEffects(LinkedList<MobEffectInstance> v) { this.potionEffects = v; }
-
-    public LinkedList<ItemStack> getItems() { return items; }
-    public void setItems(LinkedList<ItemStack> v) { this.items = v; }
-
-    @Override public int getHunger() { return hunger; }
-    @Override public void setHunger(int v) { this.hunger = v; }
-    @Override public int getSaturation() { return saturation; }
-    @Override public void setSaturation(int v) { this.saturation = v; }
-    @Override public float getHealth() { return health; }
-    @Override public void setHealth(float v) { this.health = v; }
-    @Override public String getBook() { return book; }
-    @Override public void setBook(String v) { this.book = v; }
-    @Override public String getDenizenScript() { return denizenScript; }
-    @Override public void setDenizenScript(String v) { this.denizenScript = v; }
-
-    public LinkedList<String> getExplosions() { return explosions; }
-    public void setExplosions(LinkedList<String> v) { this.explosions = v; }
-
-    public Map<String, String> getEffects() { return effects; }
-    public void setEffects(Map<String, String> v) { this.effects = v; }
-
-    public LinkedList<String> getLightningStrikes() { return lightningStrikes; }
-    public void setLightningStrikes(LinkedList<String> v) { this.lightningStrikes = v; }
-
-    public String getTeleport() { return teleport; }
-    public void setTeleport(String v) { this.teleport = v; }
+    private LinkedList<MobEffect> potionEffects = new LinkedList<>();
+    private int hunger = -1;
+    private int saturation = -1;
+    private float health = -1;
+    private FabricLocation teleport;
+    private String book = "";
 
     @Override
-    public void fire(Quester quester, Quest quest) {
-        if (quester == null) return;
+    public int compareTo(final Action action) {
+        return name.compareTo(action.getName());
+    }
 
-        // Message
-        if (message != null && !message.isEmpty()) {
-            quester.sendMessage(message);
-        }
+    @Override
+    public String getName() {
+        return name;
+    }
 
-        // Get player
-        final ServerPlayer player = getPlayer(quester);
+    @Override
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public void setMessage(final String message) {
+        this.message = message;
+    }
+
+    @Override
+    public boolean isClearInv() {
+        return clearInv;
+    }
+
+    @Override
+    public void setClearInv(final boolean clearInv) {
+        this.clearInv = clearInv;
+    }
+
+    @Override
+    public boolean isFailQuest() {
+        return failQuest;
+    }
+
+    @Override
+    public void setFailQuest(final boolean failQuest) {
+        this.failQuest = failQuest;
+    }
+
+    public LinkedList<FabricLocation> getExplosions() {
+        return explosions;
+    }
+
+    public void setExplosions(final LinkedList<FabricLocation> explosions) {
+        this.explosions = explosions;
+    }
+
+    public Map<FabricLocation, SoundEvent> getEffects() {
+        return effects;
+    }
+
+    public void setEffects(final Map<FabricLocation, SoundEvent> effects) {
+        this.effects = effects;
+    }
+
+    public LinkedList<ItemStack> getItems() {
+        return items;
+    }
+
+    public void setItems(final LinkedList<ItemStack> items) {
+        this.items = items;
+    }
+
+    public ServerLevel getStormWorld() {
+        return stormWorld;
+    }
+
+    public void setStormWorld(final ServerLevel stormWorld) {
+        this.stormWorld = stormWorld;
+    }
+
+    @Override
+    public int getStormDuration() {
+        return stormDuration;
+    }
+
+    @Override
+    public void setStormDuration(final int stormDuration) {
+        this.stormDuration = stormDuration;
+    }
+
+    public ServerLevel getThunderWorld() {
+        return thunderWorld;
+    }
+
+    public void setThunderWorld(final ServerLevel thunderWorld) {
+        this.thunderWorld = thunderWorld;
+    }
+
+    @Override
+    public int getThunderDuration() {
+        return thunderDuration;
+    }
+
+    @Override
+    public void setThunderDuration(final int thunderDuration) {
+        this.thunderDuration = thunderDuration;
+    }
+
+    @Override
+    public int getTimer() {
+        return timer;
+    }
+
+    @Override
+    public void setTimer(final int timer) {
+        this.timer = timer;
+    }
+
+    @Override
+    public boolean isCancelTimer() {
+        return cancelTimer;
+    }
+
+    @Override
+    public void setCancelTimer(final boolean cancelTimer) {
+        this.cancelTimer = cancelTimer;
+    }
+
+    @Override
+    public LinkedList<QuestMob> getMobSpawns() {
+        return mobSpawns;
+    }
+
+    @Override
+    public void setMobSpawns(final LinkedList<QuestMob> mobSpawns) {
+        this.mobSpawns = mobSpawns;
+    }
+
+    public LinkedList<FabricLocation> getLightningStrikes() {
+        return lightningStrikes;
+    }
+
+    public void setLightningStrikes(final LinkedList<FabricLocation> lightningStrikes) {
+        this.lightningStrikes = lightningStrikes;
+    }
+
+    @Override
+    public LinkedList<String> getCommands() {
+        return commands;
+    }
+
+    @Override
+    public void setCommands(final LinkedList<String> commands) {
+        this.commands = commands;
+    }
+
+    public LinkedList<MobEffect> getPotionEffects() {
+        return potionEffects;
+    }
+
+    public void setPotionEffects(final LinkedList<MobEffect> potionEffects) {
+        this.potionEffects = potionEffects;
+    }
+
+    @Override
+    public int getHunger() {
+        return hunger;
+    }
+
+    @Override
+    public void setHunger(final int hunger) {
+        this.hunger = hunger;
+    }
+
+    @Override
+    public int getSaturation() {
+        return saturation;
+    }
+
+    @Override
+    public void setSaturation(final int saturation) {
+        this.saturation = saturation;
+    }
+
+    @Override
+    public float getHealth() {
+        return health;
+    }
+
+    @Override
+    public void setHealth(final float health) {
+        this.health = health;
+    }
+
+    public FabricLocation getTeleport() {
+        return teleport;
+    }
+
+    public void setTeleport(final FabricLocation teleport) {
+        this.teleport = teleport;
+    }
+
+    @Override
+    public String getBook() {
+        return book;
+    }
+
+    @Override
+    public void setBook(final String book) {
+        this.book = book;
+    }
+
+    @Override
+    public void fire(final Quester quester, final Quest quest) {
+        final FabricQuester fabricQuester = (FabricQuester)quester;
+        final ServerPlayer player = fabricQuester.getPlayer();
         if (player == null) return;
-        final MinecraftServer server = player.level().getServer();
-        final ServerLevel level = player.level();
-
-        // Clear inventory
+        if (message != null) {
+            quester.sendMessage(FabricMiscUtil.parseString(message));
+        }
         if (clearInv) {
             player.getInventory().clearContent();
         }
 
         // Explosions
         if (explosions != null && !explosions.isEmpty()) {
-            for (final String locStr : explosions) {
-                final LocPos loc = parseLocation(server, locStr);
-                if (loc != null) {
-                    loc.level().explode(null, loc.x(), loc.y(), loc.z(), 4.0F, Level.ExplosionInteraction.BLOCK);
+            for (final FabricLocation loc : explosions) {
+                if (loc != null && loc.getLevel() != null) {
+                    loc.getLevel().explode(null, loc.getX(), loc.getY(), loc.getZ(), 4.0F, Level.ExplosionInteraction.BLOCK);
                 }
             }
         }
 
         // Effects (particles)
         if (effects != null && !effects.isEmpty()) {
-            for (final Map.Entry<String, String> entry : effects.entrySet()) {
-                final LocPos loc = parseLocation(server, entry.getKey());
-                if (loc == null) continue;
-                final ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE
-                        .getValue(Identifier.tryBuild("minecraft", entry.getValue().toLowerCase()));
-                if (particle instanceof ParticleOptions particles) {
-                    loc.level().sendParticles(particles, loc.x(), loc.y(), loc.z(), 1, 0, 0, 0, 0);
+            for (final Map.Entry<FabricLocation, SoundEvent> entry : effects.entrySet()) {
+                final FabricLocation loc = entry.getKey();
+                if (loc == null || loc.getLevel() == null) continue;
+                Object effectObj = entry.getValue();
+                if (effectObj instanceof String) {
+                    String effectStr = (String) effectObj;
+                    final ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE
+                            .getValue(Identifier.tryBuild("minecraft", effectStr.toLowerCase()));
+                    if (particle instanceof ParticleOptions) {
+                        ParticleOptions particles = (ParticleOptions) particle;
+                        loc.getLevel().sendParticles(particles, loc.getX(), loc.getY(), loc.getZ(), 1, 0, 0, 0, 0);
+                    }
+                } else if (effectObj instanceof SoundEvent) {
+                    SoundEvent eff = (SoundEvent) effectObj;
+                    loc.getLevel().playSound(null, loc.getX(), loc.getY(), loc.getZ(), eff, SoundSource.MASTER);
+                    loc.getLevel().levelEvent(2002, BlockPos.containing(loc.getX(), loc.getY(), loc.getZ()), eff.getId());
                 }
             }
         }
@@ -197,18 +363,18 @@ public class FabricAction implements Action {
         }
 
         // Teleport
-        if (teleport != null && !teleport.isEmpty()) {
-            final LocPos loc = parseLocation(server, teleport);
-            if (loc != null && player.isAlive()) {
-                player.teleportTo(loc.level(), loc.x(), loc.y(), loc.z(),
-                        java.util.Set.of(), player.getYRot(), player.getXRot(), false);
+        if (teleport != null) {
+            if (teleport.getLevel() != null && player.isAlive()) {
+                player.teleportTo(teleport.getLevel(), teleport.getX(), teleport.getY(), teleport.getZ(),
+                        java.util.Collections.emptySet(), teleport.getYaw(), teleport.getPitch(), false);
             }
         }
 
         // Potion effects
         if (potionEffects != null && !potionEffects.isEmpty()) {
-            for (final MobEffectInstance effect : potionEffects) {
-                player.addEffect(effect);
+            for (final MobEffect effect : potionEffects) {
+                Holder<MobEffect> effectHolder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);
+                player.addEffect(new MobEffectInstance(effectHolder));
             }
         }
 
@@ -246,13 +412,12 @@ public class FabricAction implements Action {
 
         // Lightning strikes
         if (lightningStrikes != null && !lightningStrikes.isEmpty()) {
-            for (final String locStr : lightningStrikes) {
-                final LocPos loc = parseLocation(server, locStr);
-                if (loc == null) continue;
-                final LightningBolt bolt = FabricMiscUtil.LIGHTNING_BOLT.create(loc.level(), EntitySpawnReason.TRIGGERED);
+            for (final FabricLocation loc : lightningStrikes) {
+                if (loc == null || loc.getLevel() == null) continue;
+                final LightningBolt bolt = FabricMiscUtil.LIGHTNING_BOLT.create(loc.getLevel(), EntitySpawnReason.TRIGGERED);
                 if (bolt != null) {
-                    bolt.setPos(loc.x(), loc.y(), loc.z());
-                    loc.level().addFreshEntity(bolt);
+                    bolt.setPos(loc.getX(), loc.getY(), loc.getZ());
+                    loc.getLevel().addFreshEntity(bolt);
                 }
             }
         }
@@ -289,14 +454,17 @@ public class FabricAction implements Action {
     }
 
     private void spawnMob(ServerPlayer player, ServerLevel level, QuestMob mob) {
-        if (!(mob instanceof FabricQuestMob fabricMob)
-                || fabricMob.getEntityType() == null) return;
+        if (!(mob instanceof FabricQuestMob))
+            return;
+        FabricQuestMob fabricMob = (FabricQuestMob) mob;
+        if (fabricMob.getEntityType() == null) return;
         final EntityType<?> entityType = fabricMob.getEntityType();
         final Integer amount = fabricMob.getSpawnAmounts();
         final int max = amount != null ? amount : 1;
         for (int i = 0; i < max; i++) {
-            final var entity = entityType.create(level, EntitySpawnReason.COMMAND);
-            if (entity instanceof Mob mobEntity) {
+            final EntityType<?> entity = entityType.create(level, EntitySpawnReason.COMMAND);
+            if (entity instanceof Mob) {
+                Mob mobEntity = (Mob) entity;
                 mobEntity.setPos(player.getX() + (Math.random() * 4) - 2,
                         player.getY() + (Math.random() * 4) - 2,
                         player.getZ() + (Math.random() * 4) - 2);
@@ -315,7 +483,7 @@ public class FabricAction implements Action {
         return server.getPlayerList().getPlayer(quester.getUUID());
     }
 
-    private LocPos parseLocation(MinecraftServer server, String locStr) {
+    private FabricLocation parseLocation(MinecraftServer server, String locStr) {
         if (server == null || locStr == null || locStr.isEmpty()) return null;
         final String[] parts = locStr.split(":");
         if (parts.length < 2) return null;
@@ -336,20 +504,17 @@ public class FabricAction implements Action {
             final double x = Double.parseDouble(coords[0]);
             final double y = Double.parseDouble(coords[1]);
             final double z = Double.parseDouble(coords[2]);
-            return new LocPos(level, x, y, z);
+            float yaw = 0.0f;
+            float pitch = 0.0f;
+            if (coords.length > 3) {
+                try { yaw = Float.parseFloat(coords[3]); } catch (Exception ignored) {}
+            }
+            if (coords.length > 4) {
+                try { pitch = Float.parseFloat(coords[4]); } catch (Exception ignored) {}
+            }
+            return new FabricLocation(level, x, y, z, yaw, pitch);
         } catch (final NumberFormatException e) {
             return null;
         }
-    }
-
-    private record LocPos(ServerLevel level, double x, double y, double z) {}
-
-    @Override
-    public int compareTo(Action other) {
-        if (other == null) return 1;
-        if (this.name != null && other.getName() != null) {
-            return this.name.compareTo(other.getName());
-        }
-        return 0;
     }
 }

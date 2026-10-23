@@ -11,7 +11,6 @@
 package me.pikamug.quests.statistics;
 
 import me.pikamug.quests.FabricQuestsPlugin;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.MinecraftServer;
 
@@ -143,9 +142,7 @@ public class FabricMetrics {
   }
 
   private void appendServiceData(final JsonObjectBuilder builder) {
-    final String pluginVersion = FabricLoader.getInstance().getModContainer(FabricQuestsPlugin.MOD_ID)
-            .map(container -> container.getMetadata().getVersion().getFriendlyString())
-            .orElse("5.3.3");
+    final String pluginVersion = FabricQuestsPlugin.VERSION;
     final String adjustedVersion = pluginVersion.contains("-")
             ? pluginVersion.substring(0, pluginVersion.indexOf("-")) : pluginVersion;
     builder.appendField("pluginVersion", adjustedVersion);

@@ -67,6 +67,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests {
 
     public static final String MOD_ID = "quests";
+    public static final String VERSION = "${version}";
     public static final FabricQuestsLogger LOGGER = new FabricQuestsLogger();
 
     private boolean loading = true;
@@ -227,7 +228,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
 
     @Override
     public File getPluginDataFolder() {
-        final Path path = FabricLoader.getInstance().getConfigDir().resolve(MOD_ID);
+        final Path path = FabricLoader.getInstance().getConfigDir().resolve("Quests");
         final File dir = path.toFile();
         if (!dir.exists()) {
             dir.mkdirs();
@@ -369,7 +370,8 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
             live.setCompletedQuests(loaded.getCompletedQuests());
             live.setCompletedTimes(loaded.getCompletedTimes());
             live.setAmountsCompleted(loaded.getAmountsCompleted());
-            if (loaded instanceof FabricQuester fabricLoaded) {
+            if (loaded instanceof FabricQuester) {
+                FabricQuester fabricLoaded = (FabricQuester) loaded;
                 for (final Map.Entry<Quest, QuestProgress> e : fabricLoaded.getProgressData().entrySet()) {
                     live.setQuestProgress(e.getKey(), e.getValue());
                 }
@@ -381,7 +383,11 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
     }
 
     private static boolean fabricLoadedHasData(final Quester loaded) {
-        return loaded instanceof FabricQuester fabricLoaded && fabricLoaded.hasData();
+        if (loaded instanceof FabricQuester) {
+            FabricQuester fabricLoaded = (FabricQuester) loaded;
+            return fabricLoaded.hasData();
+        }
+        return false;
     }
 
     @Override

@@ -512,6 +512,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                 break;
             case 4:
                 if (sender instanceof ServerPlayer) {
+                    ServerPlayer player = (ServerPlayer) sender;
                     final MinecraftServer server = plugin.getServer();
                     if (server == null) {
                         sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("unknownError")));

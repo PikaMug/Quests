@@ -67,6 +67,7 @@ public class FabricPlayerMoveThread implements Runnable {
                         if (progress.getLocationsReached().size() <= i) continue;
                         if (!progress.getLocationsReached().get(i)) {
                             progress.getLocationsReached().set(i, true);
+                            quester.finishObjective(quest, me.pikamug.quests.enums.ObjectiveType.REACH_LOCATION, i);
                             changed = true;
                         }
                     }

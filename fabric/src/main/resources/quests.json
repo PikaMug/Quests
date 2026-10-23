@@ -19,7 +19,6 @@
     },
     "stages": [
       {
-        "start-message": "<yellow>Mine 2 blocks of Iron Ore.",
         "break-block-names": [
           "IRON_ORE"
         ],
@@ -38,25 +37,27 @@
     "finish-message": "<yellow>Excellent. Here is a Diamond Sword.",
     "stages": [
       {
-        "start-message": "<yellow>Kill 3 Pigs.",
+        "death-event": "DeathFail",
         "mobs-to-kill": [
           "Pig"
         ],
         "mob-amounts": [
           3
-        ]
+        ],
+        "finish-event": "NiceFinish"
       },
       {
-        "start-message": "<yellow>Kill 2 Zombies.",
+        "death-event": "DeathFail",
         "mobs-to-kill": [
           "Zombie"
         ],
         "mob-amounts": [
           2
-        ]
+        ],
+        "finish-event": "NiceFinish"
       },
       {
-        "start-message": "<yellow>Kill 1 Skeleton.",
+        "death-event": "DeathFail",
         "mobs-to-kill": [
           "Skeleton"
         ],
@@ -81,7 +82,8 @@
     "finish-message": "<yellow>Good job. Here is some experience.",
     "stages": [
       {
-        "start-message": "<yellow>Catch some fish!",
+        "start-event": "GiveRod",
+        "death-event": "DeathFail",
         "fish-to-catch": 5
       }
     ],
@@ -98,7 +100,8 @@
     },
     "stages": [
       {
-        "start-message": "<yellow>Dig up 10 blocks of Dirt before time runs out!",
+        "start-event": "TimerStart",
+        "disconnect-event": "CancelTimer",
         "break-block-names": [
           "DIRT"
         ],

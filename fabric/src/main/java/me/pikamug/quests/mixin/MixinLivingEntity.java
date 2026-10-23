@@ -35,15 +35,17 @@ public abstract class MixinLivingEntity {
         final LivingEntity victim = (LivingEntity) (Object) this;
         final Entity killer = damageSource.getEntity();
         if (killer == null) return;
-        if (victim.level() instanceof ServerLevel serverLevel) {
+        if (victim.level() instanceof ServerLevel) {
+            ServerLevel serverLevel = (ServerLevel) victim.level();
             FabricMixinEvents.invokeEntityKilled(serverLevel, killer, victim, damageSource);
         }
     }
 
     @Inject(method = "completeUsingItem", at = @At("HEAD"))
     private void quests$onItemConsumed(CallbackInfo ci) {
-        if ((Object) this instanceof ServerPlayer player
+        if ((Object) this instanceof ServerPlayer
                 && (useItem.has(DataComponents.FOOD) || useItem.has(DataComponents.POTION_CONTENTS))) {
+            ServerPlayer player = (ServerPlayer) (Object) this;
             FabricMixinEvents.invokeItemConsumed(player, useItem.copy());
         }
     }

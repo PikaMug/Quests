@@ -29,7 +29,8 @@ public abstract class MixinFurnaceResultSlot {
 
     @Inject(method = "onTake", at = @At("TAIL"))
     private void quests$onItemSmelted(Player player, ItemStack stack, CallbackInfo ci) {
-        if (player instanceof ServerPlayer serverPlayer) {
+        if (player instanceof ServerPlayer) {
+            ServerPlayer serverPlayer = (ServerPlayer) player;
             FabricMixinEvents.invokeItemSmelted(serverPlayer, stack.copy());
         }
     }

@@ -12,7 +12,7 @@ package me.pikamug.quests.commands.quests.subcommands;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.commands.BukkitQuestsSubCommand;
-import me.pikamug.quests.convo.actions.menu.ActionMenuPrompt;
+import me.pikamug.quests.convo.actions.menu.BukkitActionMenuPrompt;
 import me.pikamug.quests.util.BukkitLang;
 import me.pikamug.quests.util.SessionData;
 import org.browsit.conversations.api.Conversations;
@@ -71,7 +71,7 @@ public class BukkitQuestsActionsCommand extends BukkitQuestsSubCommand {
                     return;
                 }
                 SessionData.clear(uuid);
-                new ActionMenuPrompt(uuid).start();
+                new BukkitActionMenuPrompt(uuid).start();
             }
             // TODO - determine how to run from console
 

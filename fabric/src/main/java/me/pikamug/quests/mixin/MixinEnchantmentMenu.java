@@ -39,7 +39,8 @@ public abstract class MixinEnchantmentMenu {
     private void quests$onItemEnchanted(Player player, int button, CallbackInfoReturnable<Boolean> cir) {
         final ItemStack item = enchantSlots.getItem(0);
         if (!item.isEmpty() && EnchantmentHelper.hasAnyEnchantments(item)
-                && player instanceof ServerPlayer serverPlayer) {
+                && player instanceof ServerPlayer) {
+            ServerPlayer serverPlayer = (ServerPlayer) player;
             FabricMixinEvents.invokeItemEnchanted(serverPlayer, item.copy());
         }
     }

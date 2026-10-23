@@ -93,19 +93,30 @@ public class FabricItemUtil {
         if (element == null || element.isJsonNull()) {
             return ItemStack.EMPTY;
         }
+        if (element.isJsonObject()) {
+            try {
+                final com.google.gson.JsonObject obj = element.getAsJsonObject();
+                if (obj.has("id") && obj.get("id").isJsonPrimitive()) {
+                    final ItemStack legacy = deserialize(obj.get("id").getAsString());
+                    if (!legacy.isEmpty()) {
+                        if (obj.has("count") && obj.get("count").isJsonPrimitive()) {
+                            try { legacy.setCount(Math.max(1, Math.min(obj.get("count").getAsInt(), 64))); } catch (Exception ignored) {}
+                        }
+                        return legacy;
+                    }
+                }
+            } catch (Exception ex) {}
+        }
+        final var server = FabricQuestsPlugin.getInstance().getServer();
+        final com.mojang.serialization.DynamicOps<JsonElement> ops = server == null ? JsonOps.INSTANCE : net.minecraft.resources.RegistryOps.create(JsonOps.INSTANCE, server.registryAccess());
         try {
-            final DataResult<ItemStack> result = ItemStack.CODEC.parse(JsonOps.INSTANCE, element);
+            final DataResult<ItemStack> result = ItemStack.CODEC.parse(ops, element);
             if (result.result().isPresent()) {
                 return result.result().get();
             }
-            FabricQuestsPlugin.LOGGER.warn("Could not load item from config (upgrade format?) {}",
-                    result.error().map(error -> error.message()).orElse(element.toString()));
-        } catch (final Exception e) {
-            FabricQuestsPlugin.LOGGER.warn("Could not load item from config (upgrade format?) {}", element, e);
-        }
+        } catch (final Exception e) {}
         return ItemStack.EMPTY;
     }
-
     /**
      * Compares two stacks by material, count and data components (enchantments, custom name, lore, etc.).
      * Amounts are optional; when {@code ignoreAmount} is true, count is not considered.
@@ -133,7 +144,7 @@ public class FabricItemUtil {
 
     public static String getName(ItemStack item) {
         if (item == null || item.isEmpty()) return "Air";
-        return item.getHoverName().getString();
+        try { String n = item.getHoverName().getString(); if (n == null || n.trim().isEmpty() || n.equals("Air")) return item.getItem().toString(); return n; } catch (Exception e) { return item.getItem().toString(); }
     }
 
     public static String getMaterialName(ItemStack item) {

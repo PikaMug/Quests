@@ -13,6 +13,7 @@ package me.pikamug.quests.listeners;
 import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.actions.Action;
+import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
@@ -72,7 +73,11 @@ public class FabricChatListener {
                 for (int i = 0; i < stage.getPasswordPhrases().size(); i++) {
                     final String phrase = stage.getPasswordPhrases().get(i);
                     if (phrase != null && phrase.equalsIgnoreCase(content)) {
-                        quester.getQuestProgressOrDefault(quest).getPasswordsSaid().set(i, true);
+                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        if (!progress.getPasswordsSaid().get(i)) {
+                            progress.getPasswordsSaid().set(i, true);
+                            quester.finishObjective(quest, ObjectiveType.PASSWORD, i);
+                        }
                         matched = true;
                     }
                 }
