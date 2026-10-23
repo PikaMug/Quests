@@ -655,12 +655,11 @@ public class BukkitQuestsPlugin extends JavaPlugin implements Quests {
         foliaLib.getScheduler().runLater(() -> {
             // Workaround for issues with the Compass on fast join
             for (final Player p : getServer().getOnlinePlayers()) {
-                final Quester quester = new BukkitQuester(BukkitQuestsPlugin.this, p.getUniqueId());
+                final Quester quester = getQuester(p.getUniqueId());
                 if (!quester.hasData()) {
                     quester.saveData();
                 }
                 quester.findCompassTarget();
-                questers.put(p.getUniqueId(), quester);
             }
             loading = false;
         }, 60L);
