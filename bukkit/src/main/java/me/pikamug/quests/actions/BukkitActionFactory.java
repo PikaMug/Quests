@@ -57,7 +57,7 @@ public class BukkitActionFactory implements ActionFactory {
     public BukkitActionFactory(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
-    
+
     public ConcurrentHashMap<UUID, Block> getSelectedExplosionLocations() {
         return selectedExplosionLocations;
     }
@@ -97,34 +97,29 @@ public class BukkitActionFactory implements ActionFactory {
     public void setSelectedTeleportLocations(final ConcurrentHashMap<UUID, Block> selectedTeleportLocations) {
         this.selectedTeleportLocations = selectedTeleportLocations;
     }
-    
+
     public List<String> getNamesOfActionsBeingEdited() {
         return editingActionNames;
     }
-    
+
     public void setNamesOfActionsBeingEdited(final Collection<String> actionNames) {
         this.editingActionNames = new LinkedList<>(actionNames);
     }
-    
+
     public void returnToMenu(final UUID uuid) {
         new BukkitActionMainPrompt(uuid).start();
     }
     
     public void loadData(final UUID uuid, final Action action) {
+        if (!(action instanceof BukkitAction)) {
+            return;
+        }
         BukkitAction bukkitAction = (BukkitAction) action;
         if (bukkitAction.getMessage() != null) {
             SessionData.set(uuid, Key.A_MESSAGE, bukkitAction.getMessage());
         }
-        if (bukkitAction.isClearInv()) {
-            SessionData.set(uuid, Key.A_CLEAR_INVENTORY, true);
-        } else {
-            SessionData.set(uuid, Key.A_CLEAR_INVENTORY, false);
-        }
-        if (bukkitAction.isFailQuest()) {
-            SessionData.set(uuid, Key.A_FAIL_QUEST, true);
-        } else {
-            SessionData.set(uuid, Key.A_FAIL_QUEST, false);
-        }
+        SessionData.set(uuid, Key.A_CLEAR_INVENTORY, bukkitAction.isClearInv());
+        SessionData.set(uuid, Key.A_FAIL_QUEST, bukkitAction.isFailQuest());
         if (bukkitAction.getItems() != null && !bukkitAction.getItems().isEmpty()) {
             final LinkedList<ItemStack> items = new LinkedList<>(bukkitAction.getItems());
             SessionData.set(uuid, Key.A_ITEMS, items);

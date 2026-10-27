@@ -52,9 +52,9 @@ public class FabricItemUtil {
             } catch (final NumberFormatException ignored) {}
         }
         // Try to find the item by registry name
-        final var registry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
+        final net.minecraft.core.Registry<net.minecraft.world.item.Item> registry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
         final Identifier id = Identifier.tryParse(materialName.toLowerCase());
-        final var optional = id == null ? Optional.<net.minecraft.world.item.Item>empty() : registry.getOptional(id);
+        final java.util.Optional<net.minecraft.world.item.Item> optional = id == null ? Optional.<net.minecraft.world.item.Item>empty() : registry.getOptional(id);
         if (optional.isPresent()) {
             return new ItemStack(optional.get(), count);
         }
@@ -107,7 +107,7 @@ public class FabricItemUtil {
                 }
             } catch (Exception ex) {}
         }
-        final var server = FabricQuestsPlugin.getInstance().getServer();
+        final net.minecraft.server.MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
         final com.mojang.serialization.DynamicOps<JsonElement> ops = server == null ? JsonOps.INSTANCE : net.minecraft.resources.RegistryOps.create(JsonOps.INSTANCE, server.registryAccess());
         try {
             final DataResult<ItemStack> result = ItemStack.CODEC.parse(ops, element);

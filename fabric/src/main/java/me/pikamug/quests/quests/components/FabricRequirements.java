@@ -12,61 +12,126 @@ package me.pikamug.quests.quests.components;
 
 import net.minecraft.world.item.ItemStack;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class FabricRequirements implements Requirements {
-
     private int money = 0;
     private int questPoints = 0;
     private int exp = 0;
-    private List<ItemStack> items = new ArrayList<>();
-    private List<Boolean> removeItems = new ArrayList<>();
-    private List<String> neededQuestIds = new ArrayList<>();
-    private List<String> blockQuestIds = new ArrayList<>();
-    private List<String> permissions = new ArrayList<>();
-    private List<String> mcmmoSkills = new ArrayList<>();
-    private List<Integer> mcmmoAmounts = new ArrayList<>();
-    private String heroesPrimaryClass;
-    private String heroesSecondaryClass;
+    private List<ItemStack> items = new LinkedList<>();
+    private List<Boolean> removeItems = new LinkedList<>();
+    private List<String> neededQuestIds = new LinkedList<>();
+    private List<String> blockQuestIds = new LinkedList<>();
+    private List<String> permissions = new LinkedList<>();
+    private List<String> mcmmoSkills = new LinkedList<>();
+    private List<Integer> mcmmoAmounts = new LinkedList<>();
+    private String heroesPrimaryClass = null;
+    private String heroesSecondaryClass = null;
     private Map<String, Map<String, Object>> customRequirements = new HashMap<>();
-    private List<String> detailsOverride = new ArrayList<>();
+    private List<String> detailsOverride = new LinkedList<>();
 
-    @Override public int getMoney() { return money; }
-    @Override public void setMoney(int v) { this.money = v; }
-    @Override public int getQuestPoints() { return questPoints; }
-    @Override public void setQuestPoints(int v) { this.questPoints = v; }
-    @Override public int getExp() { return exp; }
-    @Override public void setExp(int v) { this.exp = v; }
-    @Override public List<?> getItems() { return items; }
-    public void setItems(List<ItemStack> v) { this.items = v; }
-    @Override public List<Boolean> getRemoveItems() { return removeItems; }
-    @Override public void setRemoveItems(List<Boolean> v) { this.removeItems = v; }
-    @Override public List<String> getNeededQuestIds() { return neededQuestIds; }
-    @Override public void setNeededQuestIds(List<String> v) { this.neededQuestIds = v; }
-    @Override public List<String> getBlockQuestIds() { return blockQuestIds; }
-    @Override public void setBlockQuestIds(List<String> v) { this.blockQuestIds = v; }
-    @Override public List<String> getPermissions() { return permissions; }
-    @Override public void setPermissions(List<String> v) { this.permissions = v; }
-    @Override public List<String> getMcmmoSkills() { return mcmmoSkills; }
-    @Override public void setMcmmoSkills(List<String> v) { this.mcmmoSkills = v; }
-    @Override public List<Integer> getMcmmoAmounts() { return mcmmoAmounts; }
-    @Override public void setMcmmoAmounts(List<Integer> v) { this.mcmmoAmounts = v; }
-    @Override public String getHeroesPrimaryClass() { return heroesPrimaryClass; }
-    @Override public void setHeroesPrimaryClass(String v) { this.heroesPrimaryClass = v; }
-    @Override public String getHeroesSecondaryClass() { return heroesSecondaryClass; }
-    @Override public void setHeroesSecondaryClass(String v) { this.heroesSecondaryClass = v; }
-    @Override public Map<String, Map<String, Object>> getCustomRequirements() { return customRequirements; }
-    @Override public void setCustomRequirements(Map<String, Map<String, Object>> v) { this.customRequirements = v; }
-    @Override public List<String> getDetailsOverride() { return detailsOverride; }
-    @Override public void setDetailsOverride(List<String> v) { this.detailsOverride = v; }
+    public int getMoney() {
+        return money;
+    }
+    public void setMoney(final int money) {
+        this.money = money;
+    }
+    public int getQuestPoints() {
+        return questPoints;
+    }
+    public void setQuestPoints(final int questPoints) {
+        this.questPoints = questPoints;
+    }
+    public int getExp() {
+        return exp;
+    }
+    public void setExp(final int exp) {
+        this.exp = exp;
+    }
+    public List<ItemStack> getItems() {
+        return items;
+    }
+    public void setItems(final List<ItemStack> items) {
+        this.items = items;
+    }
+    public List<Boolean> getRemoveItems() {
+        return removeItems;
+    }
+    public void setRemoveItems(final List<Boolean> removeItems) {
+        this.removeItems = removeItems;
+    }
+    public List<String> getNeededQuestIds() {
+        return neededQuestIds;
+    }
+    public void setNeededQuestIds(final List<String> neededQuestIds) {
+        this.neededQuestIds = neededQuestIds;
+    }
+    public List<String> getBlockQuestIds() {
+        return blockQuestIds;
+    }
+    public void setBlockQuestIds(final List<String> blockQuestIds) {
+        this.blockQuestIds = blockQuestIds;
+    }
+    public List<String> getPermissions() {
+        return permissions;
+    }
+    public void setPermissions(final List<String> permissions) {
+        this.permissions = permissions;
+    }
+    public List<String> getMcmmoSkills() {
+        return mcmmoSkills;
+    }
+    public void setMcmmoSkills(final List<String> mcmmoSkills) {
+        this.mcmmoSkills = mcmmoSkills;
+    }
+    public List<Integer> getMcmmoAmounts() {
+        return mcmmoAmounts;
+    }
+    public void setMcmmoAmounts(final List<Integer> mcmmoAmounts) {
+        this.mcmmoAmounts = mcmmoAmounts;
+    }
+    public String getHeroesPrimaryClass() {
+        return heroesPrimaryClass;
+    }
+    public void setHeroesPrimaryClass(final String heroesPrimaryClass) {
+        this.heroesPrimaryClass = heroesPrimaryClass;
+    }
+    public String getHeroesSecondaryClass() {
+        return heroesSecondaryClass;
+    }
+    public void setHeroesSecondaryClass(final String heroesSecondaryClass) {
+        this.heroesSecondaryClass = heroesSecondaryClass;
+    }
+    public Map<String, Map<String, Object>> getCustomRequirements() {
+        return customRequirements;
+    }
+    public void setCustomRequirements(final Map<String, Map<String, Object>> customRequirements) {
+        this.customRequirements = customRequirements;
+    }
+    public List<String> getDetailsOverride() {
+        return detailsOverride;
+    }
+    public void setDetailsOverride(final List<String> detailsOverride) {
+        this.detailsOverride = detailsOverride;
+    }
 
     @Override
     public boolean hasRequirement() {
-        return money != 0 || questPoints != 0 || exp != 0 || !items.isEmpty()
-                || !neededQuestIds.isEmpty() || !blockQuestIds.isEmpty()
-                || !permissions.isEmpty() || !mcmmoSkills.isEmpty()
-                || (heroesPrimaryClass != null && !heroesPrimaryClass.isEmpty())
-                || (heroesSecondaryClass != null && !heroesSecondaryClass.isEmpty())
-                || !customRequirements.isEmpty();
+        if (money != 0) { return true; }
+        if (questPoints != 0) { return true; }
+        if (exp != 0) { return true; }
+        if (!items.isEmpty()) { return true; }
+        if (!removeItems.isEmpty()) { return true; }
+        if (!neededQuestIds.isEmpty()) { return true; }
+        if (!blockQuestIds.isEmpty()) { return true; }
+        if (!permissions.isEmpty()) { return true; }
+        if (!mcmmoSkills.isEmpty()) { return true; }
+        if (!mcmmoAmounts.isEmpty()) { return true; }
+        if (heroesPrimaryClass != null) { return true; }
+        if (heroesSecondaryClass != null) { return true; }
+        return !customRequirements.isEmpty();
     }
 }

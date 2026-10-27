@@ -191,7 +191,7 @@ public class FabricActionMenuPrompt extends FabricActionsEditorIntegerPrompt {
                         return;
                     }
                 }
-                final List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
+                final List<String> actionNames = plugin.getActionFactory().getEditingActionNames();
                 if (actionNames.contains(input)) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("questEditorBeingEdited")));
                     new ActionSelectCreatePrompt(uuid).start();
@@ -209,7 +209,7 @@ public class FabricActionMenuPrompt extends FabricActionsEditorIntegerPrompt {
                 }
                 SessionData.set(uuid, Key.A_NAME, input);
                 actionNames.add(input);
-                plugin.getActionFactory().setNamesOfActionsBeingEdited(actionNames);
+                plugin.getActionFactory().setEditingActionNames(actionNames);
                 new FabricActionMainPrompt(uuid).start();
             } else {
                 new FabricActionMenuPrompt(uuid).start();
@@ -295,7 +295,7 @@ public class FabricActionMenuPrompt extends FabricActionsEditorIntegerPrompt {
                 final Action action = plugin.getAction(input);
                 if (action != null) {
                     for (final Quest quest : plugin.getLoadedQuests()) {
-                        for (final Stage stage : quest.getStages()) {
+                        for (final Stage stage : quest.getOrderedStages()) {
                             if (stage.getFinishAction() != null
                                     && stage.getFinishAction().getName().equalsIgnoreCase(action.getName())) {
                                 used.add(quest.getName());

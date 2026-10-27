@@ -42,7 +42,7 @@ public class FabricPlayerMoveThread implements Runnable {
             if (stage.getLocationsToReach().isEmpty()) continue;
             if (!stage.hasLocatableObjective()) continue;
 
-            final var progress = quester.getQuestProgressOrDefault(quest);
+            final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
             boolean changed = false;
             for (int i = 0; i < stage.getLocationsToReach().size(); i++) {
                 final Object locObj = stage.getLocationsToReach().get(i);

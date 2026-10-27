@@ -14,13 +14,13 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class QuestsEvent extends Event {
+public abstract class BukkitQuestsEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
     
-    public QuestsEvent() {
+    public BukkitQuestsEvent() {
     }
     
-    public QuestsEvent(final boolean async) {
+    public BukkitQuestsEvent(final boolean async) {
         super(async);
     }
     

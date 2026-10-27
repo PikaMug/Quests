@@ -10,67 +10,80 @@
 
 package me.pikamug.quests.quests.components;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class FabricPlanner implements Planner {
+    public String start = null;
+    public String end = null;
+    public long repeat = -1;
+    public long cooldown = -1;
+    public boolean override = false;
 
-    private String start;
-    private String end;
-    private long repeat = 0;
-    private long cooldown = 0;
-    private boolean override = false;
-
-    @Override public String getStart() { return start; }
-    @Override public void setStart(String v) { this.start = v; }
-    @Override public String getEnd() { return end; }
-    @Override public void setEnd(String v) { this.end = v; }
-    @Override public long getRepeat() { return repeat; }
-    @Override public void setRepeat(long v) { this.repeat = v; }
-    @Override public long getCooldown() { return cooldown; }
-    @Override public void setCooldown(long v) { this.cooldown = v; }
-    @Override public boolean getOverride() { return override; }
-    @Override public void setOverride(boolean v) { this.override = v; }
-
-    @Override
+    public String getStart() {
+        return start;
+    }
     public long getStartInMillis() {
-        return parseDate(start);
-    }
-
-    @Override
-    public boolean hasStart() {
-        return start != null && !start.isEmpty();
-    }
-
-    @Override
-    public long getEndInMillis() {
-        return parseDate(end);
-    }
-
-    @Override
-    public boolean hasEnd() {
-        return end != null && !end.isEmpty();
-    }
-
-    @Override
-    public boolean hasRepeat() {
-        return repeat > 0;
-    }
-
-    @Override
-    public boolean hasCooldown() {
-        return cooldown > 0;
-    }
-
-    private long parseDate(String dateStr) {
-        if (dateStr == null || dateStr.isEmpty()) return 0;
-        try {
-            final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-            final Date date = sdf.parse(dateStr);
-            return date != null ? date.getTime() : 0;
-        } catch (final ParseException e) {
-            return 0;
+        if (start == null) {
+            return -1;
         }
+        final Calendar cal = Calendar.getInstance();
+        final String[] s = start.split(":");
+        cal.set(Integer.parseInt(s[2]), Integer.parseInt(s[1]), Integer.parseInt(s[0]),
+                Integer.parseInt(s[3]), Integer.parseInt(s[4]), Integer.parseInt(s[5]));
+        final TimeZone tz = TimeZone.getTimeZone(s[6]);
+        cal.setTimeZone(tz);
+        return cal.getTimeInMillis();
+    }
+    public boolean hasStart() {
+        return start != null;
+    }
+    public void setStart(final String start) {
+        this.start = start;
+    }
+    public String getEnd() {
+        return end;
+    }
+    public long getEndInMillis() {
+        if (end == null) {
+            return -1;
+        }
+        final Calendar cal = Calendar.getInstance();
+        final String[] s = end.split(":");
+        cal.set(Integer.parseInt(s[2]), Integer.parseInt(s[1]), Integer.parseInt(s[0]),
+                Integer.parseInt(s[3]), Integer.parseInt(s[4]), Integer.parseInt(s[5]));
+        final TimeZone tz = TimeZone.getTimeZone(s[6]);
+        cal.setTimeZone(tz);
+        return cal.getTimeInMillis();
+    }
+    public boolean hasEnd() {
+        return end != null;
+    }
+    public void setEnd(final String end) {
+        this.end = end;
+    }
+    public long getRepeat() {
+        return repeat;
+    }
+    public boolean hasRepeat() {
+        return repeat != -1;
+    }
+    public void setRepeat(final long repeat) {
+        this.repeat = repeat;
+    }
+    public long getCooldown() {
+        return cooldown;
+    }
+    public boolean hasCooldown() {
+        return cooldown != -1;
+    }
+    public void setCooldown(final long cooldown) {
+        this.cooldown = cooldown;
+    }
+    public boolean getOverride() {
+        return override;
+    }
+    public void setOverride(final boolean override) {
+        this.override = override;
     }
 }

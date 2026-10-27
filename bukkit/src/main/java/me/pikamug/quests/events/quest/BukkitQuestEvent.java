@@ -10,7 +10,7 @@
 
 package me.pikamug.quests.events.quest;
 
-import me.pikamug.quests.events.QuestsEvent;
+import me.pikamug.quests.events.BukkitQuestsEvent;
 import me.pikamug.quests.quests.Quest;
 import org.bukkit.event.HandlerList;
 
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents a quest-related event
  */
-public abstract class BukkitQuestEvent extends QuestsEvent {
+public abstract class BukkitQuestEvent extends BukkitQuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Quest quest;
     

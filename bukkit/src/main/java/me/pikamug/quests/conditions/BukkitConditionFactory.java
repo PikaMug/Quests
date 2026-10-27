@@ -57,6 +57,9 @@ public class BukkitConditionFactory implements ConditionFactory {
     }
     
     public void loadData(final UUID uuid, final Condition condition) {
+        if (!(condition instanceof BukkitCondition)) {
+            return;
+        }
         BukkitCondition bukkitCondition = (BukkitCondition) condition;
         if (bukkitCondition.isFailQuest()) {
             SessionData.set(uuid, Key.C_FAIL_QUEST, true);

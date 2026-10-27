@@ -44,7 +44,7 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToCraft().isEmpty()) {
-                final var progress = quester.getQuestProgressOrDefault(quest);
+                final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToCraft().size(); i++) {
                     final Object goal = stage.getItemsToCraft().get(i);
                     if (goal != null && FabricItemUtil.matches(crafted, (ItemStack) goal)) {
@@ -68,7 +68,7 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToSmelt().isEmpty()) {
-                final var progress = quester.getQuestProgressOrDefault(quest);
+                final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToSmelt().size(); i++) {
                     final Object goal = stage.getItemsToSmelt().get(i);
                     if (goal != null && FabricItemUtil.matches(smelted, (ItemStack) goal)) {
@@ -92,7 +92,7 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToEnchant().isEmpty()) {
-                final var progress = quester.getQuestProgressOrDefault(quest);
+                final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToEnchant().size(); i++) {
                     final Object goal = stage.getItemsToEnchant().get(i);
                     if (goal != null && FabricItemUtil.matches(enchanted, (ItemStack) goal)) {
@@ -116,7 +116,7 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToBrew().isEmpty()) {
-                final var progress = quester.getQuestProgressOrDefault(quest);
+                final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToBrew().size(); i++) {
                     final Object goal = stage.getItemsToBrew().get(i);
                     if (goal != null && FabricItemUtil.matches(brewed, (ItemStack) goal)) {
@@ -140,7 +140,7 @@ public class FabricItemListener {
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
             if (!stage.getItemsToConsume().isEmpty()) {
-                final var progress = quester.getQuestProgressOrDefault(quest);
+                final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 for (int i = 0; i < stage.getItemsToConsume().size(); i++) {
                     final Object goal = stage.getItemsToConsume().get(i);
                     if (goal != null && FabricItemUtil.matches(consumed, (ItemStack) goal)) {

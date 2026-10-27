@@ -11,9 +11,7 @@
 package me.pikamug.quests.module;
 
 import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.events.FabricQuestsEventBus;
-import me.pikamug.quests.events.quester.FabricQuesterPostUpdateObjectiveEvent;
-import me.pikamug.quests.events.quester.FabricQuesterPreUpdateObjectiveEvent;
+import me.pikamug.quests.events.FabricEventAccessor;
 import me.pikamug.quests.player.FabricQuestProgress;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
@@ -204,9 +202,13 @@ public class FabricCustomObjective implements CustomObjective {
                 }
                 if (index > -1) {
                     final int goal = quester.getCurrentStage(quest).getCustomObjectiveCounts().get(index);
-                    FabricQuestsEventBus.fire(new FabricQuesterPreUpdateObjectiveEvent(plugin, quester, quest,
-                            customObjCounts.get(index), goal));
-                    if (customObjCounts.get(index) >= goal) {
+                    final int progress = customObjCounts.get(index);
+                    final FabricQuester fabricQuester = (FabricQuester) quester;
+                    final FabricEventAccessor eventAccessor = plugin.getDependencies().getEventAccessor();
+                    if (eventAccessor != null) {
+                        eventAccessor.firePreUpdateObjective(fabricQuester, quest, progress, goal);
+                    }
+                    if (progress >= goal) {
                         // This objective has been completed in this stage.
                         quester.checkQuest(quest);
                         // Multiplayer
@@ -221,8 +223,9 @@ public class FabricCustomObjective implements CustomObjective {
                             return null;
                         });
                     }
-                    FabricQuestsEventBus.fire(new FabricQuesterPostUpdateObjectiveEvent(plugin, quester, quest,
-                            customObjCounts.get(index), goal));
+                    if (eventAccessor != null) {
+                        eventAccessor.firePostUpdateObjective(fabricQuester, quest, progress, goal);
+                    }
                 }
             }
         }

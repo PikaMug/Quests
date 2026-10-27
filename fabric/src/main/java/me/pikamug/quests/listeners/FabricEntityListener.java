@@ -62,7 +62,8 @@ public class FabricEntityListener {
                 } else if (entity instanceof TamableAnimal) {
                     TamableAnimal tamed = (TamableAnimal) entity;
                     if (!tamed.isTame()) {
-                    deferredTameCheck(serverPlayer, serverPlayer.level(), entity);
+                        deferredTameCheck(serverPlayer, serverPlayer.level(), entity);
+                    }
                 }
             }
             return false;
@@ -85,7 +86,7 @@ public class FabricEntityListener {
                 boolean matched = false;
                 for (int i = 0; i < stage.getNpcsToKill().size(); i++) {
                     if (stage.getNpcsToKill().get(i).equals(victim.getUUID())) {
-                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         final int goal = (stage.getNpcNumToKill() != null && stage.getNpcNumToKill().size() > i)
                                 ? stage.getNpcNumToKill().get(i) : 1;
                         final int before = progress.getNpcsNumKilled().get(i);
@@ -103,7 +104,7 @@ public class FabricEntityListener {
 
             if (victim instanceof ServerPlayer && stage.getPlayersToKill() != null
                     && stage.getPlayersToKill() > 0) {
-                final var progress = quester.getQuestProgressOrDefault(quest);
+                final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 final int beforeKill = progress.getPlayersKilled();
                 progress.setPlayersKilled(beforeKill + 1);
                 if (beforeKill < stage.getPlayersToKill()
@@ -120,7 +121,7 @@ public class FabricEntityListener {
                 for (int i = 0; i < stage.getMobsToKill().size(); i++) {
                     if (matchesEntityName(stage.getMobsToKill().get(i), victim.getType())
                             && isWithinKillLocation(stage, i, victim.getX(), victim.getY(), victim.getZ(), level)) {
-                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         final int goal = (stage.getMobNumToKill() != null && stage.getMobNumToKill().size() > i)
                                 ? stage.getMobNumToKill().get(i) : 1;
                         final int before = progress.getMobNumKilled().get(i);
@@ -142,7 +143,7 @@ public class FabricEntityListener {
         quester.dispatchMultiplayerEverything(quest, ObjectiveType.KILL_MOB, (q, cq) -> {
             final Stage qStage = q.getCurrentStage(cq);
             if (qStage == null || qStage.getMobsToKill().isEmpty()) return null;
-            final var qProgress = q.getQuestProgressOrDefault(cq);
+            final me.pikamug.quests.player.QuestProgress qProgress = q.getQuestProgressOrDefault(cq);
             for (int i = 0; i < qStage.getMobsToKill().size(); i++) {
                 if (!matchesEntityName(qStage.getMobsToKill().get(i), victim.getType())) continue;
                 if (!isWithinKillLocation(qStage, i, victim.getX(), victim.getY(), victim.getZ(), level)) continue;
@@ -164,7 +165,7 @@ public class FabricEntityListener {
         quester.dispatchMultiplayerEverything(quest, ObjectiveType.KILL_NPC, (q, cq) -> {
             final Stage qStage = q.getCurrentStage(cq);
             if (qStage == null || qStage.getNpcsToKill().isEmpty()) return null;
-            final var qProgress = q.getQuestProgressOrDefault(cq);
+            final me.pikamug.quests.player.QuestProgress qProgress = q.getQuestProgressOrDefault(cq);
             for (int i = 0; i < qStage.getNpcsToKill().size(); i++) {
                 if (!qStage.getNpcsToKill().get(i).equals(victim.getUUID())) continue;
                 if (qProgress.getNpcsNumKilled().size() <= i) continue;
@@ -185,7 +186,7 @@ public class FabricEntityListener {
         quester.dispatchMultiplayerEverything(quest, ObjectiveType.KILL_PLAYER, (q, cq) -> {
             final Stage qStage = q.getCurrentStage(cq);
             if (qStage == null || qStage.getPlayersToKill() == null || qStage.getPlayersToKill() <= 0) return null;
-            final var qProgress = q.getQuestProgressOrDefault(cq);
+            final me.pikamug.quests.player.QuestProgress qProgress = q.getQuestProgressOrDefault(cq);
             final int qBefore = qProgress.getPlayersKilled();
             qProgress.setPlayersKilled(Math.min(qBefore + 1, qStage.getPlayersToKill()));
             if (qBefore < qStage.getPlayersToKill() && qProgress.getPlayersKilled() >= qStage.getPlayersToKill()) {
@@ -277,7 +278,7 @@ public class FabricEntityListener {
             if (!quester.getCurrentQuests().containsKey(quest)) continue;
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null || stage.getCowsToMilk() == null || stage.getCowsToMilk() <= 0) continue;
-            final var progress = quester.getQuestProgressOrDefault(quest);
+            final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
             final int beforeMilk = progress.getCowsMilked();
             progress.setCowsMilked(beforeMilk + 1);
             if (beforeMilk < stage.getCowsToMilk() && progress.getCowsMilked() >= stage.getCowsToMilk()) {
@@ -294,7 +295,7 @@ public class FabricEntityListener {
             if (!quester.getCurrentQuests().containsKey(quest)) continue;
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null || stage.getFishToCatch() == null || stage.getFishToCatch() <= 0) continue;
-            final var progress = quester.getQuestProgressOrDefault(quest);
+            final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
             final int beforeFish = progress.getFishCaught();
             progress.setFishCaught(beforeFish + 1);
             if (beforeFish < stage.getFishToCatch() && progress.getFishCaught() >= stage.getFishToCatch()) {
@@ -335,7 +336,7 @@ public class FabricEntityListener {
                 final String lowercase = goal.toString().trim().toLowerCase(java.util.Locale.ENGLISH);
                 if (lowercase.equals(colorName.toLowerCase(java.util.Locale.ENGLISH))
                         || lowercase.equals(colorEnumName.toLowerCase(java.util.Locale.ENGLISH))) {
-                    final var progress = quester.getQuestProgressOrDefault(quest);
+                    final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                     final int shearGoal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
                             ? stage.getSheepNumToShear().get(i) : 1;
                     final int before = progress.getSheepSheared().get(i);
@@ -379,7 +380,7 @@ public class FabricEntityListener {
             boolean matched = false;
             for (int i = 0; i < stage.getMobsToTame().size(); i++) {
                 if (matchesEntityName(stage.getMobsToTame().get(i), type)) {
-                    final var progress = quester.getQuestProgressOrDefault(quest);
+                    final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                     final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
                             ? stage.getMobNumToTame().get(i) : 1;
                     final int before = progress.getMobsTamed().get(i);

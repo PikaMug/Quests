@@ -10,26 +10,22 @@
 
 package me.pikamug.quests.events;
 
-import me.pikamug.quests.FabricQuestsPlugin;
+/**
+ * Represents an event that may be cancelled by a listener
+ */
+public interface FabricCancellable {
 
-public abstract class FabricQuestEvent {
+    /**
+     * Returns whether this event has been cancelled
+     *
+     * @return true if cancelled
+     */
+    boolean isCancelled();
 
-    private final FabricQuestsPlugin plugin;
-    private boolean cancelled = false;
-
-    public FabricQuestEvent(final FabricQuestsPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public FabricQuestsPlugin getPlugin() {
-        return plugin;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    public void setCancelled(final boolean cancelled) {
-        this.cancelled = cancelled;
-    }
+    /**
+     * Sets whether this event has been cancelled
+     *
+     * @param cancel true to cancel
+     */
+    void setCancelled(final boolean cancel);
 }

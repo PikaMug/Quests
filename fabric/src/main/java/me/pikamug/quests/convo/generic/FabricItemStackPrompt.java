@@ -300,12 +300,15 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
                         SessionData.set(uuid, "tempDisplay", display);
                     }
                     final ItemLore loreData = is.get(DataComponents.LORE);
-                    if (loreData != null && !loreData.lines().isEmpty()) {
-                        final LinkedList<String> lore = new LinkedList<>();
-                        for (final Component line : loreData.lines()) {
-                            lore.add(line.getString());
+                    if (loreData != null) {
+                        final java.util.List<Component> loreLines = loreData.lines();
+                        if (loreLines != null && !loreLines.isEmpty()) {
+                            final LinkedList<String> lore = new LinkedList<>();
+                            for (final Component line : loreLines) {
+                                lore.add(line.getString());
+                            }
+                            SessionData.set(uuid, "tempLore", lore);
                         }
-                        SessionData.set(uuid, "tempLore", lore);
                     }
                 }
                 new FabricItemStackPrompt(uuid, oldPrompt).start();
@@ -860,9 +863,13 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
     }
 
     private static List<Holder.Reference<Enchantment>> getAllEnchantments() {
-        final var server = FabricQuestsPlugin.getInstance().getServer();
-        if (server == null) return List.of();
-        return server.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).listElements().toList();
+        final net.minecraft.server.MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
+        if (server == null) {
+            return java.util.Collections.emptyList();
+        }
+        final java.util.stream.Stream<Holder.Reference<Enchantment>> stream = server.registryAccess()
+                .lookupOrThrow(Registries.ENCHANTMENT).listElements();
+        return stream.collect(java.util.stream.Collectors.toList());
     }
 
     private static String capitalize(final String s) {

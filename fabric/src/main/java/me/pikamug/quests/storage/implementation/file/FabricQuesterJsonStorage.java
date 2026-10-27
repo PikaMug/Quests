@@ -134,7 +134,7 @@ public class FabricQuesterJsonStorage implements QuesterStorageImpl {
                     if (quest == null || !e.getValue().isJsonObject()) {
                         continue;
                     }
-                    quester.setQuestProgress(quest, parseProgress(e.getValue().getAsJsonObject()));
+                    quester.setQuestProgress(quest, parseProgress(e.getValue().getAsJsonObject(), quester));
                 }
             }
             quester.setHasData(true);
@@ -171,8 +171,8 @@ public class FabricQuesterJsonStorage implements QuesterStorageImpl {
         return json;
     }
 
-    private QuestProgress parseProgress(final JsonObject json) {
-        final FabricQuestProgress progress = new FabricQuestProgress();
+    private QuestProgress parseProgress(final JsonObject json, final Quester quester) {
+        final FabricQuestProgress progress = new FabricQuestProgress(quester);
         progress.setBlocksBroken(fromArray(json.getAsJsonArray("blocksBroken")));
         progress.setBlocksDamaged(fromArray(json.getAsJsonArray("blocksDamaged")));
         progress.setBlocksPlaced(fromArray(json.getAsJsonArray("blocksPlaced")));
@@ -313,7 +313,7 @@ public class FabricQuesterJsonStorage implements QuesterStorageImpl {
     public Collection<UUID> getSavedUniqueIds() throws Exception {
         final Set<UUID> uuids = new HashSet<>();
         if (!Files.exists(dataDir)) return uuids;
-        try (var stream = Files.list(dataDir)) {
+        try (java.util.stream.Stream<java.nio.file.Path> stream = Files.list(dataDir)) {
             stream.filter(p -> p.toString().endsWith(".json")).forEach(p -> {
                 try {
                     uuids.add(UUID.fromString(p.getFileName().toString().replace(".json", "")));

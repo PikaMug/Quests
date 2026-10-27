@@ -10,46 +10,52 @@
 
 package me.pikamug.quests.tasks;
 
-import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.FabricQuestsPlugin;
 
 public class FabricStageTimer implements Runnable {
 
+    private final Quester quester;
     private final FabricQuestsPlugin plugin;
-    private final FabricQuester quester;
     private final Quest quest;
-    private final int delaySeconds;
-    private int tickCount = 0;
-    private boolean cancelled = false;
 
-    public FabricStageTimer(FabricQuestsPlugin plugin, FabricQuester quester, Quest quest, int delaySeconds) {
-        this.plugin = plugin;
+    public FabricStageTimer(final FabricQuestsPlugin plugin, final Quester quester, final Quest quest) {
         this.quester = quester;
         this.quest = quest;
-        this.delaySeconds = delaySeconds;
+        this.plugin = plugin;
     }
 
     @Override
     public void run() {
-        if (cancelled) return;
-        if (!quester.getCurrentQuests().containsKey(quest)) {
-            cancelled = true;
+        if (quester == null) {
             return;
         }
-        tickCount++;
-        if (tickCount >= delaySeconds * 20) {
-            cancelled = true;
-            // Auto-complete stage
-            quester.checkQuest(quest);
+        if (quester.getQuestProgressOrDefault(quest) == null) {
+            return;
         }
-    }
-
-    public void cancel() {
-        this.cancelled = true;
-    }
-
-    public boolean isCancelled() {
-        return cancelled;
+        if (quester.getCurrentStage(quest) == null) {
+            return;
+        }
+        if (!quester.testComplete(quest)) {
+            return;
+        }
+        if (quester.getCurrentStage(quest).getFinishAction() != null) {
+            quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
+        }
+        if (quest.getOrderedStages().indexOf(quester.getCurrentStage(quest)) == (quest.getOrderedStages().size() - 1)) {
+            quest.completeQuest(quester);
+        } else {
+            final int stageNum = quester.getCurrentQuests().get(quest) + 1;
+            quester.getQuestProgressOrDefault(quest).setDelayStartTime(0);
+            quester.getQuestProgressOrDefault(quest).setDelayTimeLeft(-1);
+            try {
+                quest.setStage(quester, stageNum);
+            } catch (final IndexOutOfBoundsException e) {
+                plugin.getPluginLogger().severe("Unable to set stage of quest " + quest.getName() + " to Stage "
+                        + stageNum + " after delay");
+            }
+        }
+        quester.updateJournal();
     }
 }

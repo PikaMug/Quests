@@ -10,82 +10,149 @@
 
 package me.pikamug.quests.actions;
 
-import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.SessionData;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.convo.actions.main.FabricActionMainPrompt;
+import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricItemUtil;
+import me.pikamug.quests.util.FabricLocation;
+import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class FabricActionFactory implements ActionFactory {
 
     private final FabricQuestsPlugin plugin;
-    private final List<String> namesOfActionsBeingEdited = Collections.synchronizedList(new ArrayList<>());
+    private ConcurrentHashMap<UUID, FabricLocation> selectedExplosionLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, FabricLocation> selectedEffectLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, FabricLocation> selectedMobLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, FabricLocation> selectedLightningLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, FabricLocation> selectedTeleportLocations = new ConcurrentHashMap<>();
+    private List<String> editingActionNames = new LinkedList<>();
 
     public FabricActionFactory(FabricQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    @Override public List<String> getNamesOfActionsBeingEdited() { return namesOfActionsBeingEdited; }
-    @Override public void setNamesOfActionsBeingEdited(Collection<String> v) { namesOfActionsBeingEdited.clear(); namesOfActionsBeingEdited.addAll(v); }
+    public ConcurrentHashMap<UUID, FabricLocation> getSelectedExplosionLocations() {
+        return selectedExplosionLocations;
+    }
 
-    @Override
-    public void returnToMenu(UUID uuid) {
-        SessionData.clear(uuid);
+    public void setSelectedExplosionLocations(final ConcurrentHashMap<UUID, FabricLocation> selectedExplosionLocations) {
+        this.selectedExplosionLocations = selectedExplosionLocations;
+    }
+
+    public ConcurrentHashMap<UUID, FabricLocation> getSelectedEffectLocations() {
+        return selectedEffectLocations;
+    }
+
+    public void setSelectedEffectLocations(final ConcurrentHashMap<UUID, FabricLocation> selectedEffectLocations) {
+        this.selectedEffectLocations = selectedEffectLocations;
+    }
+
+    public ConcurrentHashMap<UUID, FabricLocation> getSelectedMobLocations() {
+        return selectedMobLocations;
+    }
+
+    public void setSelectedMobLocations(final ConcurrentHashMap<UUID, FabricLocation> selectedMobLocations) {
+        this.selectedMobLocations = selectedMobLocations;
+    }
+
+    public ConcurrentHashMap<UUID, FabricLocation> getSelectedLightningLocations() {
+        return selectedLightningLocations;
+    }
+
+    public void setSelectedLightningLocations(final ConcurrentHashMap<UUID, FabricLocation> selectedLightningLocations) {
+        this.selectedLightningLocations = selectedLightningLocations;
+    }
+
+    public ConcurrentHashMap<UUID, FabricLocation> getSelectedTeleportLocations() {
+        return selectedTeleportLocations;
+    }
+
+    public void setSelectedTeleportLocations(final ConcurrentHashMap<UUID, FabricLocation> selectedTeleportLocations) {
+        this.selectedTeleportLocations = selectedTeleportLocations;
+    }
+
+    public List<String> getNamesOfActionsBeingEdited() {
+        return editingActionNames;
+    }
+
+    public void setNamesOfActionsBeingEdited(final Collection<String> actionNames) {
+        this.editingActionNames = new LinkedList<>(actionNames);
+    }
+
+    public void returnToMenu(final UUID uuid) {
+        new FabricActionMainPrompt(uuid).start();
     }
 
     @Override
     public void loadData(UUID uuid, Action action) {
-        if (!(action instanceof FabricAction)) return;
-        FabricAction fabAction = (FabricAction) action;
-        if (fabAction.getName() != null) {
-            SessionData.set(uuid, Key.A_NAME, fabAction.getName());
+        if (!(action instanceof FabricAction)) {
+            return;
         }
-        if (fabAction.getMessage() != null) {
-            SessionData.set(uuid, Key.A_MESSAGE, fabAction.getMessage());
+        FabricAction fabricAction = (FabricAction) action;
+        if (fabricAction.getMessage() != null) {
+            SessionData.set(uuid, Key.A_MESSAGE, fabricAction.getMessage());
         }
-        SessionData.set(uuid, Key.A_CLEAR_INVENTORY, fabAction.isClearInv());
-        SessionData.set(uuid, Key.A_FAIL_QUEST, fabAction.isFailQuest());
-        if (fabAction.getCommands() != null && !fabAction.getCommands().isEmpty()) {
-            SessionData.set(uuid, Key.A_COMMANDS, fabAction.getCommands());
+        SessionData.set(uuid, Key.A_CLEAR_INVENTORY, fabricAction.isClearInv());
+        SessionData.set(uuid, Key.A_FAIL_QUEST, fabricAction.isFailQuest());
+        if (fabricAction.getItems() != null && !fabricAction.getItems().isEmpty()) {
+            SessionData.set(uuid, Key.A_ITEMS, fabricAction.getItems());
         }
-        if (fabAction.getStormDuration() > 0) {
-            SessionData.set(uuid, Key.A_WORLD_STORM_DURATION, fabAction.getStormDuration());
+        if (fabricAction.getExplosions() != null && !fabricAction.getExplosions().isEmpty()) {
+            final LinkedList<String> locs = new LinkedList<>();
+            for (final FabricLocation loc : fabricAction.getExplosions()) {
+                locs.add(FabricConfigUtil.getLocationInfo(loc));
+            }
+            SessionData.set(uuid, Key.A_EXPLOSIONS, locs);
         }
-        if (fabAction.getThunderDuration() > 0) {
-            SessionData.set(uuid, Key.A_WORLD_THUNDER_DURATION, fabAction.getThunderDuration());
+        if (fabricAction.getEffects() != null && !fabricAction.getEffects().isEmpty()) {
+            final LinkedList<String> locs = new LinkedList<>();
+            final LinkedList<String> effs = new LinkedList<>();
+            for (final Map.Entry<FabricLocation, SoundEvent> e : fabricAction.getEffects().entrySet()) {
+                locs.add(FabricConfigUtil.getLocationInfo(e.getKey()));
+                effs.add(e.getValue().toString());
+            }
+            SessionData.set(uuid, Key.A_EFFECTS, effs);
+            SessionData.set(uuid, Key.A_EFFECTS_LOCATIONS, locs);
         }
-        if (fabAction.getMobSpawns() != null && !fabAction.getMobSpawns().isEmpty()) {
-            SessionData.set(uuid, Key.A_MOBS, fabAction.getMobSpawns());
+        if (fabricAction.getStormWorld() != null) {
+            SessionData.set(uuid, Key.A_WORLD_STORM, fabricAction.getStormWorld().dimension().identifier());
+            SessionData.set(uuid, Key.A_WORLD_STORM_DURATION, fabricAction.getStormDuration());
         }
-        if (fabAction.getHunger() != 0) {
-            SessionData.set(uuid, Key.A_HUNGER, fabAction.getHunger());
+        if (fabricAction.getThunderWorld() != null) {
+            SessionData.set(uuid, Key.A_WORLD_THUNDER, fabricAction.getThunderWorld().dimension().identifier());
+            SessionData.set(uuid, Key.A_WORLD_THUNDER_DURATION, fabricAction.getThunderDuration());
         }
-        if (fabAction.getSaturation() != 0) {
-            SessionData.set(uuid, Key.A_SATURATION, fabAction.getSaturation());
+        if (fabricAction.getMobSpawns() != null && !fabricAction.getMobSpawns().isEmpty()) {
+            SessionData.set(uuid, Key.A_MOBS, fabricAction.getMobSpawns());
         }
-        if (fabAction.getHealth() > 0) {
-            SessionData.set(uuid, Key.A_HEALTH, fabAction.getHealth());
+        if (fabricAction.getLightningStrikes() != null && !fabricAction.getLightningStrikes().isEmpty()) {
+            final LinkedList<String> locs = new LinkedList<>();
+            for (final FabricLocation loc : fabricAction.getLightningStrikes()) {
+                locs.add(FabricConfigUtil.getLocationInfo(loc));
+            }
+            SessionData.set(uuid, Key.A_LIGHTNING, locs);
         }
-        if (fabAction.getTimer() > 0) {
-            SessionData.set(uuid, Key.A_TIMER, fabAction.getTimer());
-        }
-        if (fabAction.isCancelTimer()) {
-            SessionData.set(uuid, Key.A_CANCEL_TIMER, true);
-        }
-        if (fabAction.getPotionEffects() != null && !fabAction.getPotionEffects().isEmpty()) {
+        if (fabricAction.getPotionEffects() != null && !fabricAction.getPotionEffects().isEmpty()) {
             final LinkedList<String> types = new LinkedList<>();
             final LinkedList<Long> durations = new LinkedList<>();
             final LinkedList<Integer> strengths = new LinkedList<>();
-            for (final MobEffectInstance pe : fabAction.getPotionEffects()) {
+            for (final MobEffectInstance pe : fabricAction.getPotionEffects()) {
                 types.add(pe.getEffect().value().getDescriptionId()
                         .replaceFirst("effect\\.minecraft\\.", "").toUpperCase());
                 durations.add((long) pe.getDuration());
@@ -95,8 +162,26 @@ public class FabricActionFactory implements ActionFactory {
             SessionData.set(uuid, Key.A_POTION_DURATIONS, durations);
             SessionData.set(uuid, Key.A_POTION_STRENGTH, strengths);
         }
-        if (fabAction.getItems() != null && !fabAction.getItems().isEmpty()) {
-            SessionData.set(uuid, Key.A_ITEMS, fabAction.getItems());
+        if (fabricAction.getHunger() != 0) {
+            SessionData.set(uuid, Key.A_HUNGER, fabricAction.getHunger());
+        }
+        if (fabricAction.getSaturation() != 0) {
+            SessionData.set(uuid, Key.A_SATURATION, fabricAction.getSaturation());
+        }
+        if (fabricAction.getHealth() > 0) {
+            SessionData.set(uuid, Key.A_HEALTH, fabricAction.getHealth());
+        }
+        if (fabricAction.getTeleport() != null) {
+            SessionData.set(uuid, Key.A_TELEPORT, FabricConfigUtil.getLocationInfo(fabricAction.getTeleport()));
+        }
+        if (fabricAction.getCommands() != null && !fabricAction.getCommands().isEmpty()) {
+            SessionData.set(uuid, Key.A_COMMANDS, fabricAction.getCommands());
+        }
+        if (fabricAction.getTimer() > 0) {
+            SessionData.set(uuid, Key.A_TIMER, fabricAction.getTimer());
+        }
+        if (fabricAction.isCancelTimer()) {
+            SessionData.set(uuid, Key.A_CANCEL_TIMER, true);
         }
     }
 
@@ -210,7 +295,7 @@ public class FabricActionFactory implements ActionFactory {
                 json.add(actionName, section);
                 Files.write(actionsFile, gson.toJson(json).getBytes());
             }
-            namesOfActionsBeingEdited.remove(actionName);
+            editingActionNames.remove(actionName);
             plugin.reload();
             clearData(uuid);
         } catch (final Exception e) {

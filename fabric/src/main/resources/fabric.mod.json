@@ -30,6 +30,7 @@
     "java": ">=25"
   },
   "suggests": {
+    "fabric-api": "*",
     "placeholder-api": "*",
     "openpartiesandclaims": "*",
     "luckperms": "*",

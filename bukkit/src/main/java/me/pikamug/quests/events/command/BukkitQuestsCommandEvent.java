@@ -11,14 +11,14 @@
 package me.pikamug.quests.events.command;
 
 import me.pikamug.quests.player.BukkitQuester;
-import me.pikamug.quests.events.QuestsEvent;
+import me.pikamug.quests.events.BukkitQuestsEvent;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a Quests command-related event
  */
-public abstract class BukkitQuestsCommandEvent extends QuestsEvent {
+public abstract class BukkitQuestsCommandEvent extends BukkitQuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private final BukkitQuester quester;
     

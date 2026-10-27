@@ -46,7 +46,7 @@ public class FabricNpcEffectThread implements Runnable {
                 final FabricQuester quester = plugin.getQuester(player.getUUID());
                 for (final Quest quest : quester.getCurrentQuests().keySet()) {
                     // Check if this NPC is relevant to the quest
-                    final var stage = quester.getCurrentStage(quest);
+                    final me.pikamug.quests.quests.components.Stage stage = quester.getCurrentStage(quest);
                     if (stage == null) continue;
                     if (stage.getNpcsToInteract().contains(npcUuid) || stage.getNpcsToKill().contains(npcUuid)) {
                         final ServerLevel level = player.level();
@@ -98,7 +98,7 @@ public class FabricNpcEffectThread implements Runnable {
         final MinecraftServer server = plugin.getServer();
         if (server == null) return null;
         for (final ServerLevel level : server.getAllLevels()) {
-            final var entity = level.getEntity(uuid);
+            final net.minecraft.world.entity.Entity entity = level.getEntity(uuid);
             if (entity != null) {
                 return entity.position();
             }

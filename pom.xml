@@ -5,6 +5,20 @@
 
     <groupId>me.pikamug.quests</groupId>
     <version>${revision}</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>26.0.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.14.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
     <artifactId>quests-parent</artifactId>
     <packaging>pom</packaging>
 

@@ -28,9 +28,9 @@ public final class FabricScheduler {
 
     public static void tick(MinecraftServer server) {
         tickCounter++;
-        final var iterator = tasks.iterator();
-        while (iterator.hasNext()) {
-            final ScheduledTask task = iterator.next();
+            final java.util.Iterator<ScheduledTask> iterator = tasks.iterator();
+            while (iterator.hasNext()) {
+                final ScheduledTask task = iterator.next();
             if (task.cancelled) {
                 tasks.remove(task);
                 continue;

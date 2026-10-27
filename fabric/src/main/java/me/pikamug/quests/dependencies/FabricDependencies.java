@@ -11,6 +11,7 @@
 package me.pikamug.quests.dependencies;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.events.FabricEventAccessor;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -29,6 +30,7 @@ public class FabricDependencies implements Dependencies {
     private FabricLuckPermsAccessor luckPerms;
     private FabricYawpAccessor yawp;
     private FabricOpenPartiesAccessor openParties;
+    private FabricEventAccessor eventAccessor;
 
     public FabricDependencies(final FabricQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -86,6 +88,17 @@ public class FabricDependencies implements Dependencies {
                 FabricQuestsPlugin.LOGGER.warn("Failed to initialize Open Parties and Claims support", t);
             }
         }
+        if (FabricLoader.getInstance().isModLoaded("fabric-api")
+                || FabricLoader.getInstance().isModLoaded("fabric-api-base")) {
+            try {
+                eventAccessor = new FabricEventAccessor();
+                FabricQuestsPlugin.LOGGER.info("Detected {} support", "Fabric API events");
+            } catch (final Throwable t) {
+                FabricQuestsPlugin.LOGGER.warn("Failed to initialize Fabric API event support", t);
+            }
+        } else {
+            FabricQuestsPlugin.LOGGER.debug("Fabric API not detected; Quests events disabled");
+        }
     }
 
     @Override
@@ -130,6 +143,15 @@ public class FabricDependencies implements Dependencies {
      */
     public boolean hasYawp() {
         return hasYawp;
+    }
+
+    /**
+     * Returns the Fabric API event accessor, or null when Fabric API is not
+     * installed or its event support failed to initialize. Callers must
+     * null-check before firing events.
+     */
+    public FabricEventAccessor getEventAccessor() {
+        return eventAccessor;
     }
 
     /**

@@ -1,13 +1,13 @@
 package me.pikamug.quests.events.plugin;
 
-import me.pikamug.quests.events.QuestsEvent;
+import me.pikamug.quests.events.BukkitQuestsEvent;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a Quests plugin-related event
  */
-public abstract class BukkitQuestsPluginEvent extends QuestsEvent {
+public abstract class BukkitQuestsPluginEvent extends BukkitQuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
 
     public BukkitQuestsPluginEvent() {

@@ -29,8 +29,12 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:26.2")
-    implementation("net.fabricmc:fabric-loader:0.19.2")
+    minecraft("com.mojang:minecraft:${project.minecraft_version}")
+    implementation("net.fabricmc:fabric-loader:${project.loader_version}")
+
+    // Fabric API is optional at runtime: only the event bridge uses it, and it is never bundled.
+    // Keep it on the development classpath so the bridge can be exercised while developing.
+    implementation("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}")
 
     // YAWP (Yet Another World Protector) via Modrinth's public Maven.
     implementation("maven.modrinth:yawp:26.1.2-0.6.3-beta3")

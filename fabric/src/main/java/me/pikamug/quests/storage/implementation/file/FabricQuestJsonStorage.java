@@ -66,7 +66,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
      * and should never have been generated (see the Bukkit module for parity).
      */
     private void removeLegacyIndividualFiles() {
-        try (var stream = Files.list(storageDir)) {
+        try (java.util.stream.Stream<java.nio.file.Path> stream = Files.list(storageDir)) {
             stream.filter(p -> p.toString().endsWith(".json"))
                     .filter(p -> !INDEX_FILES.contains(p.getFileName().toString()))
                     .forEach(p -> {
@@ -172,7 +172,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                 final FabricStage stage = parseStage(stageJson);
                 stages.add(stage);
             }
-            quest.setStages(stages);
+            quest.setOrderedStages(stages);
         }
         return quest;
     }
@@ -501,7 +501,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
     }
 
     private void parseRequirements(FabricQuest quest, JsonObject json) {
-        final var req = quest.getRequirements();
+        final me.pikamug.quests.quests.components.Requirements req = quest.getRequirements();
         if (json.has("quest-points")) req.setQuestPoints(json.get("quest-points").getAsInt());
         if (json.has("exp")) req.setExp(json.get("exp").getAsInt());
         if (json.has("quests")) {
@@ -551,9 +551,9 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
     }
 
     private void parsePlanner(FabricQuest quest, JsonObject json) {
-        final var pln = quest.getPlanner();
+        final me.pikamug.quests.quests.components.Planner pln = quest.getPlanner();
         if (json.has("start") && json.get("start").isJsonPrimitive()) {
-            final var startEl = json.get("start");
+            final com.google.gson.JsonElement startEl = json.get("start");
             if (startEl.getAsJsonPrimitive().isNumber()) {
                 pln.setStart(new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                         .format(new java.util.Date(startEl.getAsLong())));
@@ -562,7 +562,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             }
         }
         if (json.has("end") && json.get("end").isJsonPrimitive()) {
-            final var endEl = json.get("end");
+            final com.google.gson.JsonElement endEl = json.get("end");
             if (endEl.getAsJsonPrimitive().isNumber()) {
                 pln.setEnd(new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
                         .format(new java.util.Date(endEl.getAsLong())));
@@ -576,7 +576,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
     }
 
     private void parseRewards(FabricQuest quest, JsonObject json) {
-        final var rew = quest.getRewards();
+        final me.pikamug.quests.quests.components.Rewards rew = quest.getRewards();
         if (json.has("quest-points")) rew.setQuestPoints(json.get("quest-points").getAsInt());
         if (json.has("exp")) rew.setExp(json.get("exp").getAsInt());
         if (json.has("commands")) {
@@ -630,7 +630,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
     }
 
     private void parseOptions(FabricQuest quest, JsonObject json) {
-        final var opt = quest.getOptions();
+        final me.pikamug.quests.quests.components.Options opt = quest.getOptions();
         if (json.has("allow-commands")) opt.setAllowCommands(json.get("allow-commands").getAsBoolean());
         if (json.has("allow-quitting")) opt.setAllowQuitting(json.get("allow-quitting").getAsBoolean());
         if (json.has("ignore-silk-touch")) opt.setIgnoreSilkTouch(json.get("ignore-silk-touch").getAsBoolean());

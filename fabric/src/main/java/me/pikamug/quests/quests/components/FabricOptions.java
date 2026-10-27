@@ -11,48 +11,130 @@
 package me.pikamug.quests.quests.components;
 
 public class FabricOptions implements Options {
-
     private boolean allowCommands = true;
     private boolean allowQuitting = true;
-    private boolean ignoreSilkTouch = false;
-    private String externalPartyPlugin;
-    private boolean usePartiesPlugin = false;
-    private int shareProgressLevel = 0;
-    private boolean shareSameQuestOnly = false;
-    private double shareDistance = 0;
+    private boolean ignoreSilkTouch = true;
+    private String externalPartyPlugin = null;
+    private boolean usePartiesPlugin = true;
     private boolean handleOfflinePlayers = false;
-    private boolean ignoreBlockReplace = false;
+    private double shareDistance = 0.0D;
+    private int shareProgressLevel = 1;
+    private boolean shareSameQuestOnly = true;
+    private boolean ignoreBlockReplace = true;
     private boolean giveGloballyAtLogin = false;
-    private boolean allowStackingGlobal = false;
+    private boolean allowStackingGlobal = true;
     private boolean informOnStart = true;
-    private boolean overrideMaxQuests = false;
+    private boolean overrideMaxQuests = true;
 
-    @Override public boolean canAllowCommands() { return allowCommands; }
-    @Override public void setAllowCommands(boolean v) { this.allowCommands = v; }
-    @Override public boolean canAllowQuitting() { return allowQuitting; }
-    @Override public void setAllowQuitting(boolean v) { this.allowQuitting = v; }
-    @Override public boolean canIgnoreSilkTouch() { return ignoreSilkTouch; }
-    @Override public void setIgnoreSilkTouch(boolean v) { this.ignoreSilkTouch = v; }
-    @Override public String getExternalPartyPlugin() { return externalPartyPlugin; }
-    @Override public void setExternalPartyPlugin(String v) { this.externalPartyPlugin = v; }
-    @Override public boolean canUsePartiesPlugin() { return usePartiesPlugin; }
-    @Override public void setUsePartiesPlugin(boolean v) { this.usePartiesPlugin = v; }
-    @Override public int getShareProgressLevel() { return shareProgressLevel; }
-    @Override public void setShareProgressLevel(int v) { this.shareProgressLevel = v; }
-    @Override public boolean canShareSameQuestOnly() { return shareSameQuestOnly; }
-    @Override public void setShareSameQuestOnly(boolean v) { this.shareSameQuestOnly = v; }
-    @Override public double getShareDistance() { return shareDistance; }
-    @Override public void setShareDistance(double v) { this.shareDistance = v; }
-    @Override public boolean canHandleOfflinePlayers() { return handleOfflinePlayers; }
-    @Override public void setHandleOfflinePlayers(boolean v) { this.handleOfflinePlayers = v; }
-    @Override public boolean canIgnoreBlockReplace() { return ignoreBlockReplace; }
-    @Override public void setIgnoreBlockReplace(boolean v) { this.ignoreBlockReplace = v; }
-    @Override public boolean canGiveGloballyAtLogin() { return giveGloballyAtLogin; }
-    @Override public void setGiveGloballyAtLogin(boolean v) { this.giveGloballyAtLogin = v; }
-    @Override public boolean canAllowStackingGlobal() { return allowStackingGlobal; }
-    @Override public void setAllowStackingGlobal(boolean v) { this.allowStackingGlobal = v; }
-    @Override public boolean canInformOnStart() { return informOnStart; }
-    @Override public void setInformOnStart(boolean v) { this.informOnStart = v; }
-    @Override public boolean canOverrideMaxQuests() { return overrideMaxQuests; }
-    @Override public void setOverrideMaxQuests(boolean v) { this.overrideMaxQuests = v; }
+    public boolean canAllowCommands() {
+        return allowCommands;
+    }
+
+    public void setAllowCommands(final boolean allowCommands) {
+        this.allowCommands = allowCommands;
+    }
+
+    public boolean canAllowQuitting() {
+        return allowQuitting;
+    }
+
+    public void setAllowQuitting(final boolean allowQuitting) {
+        this.allowQuitting = allowQuitting;
+    }
+
+    public boolean canIgnoreSilkTouch() {
+        return ignoreSilkTouch;
+    }
+
+    public void setIgnoreSilkTouch(final boolean ignoreSilkTouch) {
+        this.ignoreSilkTouch = ignoreSilkTouch;
+    }
+
+    public String getExternalPartyPlugin() {
+        return externalPartyPlugin;
+    }
+
+    public void setExternalPartyPlugin(final String externalPartyPlugin) {
+        this.externalPartyPlugin = externalPartyPlugin;
+    }
+
+    public boolean canUsePartiesPlugin() {
+        return usePartiesPlugin;
+    }
+
+    public void setUsePartiesPlugin(final boolean usePartiesPlugin) {
+        this.usePartiesPlugin = usePartiesPlugin;
+    }
+
+    public int getShareProgressLevel() {
+        return shareProgressLevel;
+    }
+
+    public void setShareProgressLevel(final int shareProgressLevel) {
+        this.shareProgressLevel = shareProgressLevel;
+    }
+
+    public boolean canShareSameQuestOnly() {
+        return shareSameQuestOnly;
+    }
+
+    public void setShareSameQuestOnly(final boolean shareSameQuestOnly) {
+        this.shareSameQuestOnly = shareSameQuestOnly;
+    }
+
+    public double getShareDistance() {
+        return shareDistance;
+    }
+
+    public void setShareDistance(final double shareDistance) {
+        this.shareDistance = shareDistance;
+    }
+
+    public boolean canHandleOfflinePlayers() {
+        return handleOfflinePlayers;
+    }
+
+    public void setHandleOfflinePlayers(final boolean handleOfflinePlayers) {
+        this.handleOfflinePlayers = handleOfflinePlayers;
+    }
+
+    public boolean canIgnoreBlockReplace() {
+        return ignoreBlockReplace;
+    }
+
+    public void setIgnoreBlockReplace(final boolean ignoreBlockReplace) {
+        this.ignoreBlockReplace = ignoreBlockReplace;
+    }
+
+    public boolean canGiveGloballyAtLogin() {
+        return giveGloballyAtLogin;
+    }
+
+    public void setGiveGloballyAtLogin(final boolean giveGloballyAtLogin) {
+        this.giveGloballyAtLogin = giveGloballyAtLogin;
+    }
+
+    public boolean canAllowStackingGlobal() {
+        return allowStackingGlobal;
+    }
+
+    public void setAllowStackingGlobal(final boolean allowStackingGlobal) {
+        this.allowStackingGlobal = allowStackingGlobal;
+    }
+
+    public boolean canInformOnStart() {
+        return informOnStart;
+    }
+
+    public void setInformOnStart(final boolean informOnStart) {
+        this.informOnStart = informOnStart;
+    }
+
+    public boolean canOverrideMaxQuests() {
+        return overrideMaxQuests;
+    }
+
+    public void setOverrideMaxQuests(final boolean overrideMaxQuests) {
+        this.overrideMaxQuests = overrideMaxQuests;
+    }
 }

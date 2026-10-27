@@ -11,6 +11,7 @@
 package me.pikamug.quests.quests;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
+import me.pikamug.quests.actions.BukkitAction;
 import me.pikamug.quests.convo.quests.main.BukkitQuestMainPrompt;
 import me.pikamug.quests.convo.quests.stages.BukkitQuestStageMenuPrompt;
 import me.pikamug.quests.interfaces.ReloadCallback;
@@ -112,6 +113,9 @@ public class BukkitQuestFactory implements QuestFactory {
     }
 
     public void loadQuest(final UUID uuid, final Quest quest) {
+        if (!(quest instanceof BukkitQuest)) {
+            return;
+        }
         BukkitQuest bukkitQuest = (BukkitQuest) quest;
         try {
             SessionData.set(uuid, Key.ED_QUEST_EDIT, bukkitQuest.getName());

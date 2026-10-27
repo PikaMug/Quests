@@ -50,7 +50,7 @@ public abstract class FabricQuestsIntegerPrompt implements QuestsPrompt {
      * @return        plain text to deliver
      */
     public static String sendClickableSelection(final String input, final FabricQuester quester) {
-        if (quester == null || quester.getPlugin() == null || quester.getServerPlayer() == null) {
+        if (quester == null || quester.getPlugin() == null || quester.getPlayer() == null) {
             return "ERROR";
         }
         if (!quester.getPlugin().getConfigSettings().canClickablePrompts()) {
@@ -77,7 +77,7 @@ public abstract class FabricQuestsIntegerPrompt implements QuestsPrompt {
             }
             component.append(lineComponent);
         }
-        quester.getServerPlayer().sendSystemMessage(component);
+        quester.getPlayer().sendSystemMessage(component);
         return "";
     }
 }

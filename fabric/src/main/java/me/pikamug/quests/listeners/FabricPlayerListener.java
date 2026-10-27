@@ -141,7 +141,7 @@ public class FabricPlayerListener {
         final FabricQuester quester = plugin.getQuester(player.getUUID());
         if (quester.canUseCompass()) {
             quester.resetCompass();
-            quester.sendMessage(FabricLang.get(quester.getServerPlayer(), "compassReset"));
+            quester.sendMessage(FabricLang.get(quester.getPlayer(), "compassReset"));
         }
     }
 
@@ -154,7 +154,7 @@ public class FabricPlayerListener {
                 stage.getDeathAction().fire(quester, quest);
             }
         }
-        final var inventory = player.getInventory();
+        final net.minecraft.world.entity.player.Inventory inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             final ItemStack slot = inventory.getItem(i);
             if (!slot.isEmpty() && FabricItemUtil.isJournal(slot)) {
@@ -168,7 +168,7 @@ public class FabricPlayerListener {
     private void onPlayerRespawn(ServerPlayer player) {
         final ItemStack journal = stashedJournals.remove(player.getUUID());
         if (journal != null && !journal.isEmpty()) {
-            final var inventory = player.getInventory();
+            final net.minecraft.world.entity.player.Inventory inventory = player.getInventory();
             boolean present = false;
             for (int i = 0; i < inventory.getContainerSize(); i++) {
                 if (FabricItemUtil.isJournal(inventory.getItem(i))) {
@@ -216,7 +216,7 @@ public class FabricPlayerListener {
                     deliverToNPC(player, quester, quest, stage, i, goal, hand);
                 }
                 if (npcMatched && !delivered) {
-                    quester.sendMessage(FabricLang.get(quester.getServerPlayer(), "questInvalidDeliveryItem")
+                    quester.sendMessage(FabricLang.get(quester.getPlayer(), "questInvalidDeliveryItem")
                             .replace("<item>", FabricItemUtil.getName(hand)));
                 }
             }
@@ -227,7 +227,7 @@ public class FabricPlayerListener {
                 for (int i = 0; i < stage.getNpcsToInteract().size(); i++) {
                     final UUID npcUuid = stage.getNpcsToInteract().get(i);
                     if (entity.getUUID().equals(npcUuid)) {
-                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         if (!progress.getNpcsInteracted().get(i)) {
                             progress.getNpcsInteracted().set(i, true);
                             quester.finishObjective(quest, ObjectiveType.TALK_TO_NPC, i);
@@ -242,7 +242,7 @@ public class FabricPlayerListener {
 
     private void deliverToNPC(ServerPlayer player, FabricQuester quester, Quest quest, Stage stage,
                               int index, ItemStack goal, ItemStack hand) {
-        final var progress = quester.getQuestProgressOrDefault(quest);
+        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
         if (progress == null || progress.getItemsDelivered().size() <= index) return;
         final int goalAmount = Math.max(1, goal.getCount());
         final int amount = progress.getItemsDelivered().get(index);
@@ -260,7 +260,7 @@ public class FabricPlayerListener {
             }
             quester.checkQuest(quest);
         } else {
-            final var messages = stage.getDeliverMessages();
+            final java.util.LinkedList<String> messages = stage.getDeliverMessages();
             if (messages != null && !messages.isEmpty()) {
                 final String message = messages.get(new Random().nextInt(messages.size()))
                         .replace("<item>", FabricItemUtil.getName(goal))

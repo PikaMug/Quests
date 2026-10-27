@@ -68,7 +68,7 @@ public class FabricBlockListener {
             if (!stage.getBlocksToDamage().isEmpty()) {
                 for (int i = 0; i < stage.getBlocksToDamage().size(); i++) {
                     if (matchesBlock(state, stage.getBlocksToDamage().get(i))) {
-                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         final int before = progress.getBlocksDamaged().get(i);
                         progress.getBlocksDamaged().set(i, before + 1);
                         if (before < 1 && progress.getBlocksDamaged().get(i) >= 1) {
@@ -90,12 +90,12 @@ public class FabricBlockListener {
             if (!quester.getCurrentQuests().containsKey(quest)) continue;
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
-            final var progress = quester.getQuestProgressOrDefault(quest);
+            final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
 
             // BREAK_BLOCK
             if (!stage.getBlocksToBreak().isEmpty()) {
                 if (quest.getOptions().canIgnoreSilkTouch() && hasSilkTouch(tool)) {
-                    quester.sendMessage(FabricLang.get(quester.getServerPlayer(), "optionSilkTouchFail")
+                    quester.sendMessage(FabricLang.get(quester.getPlayer(), "optionSilkTouchFail")
                             .replace("<quest>", quest.getName()));
                 } else {
                     for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
@@ -134,7 +134,7 @@ public class FabricBlockListener {
             if (!quester.getCurrentQuests().containsKey(quest)) continue;
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
-            final var progress = quester.getQuestProgressOrDefault(quest);
+            final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
 
             // PLACE_BLOCK
             if (!stage.getBlocksToPlace().isEmpty()) {
@@ -183,7 +183,7 @@ public class FabricBlockListener {
             // Block-start selection: right-click a block while editing the "start block" option
             if (plugin.isSelectingBlockStart(player.getUUID())) {
                 plugin.getSelectedBlockStarts().put(player.getUUID(), pos);
-                quester.sendMessage("§6" + FabricLang.get(quester.getServerPlayer(), "questSelectedLocation") + " §b"
+                quester.sendMessage("§6" + FabricLang.get(quester.getPlayer(), "questSelectedLocation") + " §b"
                         + player.level().dimension().identifier() + ": " + pos.getX() + ", "
                         + pos.getY() + ", " + pos.getZ());
                 return;
@@ -195,26 +195,26 @@ public class FabricBlockListener {
                 if (fabricQuest.getBlockStart() == null || !fabricQuest.getBlockStart().equals(pos)) continue;
                 if (plugin.getConfigSettings().getMaxQuests() > 0
                         && quester.getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()) {
-                    quester.sendMessage("§e" + FabricLang.get(quester.getServerPlayer(), "questMaxAllowed").replace("<number>",
+                    quester.sendMessage("§e" + FabricLang.get(quester.getPlayer(), "questMaxAllowed").replace("<number>",
                             String.valueOf(plugin.getConfigSettings().getMaxQuests())));
                 } else {
                     if (quester.getCompletedQuests().contains(fabricQuest)) {
                         if (fabricQuest.getPlanner().getCooldown() > -1
                                 && quester.getRemainingCooldown(fabricQuest) > 0) {
-                            quester.sendMessage("§e" + FabricLang.get(quester.getServerPlayer(), "questTooEarly")
+                            quester.sendMessage("§e" + FabricLang.get(quester.getPlayer(), "questTooEarly")
                                     .replace("<quest>", fabricQuest.getName())
                                     .replace("<time>", FabricMiscUtil.getTime(
                                             quester.getRemainingCooldown(fabricQuest))));
                             continue;
                         } else if (fabricQuest.getPlanner().getCooldown() < 0) {
-                            quester.sendMessage("§e" + FabricLang.get(quester.getServerPlayer(), "questAlreadyCompleted")
+                            quester.sendMessage("§e" + FabricLang.get(quester.getPlayer(), "questAlreadyCompleted")
                                     .replace("<quest>", fabricQuest.getName()));
                             continue;
                         }
                     }
                     for (final Quest currentQuest : quester.getCurrentQuests().keySet()) {
                         if (currentQuest.getId().equals(fabricQuest.getId())) {
-                            quester.sendMessage("§c" + FabricLang.get(quester.getServerPlayer(), "questAlreadyOn"));
+                            quester.sendMessage("§c" + FabricLang.get(quester.getPlayer(), "questAlreadyOn"));
                             return;
                         }
                     }
@@ -244,7 +244,7 @@ public class FabricBlockListener {
             if (!stage.getBlocksToUse().isEmpty()) {
                 for (int i = 0; i < stage.getBlocksToUse().size(); i++) {
                     if (matchesBlock(state, stage.getBlocksToUse().get(i))) {
-                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         final LinkedList<Integer> amounts = stage.getBlocksToUseAmounts();
                         final int goal = (amounts != null && !amounts.isEmpty() && amounts.size() > i)
                                 ? amounts.get(i) : 1;

@@ -73,7 +73,7 @@ public class FabricChatListener {
                 for (int i = 0; i < stage.getPasswordPhrases().size(); i++) {
                     final String phrase = stage.getPasswordPhrases().get(i);
                     if (phrase != null && phrase.equalsIgnoreCase(content)) {
-                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         if (!progress.getPasswordsSaid().get(i)) {
                             progress.getPasswordsSaid().set(i, true);
                             quester.finishObjective(quest, ObjectiveType.PASSWORD, i);
@@ -108,7 +108,7 @@ public class FabricChatListener {
             final boolean allowed = quest.getOptions().canAllowCommands()
                     || lowerContent.startsWith("/quest");
             if (!allowed) {
-                quester.sendMessage("§c" + FabricLang.get(quester.getServerPlayer(), "optCommandsDenied")
+                quester.sendMessage("§c" + FabricLang.get(quester.getPlayer(), "optCommandsDenied")
                         .replace("<quest>", quest.getName()));
                 continue;
             }

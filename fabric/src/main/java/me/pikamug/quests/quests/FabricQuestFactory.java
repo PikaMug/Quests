@@ -65,7 +65,7 @@ public class FabricQuestFactory implements QuestFactory {
                 final com.google.gson.Gson gson = new com.google.gson.GsonBuilder().setPrettyPrinting().create();
                 final com.google.gson.JsonObject root;
                 try (Reader reader = Files.newBufferedReader(index)) {
-                    final var parsed = com.google.gson.JsonParser.parseReader(reader);
+                    final com.google.gson.JsonElement parsed = com.google.gson.JsonParser.parseReader(reader);
                     root = parsed.isJsonObject() ? parsed.getAsJsonObject() : new com.google.gson.JsonObject();
                 }
                 if (root.has(questName)) {

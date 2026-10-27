@@ -10,20 +10,30 @@
 
 package me.pikamug.quests.events.quester;
 
-import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.events.FabricQuestEvent;
-import me.pikamug.quests.player.Quester;
+import me.pikamug.quests.events.FabricQuestsEvent;
+import me.pikamug.quests.player.FabricQuester;
 
-public abstract class FabricQuesterEvent extends FabricQuestEvent {
+/**
+ * Represents a quester-related event
+ */
+public abstract class FabricQuesterEvent extends FabricQuestsEvent {
+    private final FabricQuester quester;
 
-    private final Quester quester;
-
-    public FabricQuesterEvent(final FabricQuestsPlugin plugin, final Quester quester) {
-        super(plugin);
+    public FabricQuesterEvent(final FabricQuester quester) {
         this.quester = quester;
     }
 
-    public Quester getQuester() {
+    public FabricQuesterEvent(final FabricQuester quester, final boolean async) {
+        super(async);
+        this.quester = quester;
+    }
+
+    /**
+     * Returns the quester involved in this event
+     * 
+     * @return Quester which is involved in this event
+     */
+    public final FabricQuester getQuester() {
         return quester;
     }
 }

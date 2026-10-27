@@ -18,11 +18,10 @@ import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.tasks.FabricActionTimer;
 import me.pikamug.quests.tasks.FabricScheduler;
+import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,8 +31,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
@@ -52,6 +51,7 @@ import java.util.Map;
 
 public class FabricAction implements Action {
 
+    private final FabricQuestsPlugin plugin;
     private String name;
     private String message;
     private boolean clearInv = false;
@@ -60,20 +60,24 @@ public class FabricAction implements Action {
     protected Map<FabricLocation, SoundEvent> effects = new HashMap<>();
     protected LinkedList<ItemStack> items = new LinkedList<>();
     protected ServerLevel stormWorld = null;
-    private int stormDuration = 0;
+    protected int stormDuration = 0;
     protected ServerLevel thunderWorld = null;
-    private int thunderDuration = 0;
-    private int timer = 0;
-    private boolean cancelTimer = false;
-    private LinkedList<QuestMob> mobSpawns = new LinkedList<>();
-    private LinkedList<FabricLocation> lightningStrikes = new LinkedList<>();
-    private LinkedList<String> commands = new LinkedList<>();
-    private LinkedList<MobEffect> potionEffects = new LinkedList<>();
-    private int hunger = -1;
-    private int saturation = -1;
-    private float health = -1;
-    private FabricLocation teleport;
-    private String book = "";
+    protected int thunderDuration = 0;
+    protected int timer = 0;
+    protected boolean cancelTimer = false;
+    protected LinkedList<QuestMob> mobSpawns = new LinkedList<>();
+    protected LinkedList<FabricLocation> lightningStrikes = new LinkedList<>();
+    protected LinkedList<String> commands = new LinkedList<>();
+    protected LinkedList<MobEffectInstance> potionEffects = new LinkedList<>();
+    protected int hunger = -1;
+    protected int saturation = -1;
+    protected float health = -1;
+    protected FabricLocation teleport;
+    protected String book = "";
+
+    public FabricAction(final FabricQuestsPlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public int compareTo(final Action action) {
@@ -228,11 +232,11 @@ public class FabricAction implements Action {
         this.commands = commands;
     }
 
-    public LinkedList<MobEffect> getPotionEffects() {
+    public LinkedList<MobEffectInstance> getPotionEffects() {
         return potionEffects;
     }
 
-    public void setPotionEffects(final LinkedList<MobEffect> potionEffects) {
+    public void setPotionEffects(final LinkedList<MobEffectInstance> potionEffects) {
         this.potionEffects = potionEffects;
     }
 
@@ -289,8 +293,10 @@ public class FabricAction implements Action {
         final FabricQuester fabricQuester = (FabricQuester)quester;
         final ServerPlayer player = fabricQuester.getPlayer();
         if (player == null) return;
+        final ServerLevel level = player.level();
+        final MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
         if (message != null) {
-            quester.sendMessage(FabricMiscUtil.parseString(message));
+            quester.sendMessage(FabricConfigUtil.parseString(message));
         }
         if (clearInv) {
             player.getInventory().clearContent();
@@ -322,7 +328,6 @@ public class FabricAction implements Action {
                 } else if (effectObj instanceof SoundEvent) {
                     SoundEvent eff = (SoundEvent) effectObj;
                     loc.getLevel().playSound(null, loc.getX(), loc.getY(), loc.getZ(), eff, SoundSource.MASTER);
-                    loc.getLevel().levelEvent(2002, BlockPos.containing(loc.getX(), loc.getY(), loc.getZ()), eff.getId());
                 }
             }
         }
@@ -372,9 +377,8 @@ public class FabricAction implements Action {
 
         // Potion effects
         if (potionEffects != null && !potionEffects.isEmpty()) {
-            for (final MobEffect effect : potionEffects) {
-                Holder<MobEffect> effectHolder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);
-                player.addEffect(new MobEffectInstance(effectHolder));
+            for (final MobEffectInstance effect : potionEffects) {
+                player.addEffect(effect);
             }
         }
 
@@ -462,7 +466,7 @@ public class FabricAction implements Action {
         final Integer amount = fabricMob.getSpawnAmounts();
         final int max = amount != null ? amount : 1;
         for (int i = 0; i < max; i++) {
-            final EntityType<?> entity = entityType.create(level, EntitySpawnReason.COMMAND);
+            final Entity entity = entityType.create(level, EntitySpawnReason.COMMAND);
             if (entity instanceof Mob) {
                 Mob mobEntity = (Mob) entity;
                 mobEntity.setPos(player.getX() + (Math.random() * 4) - 2,

@@ -24,34 +24,35 @@ public class FabricConfigSettings implements ConfigSettings {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private JsonObject config;
 
-    private int acceptTimeout = 60;
+    private int acceptTimeout = 20;
     private boolean allowCommands = true;
-    private boolean allowCommandsForNpcQuests = true;
-    private boolean allowPranks = false;
+    private boolean allowCommandsForNpcQuests = false;
+    private boolean allowPranks = true;
     private boolean clickablePrompts = true;
-    private int conditionInterval = 1;
+    private int conditionInterval = 8;
     private boolean confirmAbandon = true;
     private boolean confirmAccept = true;
-    private int consoleLogging = 2;
+    private int consoleLogging = 1;
     private boolean disableCommandFeedback = true;
     private boolean genFilesOnJoin = true;
-    private boolean giveJournalItem = true;
+    private boolean giveJournalItem = false;
     private boolean ignoreLockedQuests = false;
-    private int killDelay = 30;
+    private int killDelay = 600;
     private String language = "en-US";
     private boolean languageOverrideClient = false;
-    private int maxQuests = 10;
+    private int maxQuests = 0;
     private boolean npcEffects = true;
-    private String effect = "ENCHANTMENT_TABLE";
-    private String redoEffect = "FLAME";
+    private String effect = "note";
+    private String redoEffect = "angry_villager";
+    private boolean preventExploit = true;
     private boolean showCompletedObjs = true;
     private boolean showQuestReqs = true;
     private boolean showQuestTitles = true;
     private int strictPlayerMovement = 0;
     private boolean trialSave = false;
-    private int topLimit = 10;
+    private int topLimit = 150;
     private boolean translateNames = true;
-    private boolean translateSubCommands = true;
+    private boolean translateSubCommands = false;
     private boolean updateCheck = true;
     private String storageMethod = "yaml";
     private String storageAddress;
@@ -106,6 +107,7 @@ public class FabricConfigSettings implements ConfigSettings {
         defaults.addProperty("npcEffects", npcEffects);
         defaults.addProperty("effect", effect);
         defaults.addProperty("redoEffect", redoEffect);
+        defaults.addProperty("preventExploit", preventExploit);
         defaults.addProperty("showCompletedObjs", showCompletedObjs);
         defaults.addProperty("showQuestReqs", showQuestReqs);
         defaults.addProperty("showQuestTitles", showQuestTitles);
@@ -143,6 +145,10 @@ public class FabricConfigSettings implements ConfigSettings {
         conditionInterval = getInt("conditionInterval", conditionInterval);
         confirmAbandon = getBool("confirmAbandon", confirmAbandon);
         confirmAccept = getBool("confirmAccept", confirmAccept);
+        if (conditionInterval < 3 || conditionInterval > 180) {
+            plugin.getPluginLogger().warn("Condition interval out of range, reverting to default of 8 seconds");
+            conditionInterval = 8;
+        }
         consoleLogging = getInt("consoleLogging", consoleLogging);
         disableCommandFeedback = getBool("disableCommandFeedback", disableCommandFeedback);
         genFilesOnJoin = getBool("genFilesOnJoin", genFilesOnJoin);
@@ -155,6 +161,7 @@ public class FabricConfigSettings implements ConfigSettings {
         npcEffects = getBool("npcEffects", npcEffects);
         effect = getString("effect", effect);
         redoEffect = getString("redoEffect", redoEffect);
+        preventExploit = getBool("preventExploit", preventExploit);
         showCompletedObjs = getBool("showCompletedObjs", showCompletedObjs);
         showQuestReqs = getBool("showQuestReqs", showQuestReqs);
         showQuestTitles = getBool("showQuestTitles", showQuestTitles);
@@ -239,8 +246,8 @@ public class FabricConfigSettings implements ConfigSettings {
     @Override public void setEffect(String v) { effect = v; setAndSave("effect", v); }
     @Override public String getRedoEffect() { return redoEffect; }
     @Override public void setRedoEffect(String v) { redoEffect = v; setAndSave("redoEffect", v); }
-    @Override public boolean canPreventExploit() { return true; }
-    @Override public void setPreventExploit(boolean v) { }
+    @Override public boolean canPreventExploit() { return preventExploit; }
+    @Override public void setPreventExploit(boolean v) { preventExploit = v; setAndSave("preventExploit", v); }
     @Override public boolean canShowCompletedObjs() { return showCompletedObjs; }
     @Override public void setShowCompletedObjs(boolean v) { showCompletedObjs = v; setAndSave("showCompletedObjs", v); }
     @Override public boolean canShowQuestReqs() { return showQuestReqs; }

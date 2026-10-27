@@ -114,7 +114,7 @@ public abstract class FabricQuestsSubCommand {
     }
 
     /**
-     * Used to get quest names that contain spaces from command input
+     * Used to FabricQuestsEvent quest names that contain spaces from command input
      *
      * @param args an array of Strings
      * @param startingIndex the index to start combining at

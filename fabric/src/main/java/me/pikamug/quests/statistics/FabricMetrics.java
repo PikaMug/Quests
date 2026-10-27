@@ -274,7 +274,7 @@ public class FabricMetrics {
       // and second delay.
       // WARNING: You must not modify and part of this Metrics class, including the submit delay or
       // frequency!
-      // WARNING: Modifying this code will get your plugin banned on bStats. Just don't do it!
+      // WARNING: Modifying this code will FabricQuestsEvent your plugin banned on bStats. Just don't do it!
       final long initialDelay = (long) (1000 * 60 * (3 + Math.random() * 3));
       final long secondDelay = (long) (1000 * 60 * (Math.random() * 30));
       scheduler.schedule(submitTask, initialDelay, TimeUnit.MILLISECONDS);
@@ -556,7 +556,7 @@ public class FabricMetrics {
         builder.appendField("data", data);
       } catch (final Throwable t) {
         if (logErrors) {
-          errorLogger.accept("Failed to get data for custom chart with id " + chartId, t);
+          errorLogger.accept("Failed to FabricQuestsEvent data for custom chart with id " + chartId, t);
         }
         return null;
       }

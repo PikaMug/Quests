@@ -62,7 +62,7 @@ public final class FabricQuestEditorSaver {
         JsonObject root = new JsonObject();
         if (Files.exists(index)) {
             try (Reader reader = Files.newBufferedReader(index)) {
-                final var parsed = JsonParser.parseReader(reader);
+                final com.google.gson.JsonElement parsed = JsonParser.parseReader(reader);
                 if (parsed.isJsonObject()) {
                     root = parsed.getAsJsonObject();
                 }

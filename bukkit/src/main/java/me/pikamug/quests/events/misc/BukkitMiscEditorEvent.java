@@ -11,7 +11,7 @@
 package me.pikamug.quests.events.misc;
 
 import me.pikamug.quests.convo.QuestsPrompt;
-import me.pikamug.quests.events.QuestsEvent;
+import me.pikamug.quests.events.BukkitQuestsEvent;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +20,7 @@ import java.util.UUID;
 /**
  * Represents a miscellaneous editor-related event
  */
-public class BukkitMiscEditorEvent extends QuestsEvent {
+public class BukkitMiscEditorEvent extends BukkitQuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private final UUID uuid;
     private final QuestsPrompt prompt;

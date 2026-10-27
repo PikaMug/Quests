@@ -450,6 +450,7 @@ public class FabricQuesterSqlStorage implements QuesterStorageImpl {
     }
 
     public ConcurrentHashMap<Quest, QuestProgress> getQuesterQuestProgress(final UUID uniqueId) throws SQLException {
+        final Quester quester = plugin.getQuester(uniqueId);
         final ConcurrentHashMap<Quest, QuestProgress> questProgress = new ConcurrentHashMap<>();
         try (final Connection c = connectionFactory.getConnection()) {
             try (final PreparedStatement ps = c.prepareStatement(statementProcessor.apply(PLAYER_QUEST_PROGRESS_SELECT_BY_UUID))) {
@@ -457,8 +458,8 @@ public class FabricQuesterSqlStorage implements QuesterStorageImpl {
                 try (final ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         final Quest quest = plugin.getQuestById(rs.getString("quest_id"));
-                        final FabricQuestProgress data = new FabricQuestProgress();
-                        if (quest != null && plugin.getQuester(uniqueId).getCurrentStage(quest) != null) {
+                        final FabricQuestProgress data = new FabricQuestProgress(quester);
+                        if (quest != null && quester.getCurrentStage(quest) != null) {
                             data.getBlocksBroken().addAll(deserializeIntProgress(rs.getString("blocks_broken")));
                             data.getBlocksDamaged().addAll(deserializeIntProgress(rs.getString("blocks_damaged")));
                             data.getBlocksPlaced().addAll(deserializeIntProgress(rs.getString("blocks_placed")));

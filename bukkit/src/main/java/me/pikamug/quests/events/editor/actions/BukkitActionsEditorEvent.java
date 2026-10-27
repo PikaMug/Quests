@@ -13,7 +13,7 @@ package me.pikamug.quests.events.editor.actions;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.actions.ActionFactory;
 import me.pikamug.quests.convo.QuestsPrompt;
-import me.pikamug.quests.events.QuestsEvent;
+import me.pikamug.quests.events.BukkitQuestsEvent;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +22,7 @@ import java.util.UUID;
 /**
  * Represents an Actions Editor-related event
  */
-public abstract class BukkitActionsEditorEvent extends QuestsEvent {
+public abstract class BukkitActionsEditorEvent extends BukkitQuestsEvent {
     private static final HandlerList HANDLERS = new HandlerList();
     private final UUID uuid;
     private final QuestsPrompt prompt;

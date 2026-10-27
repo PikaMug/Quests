@@ -23,8 +23,6 @@ import me.pikamug.quests.quests.components.FabricObjective;
 import me.pikamug.quests.quests.components.Objective;
 import me.pikamug.quests.quests.components.Planner;
 import me.pikamug.quests.quests.components.Stage;
-import me.pikamug.quests.tasks.FabricActionTimer;
-import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricInventoryUtil;
 import me.pikamug.quests.util.FabricItemUtil;
@@ -46,10 +44,10 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.browsit.conversations.api.Conversations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
-import java.util.ArrayList;
+import java.util.AbstractSet;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,22 +59,126 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FabricQuester implements Quester {
 
     private final FabricQuestsPlugin plugin;
     private final UUID id;
-    private String questIdToTake;
-    private String questIdToQuit;
+    protected String questIdToTake;
+    protected String questIdToQuit;
     private String lastKnownName;
-    private int questPoints = 0;
+    protected int questPoints = 0;
     private String compassTargetQuestId;
     private long lastNotifiedCondition = 0L;
-    private final ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<>();
-    private final Collection<Quest> completedQuests = Collections.synchronizedCollection(new ArrayList<>());
-    private final ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<Runnable, Quest> timers = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<Quest, Integer> currentQuests = new ConcurrentHashMap<Quest, Integer>() {
+
+        private static final long serialVersionUID = 6361484975823846780L;
+
+        @Override
+        public Integer put(final @NotNull Quest key, final @NotNull Integer val) {
+            final Integer data = super.put(key, val);
+            updateJournal();
+            return data;
+        }
+
+        @Override
+        public Integer remove(final @NotNull Object key) {
+            final Integer i = super.remove(key);
+            updateJournal();
+            return i;
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            updateJournal();
+        }
+
+        @Override
+        public void putAll(final Map<? extends Quest, ? extends Integer> m) {
+            super.putAll(m);
+            updateJournal();
+        }
+    };
+    private Collection<Quest> completedQuests = new CompletedQuestSet();
+    private class CompletedQuestSet extends AbstractSet<Quest> {
+        private final Set<Quest> delegate = ConcurrentHashMap.newKeySet();
+        @Override
+        public boolean add(final Quest e) {
+            final boolean changed = delegate.add(e);
+            if (changed) updateJournal();
+            return changed;
+        }
+        @Override
+        public boolean addAll(final Collection<? extends Quest> c) {
+            final boolean changed = delegate.addAll(c);
+            if (changed) updateJournal();
+            return changed;
+        }
+        @Override
+        public void clear() {
+            if (!delegate.isEmpty()) {
+                delegate.clear();
+                updateJournal();
+            }
+        }
+        @Override
+        public boolean remove(final Object o) {
+            final boolean changed = delegate.remove(o);
+            if (changed) updateJournal();
+            return changed;
+        }
+        @Override
+        public boolean removeAll(final Collection<?> c) {
+            final boolean changed = delegate.removeAll(c);
+            if (changed) updateJournal();
+            return changed;
+        }
+        @Override
+        public @NonNull Iterator<Quest> iterator() {
+            return delegate.iterator();
+        }
+        @Override
+        public int size() {
+            return delegate.size();
+        }
+    }
+    protected ConcurrentHashMap<Quest, Long> completedTimes = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<Quest, Integer> amountsCompleted = new ConcurrentHashMap<Quest, Integer>() {
+
+        private static final long serialVersionUID = 5475202358792520975L;
+
+        @Override
+        public Integer put(final @NotNull Quest key, final @NotNull Integer val) {
+            final Integer data = super.put(key, val);
+            updateJournal();
+            return data;
+        }
+
+        @Override
+        public Integer remove(final @NotNull Object key) {
+            final Integer i = super.remove(key);
+            updateJournal();
+            return i;
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            updateJournal();
+        }
+
+        @Override
+        public void putAll(final Map<? extends Quest, ? extends Integer> m) {
+            super.putAll(m);
+            updateJournal();
+        }
+    };
+    private boolean hasData = false;
     protected ConcurrentHashMap<Quest, QuestProgress> questProgress
             = new ConcurrentHashMap<Quest, QuestProgress>() {
 
@@ -109,7 +211,7 @@ public class FabricQuester implements Quester {
         }
     };
 
-    public FabricQuester(FabricQuestsPlugin plugin, UUID uuid) {
+    public FabricQuester(final FabricQuestsPlugin plugin, final UUID uuid) {
         this.plugin = plugin;
         this.id = uuid;
         if (getPlayer() != null) {
@@ -211,15 +313,15 @@ public class FabricQuester implements Quester {
         }
     }
 
-    public ConcurrentHashMap<WrappedTask, Quest> getTimers() {
+    public ConcurrentHashMap<Runnable, Quest> getTimers() {
         return timers;
     }
 
-    public void setTimers(final ConcurrentHashMap<WrappedTask, Quest> timers) {
+    public void setTimers(final ConcurrentHashMap<Runnable, Quest> timers) {
         this.timers = timers;
     }
 
-    public void removeTimer(final WrappedTask task) {
+    public void removeTimer(final Runnable task) {
         this.timers.remove(task);
     }
 
@@ -282,6 +384,18 @@ public class FabricQuester implements Quester {
         this.questProgress = questProgress;
     }
 
+    public void setQuestProgress(final Quest quest, final QuestProgress progress) {
+        questProgress.put(quest, progress);
+    }
+
+    public ConcurrentHashMap<Quest, QuestProgress> getProgressData() {
+        return questProgress;
+    }
+
+    public void setHasData(final boolean hasData) {
+        this.hasData = hasData;
+    }
+
     public @Nullable ServerPlayer getPlayer() {
         return FabricQuestsPlugin.getInstance().getServer().getPlayerList().getPlayer(id);
     }
@@ -322,6 +436,10 @@ public class FabricQuester implements Quester {
             addEmptiesFor(quest, currentQuests.get(quest));
         }
         return new FabricQuestProgress(this);
+    }
+
+    public QuestProgress getQuestProgress(final Quest quest) {
+        return questProgress.get(quest);
     }
 
     @Override
@@ -435,7 +553,7 @@ public class FabricQuester implements Quester {
                     if (giveReason) {
                         final String msg = FabricLang.get(getPlayer(), "mustSpeakTo").replace("<npc>",
                                 plugin.getDependencies().getNpcName(uuid));
-                        sendMessage("§e" + msg);
+                        sendMessage("Â§e" + msg);
                     }
                     return false;
                 }
@@ -466,12 +584,12 @@ public class FabricQuester implements Quester {
             return false;
         }
         if (quest instanceof FabricQuest) {
-            FabricQuest fabricQuest = (FabricQuest) quest;
             if (fabricQuest.getBlockStart() != null) {
-            if (giveReason) {
-                sendMessage(FabricLang.get(getPlayer(), "noCommandStart").replace("<quest>", quest.getName()));
+                if (giveReason) {
+                    sendMessage(FabricLang.get(getPlayer(), "noCommandStart").replace("<quest>", quest.getName()));
+                }
+                return false;
             }
-            return false;
         }
         return true;
     }
@@ -590,8 +708,8 @@ public class FabricQuester implements Quester {
         addEmptiesFor(quest, 0);
         final ServerPlayer player = getPlayer();
         if (player != null && !ignoreRequirements) {
-            final var requirements = quest.getRequirements();
-            final var inventory = player.getInventory();
+            final me.pikamug.quests.quests.components.Requirements requirements = quest.getRequirements();
+            final net.minecraft.world.entity.player.Inventory inventory = player.getInventory();
             final int size = inventory.getContainerSize();
             final ItemStack[] original = new ItemStack[size];
             for (int i = 0; i < size; i++) {
@@ -621,21 +739,21 @@ public class FabricQuester implements Quester {
         final boolean isGlobalQuest = quest.getOptions().canGiveGloballyAtLogin();
         if (player != null && (!isGlobalQuest || quest.getOptions().canInformOnStart())) {
             final String accepted = FabricLang.get(getPlayer(), "questAccepted").replace("<quest>", quest.getName());
-            sendMessage("§a" + accepted);
+            sendMessage("Â§a" + accepted);
             sendMessage("");
             if (plugin.getConfigSettings().canShowQuestTitles()) {
-                player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§e" + quest.getName())));
+                player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("Â§e" + quest.getName())));
                 player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(
-                        "§6" + FabricLang.get(getPlayer(), "quest") + " " + FabricLang.get(getPlayer(), "accepted"))));
+                        "Â§6" + FabricLang.get(getPlayer(), "quest") + " " + FabricLang.get(getPlayer(), "accepted"))));
                 player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
             }
         }
         final Stage stage = quest.getStage(0);
         if (player != null) {
-            sendMessage("§6" + FabricLang.get(getPlayer(), "objectives").replace("<quest>", quest.getName()));
+            sendMessage("Â§6" + FabricLang.get(getPlayer(), "objectives").replace("<quest>", quest.getName()));
             showCurrentObjectives(quest, this, false);
             if (stage != null && stage.getStartMessage() != null) {
-                sendMessage(FabricMiscUtil.parseString(stage.getStartMessage()));
+                sendMessage(FabricConfigUtil.parseString(stage.getStartMessage()));
             }
             showCurrentConditions(quest, this);
         }
@@ -690,7 +808,7 @@ public class FabricQuester implements Quester {
     @Override
     public void listQuests(Quester quester, int page) {
         if (quester == null) return;
-        sendMessage("§6--- Your Quests ---");
+        sendMessage("Â§6--- Your Quests ---");
         final Collection<Quest> quests = quester.getCurrentQuests().keySet();
         if (quests.isEmpty()) {
             sendMessage(FabricLang.get(getPlayer(), "noCurrentQuest")
@@ -701,10 +819,10 @@ public class FabricQuester implements Quester {
         for (final Quest q : quests) {
             final Stage stage = quester.getCurrentStage(q);
             final String stageInfo = stage != null ? " (Stage " + (quester.getCurrentQuests().get(q) + 1) + ")" : "";
-            sendMessage("§7- §f" + q.getName() + stageInfo);
+            sendMessage("Â§7- Â§f" + q.getName() + stageInfo);
             idx++;
         }
-        sendMessage("§7Total: " + idx);
+        sendMessage("Â§7Total: " + idx);
     }
 
     @Override
@@ -847,14 +965,14 @@ public class FabricQuester implements Quester {
             String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "enchItem", current, goal);
             final ItemEnchantments ench = eGoal.get(DataComponents.ENCHANTMENTS);
             if (ench != null && !ench.isEmpty()) {
-                final var first = ench.entrySet().iterator().next();
+                final java.util.Map.Entry<net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment>, Integer> first = ench.entrySet().iterator().next();
                 final Holder<Enchantment> holder = first.getKey();
                 String enchName = holder.getRegisteredName();
                 if (enchName != null && enchName.indexOf(':') != -1) {
                     enchName = enchName.substring(enchName.indexOf(':') + 1);
                 }
                 msg = msg.replace("<enchantment>", FabricMiscUtil.snakeCaseToUpperCamelCase(enchName))
-                        .replace("<level>", toRoman(first.getIntValue()));
+                            .replace("<level>", toRoman(first.getValue()));
             } else {
                 msg = msg.replace("<enchantment>", "").replace("<level>", "");
             }
@@ -1038,7 +1156,7 @@ public class FabricQuester implements Quester {
             String msg;
             if (!ignoreOverrides && objIndex < overrides.size()) {
                 final String s = overrides.get(objIndex);
-                msg = FabricMiscUtil.parseString((s != null ? s : "")
+                msg = FabricConfigUtil.parseString((s != null ? s : "")
                         .replace("<count>", current + "/" + goal)
                         .replace("%count%", current + "/" + goal));
             } else {
@@ -1092,7 +1210,7 @@ public class FabricQuester implements Quester {
             final int goal) {
         if (!ignoreOverrides && overrides != null && objIndex < overrides.size()) {
             final String s = overrides.get(objIndex);
-            return FabricMiscUtil.parseString((s != null ? s : "").replace("<count>", current + "/" + goal)
+            return FabricConfigUtil.parseString((s != null ? s : "").replace("<count>", current + "/" + goal)
                     .replace("%count%", current + "/" + goal));
         }
         return FabricLang.get(player, langKey)
@@ -1171,7 +1289,7 @@ public class FabricQuester implements Quester {
         final String line = FabricLang.get(player, langKey)
                 .replace("<count>", goal + "/" + goal)
                 .replace("%count%", goal + "/" + goal);
-        return "§a(" + FabricLang.get(player, "completed") + ") " + line;
+        return "Â§a(" + FabricLang.get(player, "completed") + ") " + line;
     }
 
     /**
@@ -1196,8 +1314,8 @@ public class FabricQuester implements Quester {
             for (final String s : overrides) {
                 if (s == null) continue;
                 final String count = goal + "/" + goal;
-                final String message = "§a(" + FabricLang.get(player, "completed") + ") "
-                        + FabricMiscUtil.parseString(s.replace("<count>", count).replace("%count%", count));
+                final String message = "Â§a(" + FabricLang.get(player, "completed") + ") "
+                        + FabricConfigUtil.parseString(s.replace("<count>", count).replace("%count%", count));
                 sendMessage(message);
             }
             return;
@@ -1245,14 +1363,14 @@ public class FabricQuester implements Quester {
                 String enchMsg = formatCompletedObjective(player, "enchItem", goal);
                 final ItemEnchantments ench = enchGoal.get(DataComponents.ENCHANTMENTS);
                 if (ench != null && !ench.isEmpty()) {
-                    final var first = ench.entrySet().iterator().next();
+                    final java.util.Map.Entry<net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment>, Integer> first = ench.entrySet().iterator().next();
                     final Holder<Enchantment> holder = first.getKey();
                     String enchName = holder.getRegisteredName();
                     if (enchName != null && enchName.indexOf(':') != -1) {
                         enchName = enchName.substring(enchName.indexOf(':') + 1);
                     }
                     enchMsg = enchMsg.replace("<enchantment>", FabricMiscUtil.snakeCaseToUpperCamelCase(enchName))
-                            .replace("<level>", toRoman(first.getIntValue()));
+                        .replace("<level>", toRoman(first.getValue()));
                 } else {
                     enchMsg = enchMsg.replace("<enchantment>", "").replace("<level>", "");
                 }
@@ -1339,7 +1457,7 @@ public class FabricQuester implements Quester {
                 break;
             case PASSWORD:
                 if (index >= stage.getPasswordDisplays().size()) return;
-                sendMessage("§a(" + FabricLang.get(player, "completed") + ") "
+                sendMessage("Â§a(" + FabricLang.get(player, "completed") + ") "
                         + (stage.getPasswordDisplays().get(index) != null
                                 ? stage.getPasswordDisplays().get(index) : ""));
                 break;
@@ -1364,7 +1482,7 @@ public class FabricQuester implements Quester {
                 if (co.canShowCount()) {
                     custom = custom.replace("%count%", goal + "/" + goal);
                 }
-                sendMessage(FabricMiscUtil.parseString("§a(" + FabricLang.get(player, "completed") + ") "
+                sendMessage(FabricConfigUtil.parseString("Â§a(" + FabricLang.get(player, "completed") + ") "
                         + custom.trim()));
                 break;
             default:
@@ -1399,7 +1517,7 @@ public class FabricQuester implements Quester {
         final LinkedList<Objective> objectives = getCurrentObjectives(quest, ignoreOverrides, true);
         if (objectives.isEmpty()) return;
         for (final Objective obj : objectives) {
-            final String color = obj.getProgress() < obj.getGoal() ? "§a" : "§7";
+            final String color = obj.getProgress() < obj.getGoal() ? "Â§a" : "Â§7";
             sendMessage("- " + color + obj.getMessage());
         }
     }
@@ -1426,9 +1544,9 @@ public class FabricQuester implements Quester {
         if (stage == null) return;
         final Condition condition = stage.getCondition();
         if (condition == null) return;
-        sendMessage("§6--- Condition ---");
+        sendMessage("Â§6--- Condition ---");
         final boolean met = condition.check(quester, quest);
-        sendMessage((met ? "§a" : "§c") + " " + (condition.getName() != null ? condition.getName() : "Unknown"));
+        sendMessage((met ? "Â§a" : "Â§c") + " " + (condition.getName() != null ? condition.getName() : "Unknown"));
     }
 
     @Override
@@ -1576,7 +1694,7 @@ public class FabricQuester implements Quester {
 
     @Override
     public void addEmptiesFor(Quest quest, int stage) {
-        final QuestProgress data = new FabricQuestProgress();
+        final QuestProgress data = new FabricQuestProgress(this);
         data.setDoJournalUpdate(false);
         if (quest == null) {
             FabricQuestsPlugin.LOGGER.warn("Unable to find quest for player " + lastKnownName);
@@ -1695,7 +1813,7 @@ public class FabricQuester implements Quester {
         try {
             plugin.getStorage().saveQuester(this).get();
         } catch (final Exception e) {
-            FabricQuestsPlugin.LOGGER.error("Failed to save quester data for " + uuid, e);
+            FabricQuestsPlugin.LOGGER.error("Failed to save quester data for " + id, e);
             return false;
         }
         return true;
@@ -1718,38 +1836,41 @@ public class FabricQuester implements Quester {
         return cooldown - diff;
     }
 
-    @Override
-    public boolean hasData() {
-        return hasData;
+    /**
+     * Load data of the Quester from storage
+     *
+     * @deprecated Use {@link #hasData()}
+     * @return true if successful
+     */
+    @Deprecated
+    public boolean loadData() {
+        return plugin.getStorage().loadQuester(id) != null;
     }
 
-    @Override
+    /**
+     * Check whether the Quester has data saved to hard storage
+     *
+     * @return true if successful
+     */
+    public boolean hasData() {
+        return plugin.getStorage().loadQuester(id) != null;
+    }
+
+    /**
+     * Check whether the Quester has base data in memory, indicating they have participated in quests
+     *
+     * @return false if empty
+     */
     public boolean hasBaseData() {
-        return hasData;
+        return !currentQuests.isEmpty() || !questProgress.isEmpty() || !completedQuests.isEmpty();
     }
 
     @Override
     public void startStageTimer(Quest quest) {
-        if (quest == null) return;
-        final Stage stage = getCurrentStage(quest);
-        if (stage == null) return;
-        final long delay = stage.getDelay();
-        final FabricScheduler.ScheduledTask previous = stageTimers.remove(quest);
-        if (previous != null) {
-            previous.cancel();
-        }
-        if (delay > 0) {
-            stageTimers.put(quest, FabricScheduler.runLater(() -> checkQuest(quest), delay * 20));
-        }
     }
 
     @Override
     public void stopStageTimer(Quest quest) {
-        if (quest == null) return;
-        final FabricScheduler.ScheduledTask task = stageTimers.remove(quest);
-        if (task != null) {
-            task.cancel();
-        }
     }
 
     @Override
@@ -1799,10 +1920,10 @@ public class FabricQuester implements Quester {
                     next.getStartAction().fire(this, quest);
                 }
                 final ServerPlayer player = getPlayer();
-                sendMessage("§6" + FabricLang.get(player, "objectives"));
+                sendMessage("Â§6" + FabricLang.get(player, "objectives"));
                 showCurrentObjectives(quest, this, false);
                 if (next.getStartMessage() != null) {
-                    sendMessage(FabricMiscUtil.parseString(next.getStartMessage()));
+                    sendMessage(FabricConfigUtil.parseString(next.getStartMessage()));
                 }
                 startStageTimer(quest);
                 updateJournal();
@@ -1819,33 +1940,40 @@ public class FabricQuester implements Quester {
             sendMessage(FabricLang.get(getPlayer(), "noCurrentQuest"));
             return;
         }
-        sendMessage("§6--- Available Quests ---");
+        sendMessage("Â§6--- Available Quests ---");
         for (final Quest quest : quests) {
-            final String info = "§7- §f" + quest.getName() + " §8("
+            final String info = "Â§7- Â§f" + quest.getName() + " Â§8("
                     + (quest.getDescription() != null ? quest.getDescription() : "No description") + ")";
             sendMessage(info);
         }
     }
 
+    /**
+     * Force Quester to quit the specified quest (canceling any timers), then update Quest Journal<p>
+     *
+     * Does not save changes to disk. Consider {@link #quitQuest(Quest, String)} or {@link #quitQuest(Quest, String[])}
+     *
+     * @param quest The quest to quit
+     */
     @Override
-    public void hardQuit(Quest quest) {
-        if (quest == null) return;
-        stopStageTimer(quest);
-        final Iterator<Map.Entry<FabricActionTimer, Quest>> it = actionTimers.entrySet().iterator();
-        while (it.hasNext()) {
-            final Map.Entry<FabricActionTimer, Quest> entry = it.next();
-            if (entry.getValue() == quest || (entry.getValue() != null
-                    && entry.getValue().getName() != null && entry.getValue().getName().equals(quest.getName()))) {
-                entry.getKey().cancel();
-                it.remove();
+    public void hardQuit(final Quest quest) {
+        try {
+            if (compassTargetQuestId != null && compassTargetQuestId.equals(quest.getId())) {
+                compassTargetQuestId = null;
             }
+            currentQuests.remove(quest);
+            questProgress.remove(quest);
+            if (!timers.isEmpty()) {
+                for (final Map.Entry<Runnable, Quest> entry : timers.entrySet()) {
+                    if (entry.getValue().getName().equals(quest.getName())) {
+                        //plugin.getScheduler().cancelTask(entry.getKey());
+                        timers.remove(entry.getKey());
+                    }
+                }
+            }
+        } catch (final Exception ex) {
+            ex.printStackTrace();
         }
-        if (compassTarget != null && quest.getId() != null && compassTarget.getId() != null
-                && compassTarget.getId().equals(quest.getId())) {
-            compassTarget = null;
-        }
-        currentQuests.remove(quest);
-        progressData.remove(quest);
     }
 
     @Override
@@ -1863,7 +1991,7 @@ public class FabricQuester implements Quester {
         completedQuests.clear();
         completedTimes.clear();
         amountsCompleted.clear();
-        progressData.clear();
+        questProgress.clear();
         questPoints = 0;
     }
 
@@ -1874,17 +2002,17 @@ public class FabricQuester implements Quester {
 
     @Override
     public void hardDataPut(Quest key, QuestProgress val) {
-        if (key != null && val != null) progressData.put(key, val);
+        if (key != null && val != null) questProgress.put(key, val);
     }
 
     @Override
     public boolean canUseCompass() {
-        return compassTarget != null;
+        return compassTargetQuestId != null;
     }
 
     @Override
     public void resetCompass() {
-        compassTarget = null;
+        compassTargetQuestId = null;
         final ServerPlayer player = getPlayer();
         final net.minecraft.server.MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
         if (player == null || server == null) return;
@@ -1898,7 +2026,7 @@ public class FabricQuester implements Quester {
     public void findCompassTarget() {
         // Here we apply this method to OPs by not checking #canUseCompass
         final ServerPlayer player = getPlayer();
-        if (player == null || !plugin.getDependencies().hasPermission(uuid, "quests.compass")) {
+        if (player == null || !plugin.getDependencies().hasPermission(id, "quests.compass")) {
             return;
         }
         for (final Quest quest : currentQuests.keySet()) {
@@ -1919,18 +2047,18 @@ public class FabricQuester implements Quester {
     public void findNextCompassTarget(final boolean notify) {
         // Here we apply this method to OPs by not checking #canUseCompass
         final ServerPlayer player = getPlayer();
-        if (player == null || !plugin.getDependencies().hasPermission(uuid, "quests.compass")) {
+        if (player == null || !plugin.getDependencies().hasPermission(id, "quests.compass")) {
             return;
         }
         final LinkedList<String> list = currentQuests.keySet().stream()
                 .sorted(Comparator.comparing(Quest::getName)).map(Quest::getId)
                 .collect(Collectors.toCollection(LinkedList::new));
         int index = 0;
-        if (compassTarget != null) {
-            if (!list.contains(compassTarget.getId()) && notify) {
+        if (compassTargetQuestId != null) {
+            if (!list.contains(compassTargetQuestId) && notify) {
                 return;
             }
-            index = list.indexOf(compassTarget.getId()) + 1;
+            index = list.indexOf(compassTargetQuestId) + 1;
             if (index >= list.size()) {
                 index = 0;
             }
@@ -1944,18 +2072,18 @@ public class FabricQuester implements Quester {
                 if (stage.hasLocatableObjective()) {
                     pointCompass(quest, stage);
                     if (notify) {
-                        sendMessage("§e" + FabricLang.get(getPlayer(), "compassSet").replace("<quest>", quest.getName()));
+                        sendMessage("Â§e" + FabricLang.get(getPlayer(), "compassSet").replace("<quest>", quest.getName()));
                     }
                 } else {
                     resetCompass();
                     setCompassTarget(quest);
                     if (notify) {
-                        sendMessage("§c" + FabricLang.get(getPlayer(), "compassNone").replace("<quest>", quest.getName()));
+                        sendMessage("Â§c" + FabricLang.get(getPlayer(), "compassNone").replace("<quest>", quest.getName()));
                     }
                 }
             }
         } else {
-            sendMessage("§c" + FabricLang.get(getPlayer(), "journalNoQuests")
+            sendMessage("Â§c" + FabricLang.get(getPlayer(), "journalNoQuests")
                     .replace("<journal>", FabricLang.get(getPlayer(), "journalTitle")));
         }
     }
@@ -2115,7 +2243,7 @@ public class FabricQuester implements Quester {
 
     @Override
     public boolean isSelectingBlock() {
-        return plugin.isSelectingBlockStart(uuid) || plugin.getTempBlocks().containsKey(uuid);
+        return plugin.isSelectingBlockStart(id) || plugin.getTempBlocks().containsKey(id);
     }
 
     @Override
@@ -2170,10 +2298,5 @@ public class FabricQuester implements Quester {
         }
         return false;
     }
-
-
-
-    public ServerPlayer getPlayer() {
-        return plugin.getServer() != null ? plugin.getServer().getPlayerList().getPlayer(uuid) : null;
-    }
 }
+

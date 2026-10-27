@@ -118,10 +118,10 @@ public class FabricQuestadminSetStageCommand extends FabricQuestsSubCommand {
             quester.takeQuest(quest, true);
         }
         final int index = stage - 1;
-        if (index < 0 || index >= quest.getStages().size()) {
+        if (index < 0 || index >= quest.getOrderedStages().size()) {
             reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "invalidRange")
                     .replace("<least>", "1")
-                    .replace("<greatest>", String.valueOf(quest.getStages().size()))), false);
+                    .replace("<greatest>", String.valueOf(quest.getOrderedStages().size()))), false);
             return 0;
         }
         quest.setStage(quester, index);
@@ -157,7 +157,7 @@ public class FabricQuestadminSetStageCommand extends FabricQuestsSubCommand {
             final Quest quest = findQuest(plugin, questName);
             if (quest != null) {
                 final List<String> results = new ArrayList<>();
-                for (int i = 1; i <= quest.getStages().size(); i++) {
+                for (int i = 1; i <= quest.getOrderedStages().size(); i++) {
                     results.add(questName + " " + i);
                 }
                 return results;

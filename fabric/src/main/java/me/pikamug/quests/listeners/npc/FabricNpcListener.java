@@ -52,7 +52,7 @@ public abstract class FabricNpcListener {
                 boolean matched = false;
                 for (int i = 0; i < stage.getNpcsToInteract().size(); i++) {
                     if (npcUuid.equals(stage.getNpcsToInteract().get(i))) {
-                        final var progress = quester.getQuestProgressOrDefault(quest);
+                        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         if (!progress.getNpcsInteracted().get(i)) {
                             progress.getNpcsInteracted().set(i, true);
                             quester.finishObjective(quest, ObjectiveType.TALK_TO_NPC, i);

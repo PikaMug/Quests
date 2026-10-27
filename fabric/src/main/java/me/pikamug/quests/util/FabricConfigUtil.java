@@ -13,7 +13,8 @@ package me.pikamug.quests.util;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.quests.Quest;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Locale;
@@ -25,24 +26,74 @@ public class FabricConfigUtil {
     //private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
     private static final Pattern hexPattern = Pattern.compile("(?i)%#([0-9A-F]{6})%");
 
-    public static String getLocationInfo(final BlockPos block) {
-        return block.getX() + " " + block.getY() + " " + block.getZ();
+    public static FabricLocation getLocation(final String arg) {
+        if (arg == null) {
+            return null;
+        }
+        final String[] info = arg.split(" ");
+        if (info.length < 4) {
+            return null;
+        }
+        final StringBuilder sb = new StringBuilder();
+        final int xIndex = info.length - 3;
+        final int yIndex = info.length - 2;
+        final int zIndex = info.length - 1;
+        for (int index = 0; index < xIndex; index++) {
+            if (index == 0) {
+                sb.append(info[index]);
+            } else {
+                sb.append(" ").append(info[index]);
+            }
+        }
+        final String world = sb.toString();
+        final double x;
+        final double y;
+        final double z;
+        try {
+            x = Double.parseDouble(info[xIndex]);
+            y = Double.parseDouble(info[yIndex]);
+            z = Double.parseDouble(info[zIndex]);
+        } catch (final Exception e) {
+            FabricQuestsPlugin.LOGGER.severe("Please inform Quests developer location was wrong for "
+                    + world + " " + info[xIndex] + " " + info[yIndex] + " " + info[zIndex] + " ");
+            return null;
+        }
+        final MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
+        if (server == null) {
+            return null;
+        }
+        for (final ServerLevel level : server.getAllLevels()) {
+            final String path = level.dimension().identifier().getPath();
+            final String full = level.dimension().identifier().toString();
+            if (path.equalsIgnoreCase(world) || full.equalsIgnoreCase(world)) {
+                return new FabricLocation(level, x, y, z);
+            }
+        }
+        FabricQuestsPlugin.LOGGER.severe("Quests could not locate world " + world + ", is it loaded?");
+        return null;
     }
 
-    /*public static String[] parseStringWithPossibleLineBreaks(final String s, final me.pikamug.quests.quests.Quest quest, final Player player) {
+    public static String getLocationInfo(final FabricLocation loc) {
+        if (loc == null || loc.getWorld() == null) {
+            return "";
+        }
+        return loc.getWorld().dimension().identifier() + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ();
+    }
+
+    public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest, final ServerPlayer player) {
         String parsed = parseString(s);
         if (parsed.contains("<npc>")) {
             if (quest.getNpcStart() != null) {
                 parsed = parsed.replace("<npc>", quest.getNpcStartName());
             } else {
-                Bukkit.getLogger().warning(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
+                FabricQuestsPlugin.LOGGER.warn(quest.getName() + " quest uses <npc> tag but doesn't have an NPC start set");
             }
         }
-        if (FabricDependencies.placeholder != null && player != null) {
+        /*if (FabricDependencies.placeholder != null && player != null) {
             parsed = PlaceholderAPI.setPlaceholders(player, parsed);
-        }
+        }*/
         return parsed.split("\n");
-    }*/
+    }
 
     public static String[] parseStringWithPossibleLineBreaks(final String s, final Quest quest) {
         String parsed = parseString(s);

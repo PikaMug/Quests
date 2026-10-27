@@ -9,10 +9,13 @@ import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.exceptions.ActionFormatException;
 import me.pikamug.quests.actions.FabricAction;
 import me.pikamug.quests.storage.implementation.ActionStorageImpl;
+import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricItemUtil;
+import me.pikamug.quests.util.FabricLocation;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 
@@ -68,8 +71,8 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
         return null;
     }
 
-    private static Action parseAction(final String name, final JsonObject json) throws ActionFormatException {
-        final FabricAction action = new FabricAction();
+    private Action parseAction(final String name, final JsonObject json) throws ActionFormatException {
+        final FabricAction action = new FabricAction(plugin);
         action.setName(name);
         if (json.has("message")) action.setMessage(json.get("message").getAsString());
         if (json.has("clear-inventory")) action.setClearInv(json.get("clear-inventory").getAsBoolean());
@@ -90,8 +93,15 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
         if (json.has("book")) action.setBook(json.get("book").getAsString());
         if (json.has("explosions")) {
             final JsonArray arr = json.getAsJsonArray("explosions");
-            final LinkedList<String> explosions = new LinkedList<>();
-            arr.forEach(e -> explosions.add(e.getAsString()));
+            final LinkedList<FabricLocation> explosions = new LinkedList<>();
+            for (final com.google.gson.JsonElement e : arr) {
+                final FabricLocation loc = FabricConfigUtil.getLocation(e.getAsString());
+                if (loc == null) {
+                    throw new ActionFormatException("'explosions' is not in proper \"WorldName x y z\" format",
+                            name);
+                }
+                explosions.add(loc);
+            }
             action.setExplosions(explosions);
         }
         if (json.has("effects") && json.has("effect-locations")) {
@@ -100,20 +110,41 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
             if (effectsArr.size() != locationsArr.size()) {
                 throw new ActionFormatException("'effects' and 'effect-locations' must be lists of the same size", name);
             }
-            final LinkedHashMap<String, String> effects = new LinkedHashMap<>();
+            final LinkedHashMap<FabricLocation, SoundEvent> effects = new LinkedHashMap<>();
             for (int i = 0; i < effectsArr.size(); i++) {
-                effects.put(locationsArr.get(i).getAsString(), effectsArr.get(i).getAsString());
+                final FabricLocation loc = FabricConfigUtil.getLocation(locationsArr.get(i).getAsString());
+                if (loc == null) {
+                    throw new ActionFormatException("'effect-locations' is not a list of locations", name);
+                }
+                final SoundEvent effect = BuiltInRegistries.SOUND_EVENT
+                        .getValue(Identifier.tryBuild("minecraft", effectsArr.get(i).getAsString().toLowerCase()));
+                if (effect == null) {
+                    throw new ActionFormatException("'effects' is not a list of effects", name);
+                }
+                effects.put(loc, effect);
             }
             action.setEffects(effects);
         }
         if (json.has("lightning-strikes")) {
             final JsonArray arr = json.getAsJsonArray("lightning-strikes");
-            final LinkedList<String> strikes = new LinkedList<>();
-            arr.forEach(e -> strikes.add(e.getAsString()));
+            final LinkedList<FabricLocation> strikes = new LinkedList<>();
+            for (final com.google.gson.JsonElement e : arr) {
+                final FabricLocation loc = FabricConfigUtil.getLocation(e.getAsString());
+                if (loc == null) {
+                    throw new ActionFormatException("'lightning-strikes' is not in proper \"WorldName x y z\" format",
+                            name);
+                }
+                strikes.add(loc);
+            }
             action.setLightningStrikes(strikes);
         }
         if (json.has("teleport-location")) {
-            action.setTeleport(json.get("teleport-location").getAsString());
+            final FabricLocation loc = FabricConfigUtil.getLocation(json.get("teleport-location").getAsString());
+            if (loc == null) {
+                throw new ActionFormatException("'teleport-location' is not in proper \"WorldName x y z\" format",
+                        name);
+            }
+            action.setTeleport(loc);
         }
         if (json.has("potion-effect-types") && json.has("potion-effect-durations")
                 && json.has("potion-effect-amplifiers")) {
