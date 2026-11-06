@@ -287,9 +287,7 @@ public class BukkitQuesterYamlStorage implements QuesterStorageImpl {
     @Override
     public String getQuesterLastKnownName(final UUID uniqueId) {
         Quester quester = plugin.getQuester(uniqueId);
-        if (quester != null) {
-            quester.hardClear();
-        } else {
+        if (quester == null) {
             quester = new BukkitQuester(plugin, uniqueId);
         }
         return quester.getLastKnownName();
