@@ -13,6 +13,7 @@ package me.pikamug.quests.dependencies;
 import de.z0rdak.yawp.api.core.ILevelRegionApi;
 import de.z0rdak.yawp.api.core.RegionManager;
 import de.z0rdak.yawp.core.region.IMarkableRegion;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.LinkedList;
@@ -31,6 +32,20 @@ public class FabricYawpAccessor {
         final Optional<ILevelRegionApi> api = RegionManager.get().getDimRegionApi(player.level().dimension());
         if (api.isPresent()) {
             for (final IMarkableRegion region : api.get().getRegionsAt(player.blockPosition())) {
+                final String name = region.getName();
+                if (name != null) {
+                    regions.add(name);
+                }
+            }
+        }
+        return regions;
+    }
+
+    public List<String> getRegionNames(ServerLevel level) {
+        final List<String> regions = new LinkedList<>();
+        final Optional<ILevelRegionApi> api = RegionManager.get().getDimRegionApi(level.dimension());
+        if (api.isPresent()) {
+            for (final IMarkableRegion region : api.get().getAllLocalRegions()) {
                 final String name = region.getName();
                 if (name != null) {
                     regions.add(name);

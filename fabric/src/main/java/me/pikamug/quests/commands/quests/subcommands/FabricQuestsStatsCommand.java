@@ -16,6 +16,7 @@ import me.pikamug.quests.commands.FabricQuestsSubCommand;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.util.FabricLang;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.level.ServerPlayer;
 
 public class FabricQuestsStatsCommand extends FabricQuestsSubCommand {
 
@@ -57,10 +58,11 @@ public class FabricQuestsStatsCommand extends FabricQuestsSubCommand {
 
     @Override
     public int execute(final CommandSourceStack source, final String[] args) {
-        if (assertNonPlayer(source)) {
+        final ServerPlayer player = source.getPlayer();
+        if (player == null) {
             return 0;
         }
-        final FabricQuester quester = plugin.getQuester(source.getPlayer().getUUID());
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
         displayStats(source, quester);
         return Command.SINGLE_SUCCESS;
     }

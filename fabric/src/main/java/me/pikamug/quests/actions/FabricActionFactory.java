@@ -12,14 +12,18 @@ package me.pikamug.quests.actions;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.convo.actions.main.FabricActionMainPrompt;
+import me.pikamug.quests.entity.FabricQuestMob;
 import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.ItemStack;
@@ -41,9 +45,9 @@ public class FabricActionFactory implements ActionFactory {
     private ConcurrentHashMap<UUID, FabricLocation> selectedMobLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, FabricLocation> selectedLightningLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, FabricLocation> selectedTeleportLocations = new ConcurrentHashMap<>();
-    private List<String> editingActionNames = new LinkedList<>();
+    private List<String> namesOfActionsBeingEdited = new LinkedList<>();
 
-    public FabricActionFactory(FabricQuestsPlugin plugin) {
+    public FabricActionFactory(final FabricQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -88,19 +92,18 @@ public class FabricActionFactory implements ActionFactory {
     }
 
     public List<String> getNamesOfActionsBeingEdited() {
-        return editingActionNames;
+        return namesOfActionsBeingEdited;
     }
 
     public void setNamesOfActionsBeingEdited(final Collection<String> actionNames) {
-        this.editingActionNames = new LinkedList<>(actionNames);
+        this.namesOfActionsBeingEdited = new LinkedList<>(actionNames);
     }
 
     public void returnToMenu(final UUID uuid) {
         new FabricActionMainPrompt(uuid).start();
     }
 
-    @Override
-    public void loadData(UUID uuid, Action action) {
+    public void loadData(final UUID uuid, final Action action) {
         if (!(action instanceof FabricAction)) {
             return;
         }
@@ -124,8 +127,11 @@ public class FabricActionFactory implements ActionFactory {
             final LinkedList<String> locs = new LinkedList<>();
             final LinkedList<String> effs = new LinkedList<>();
             for (final Map.Entry<FabricLocation, SoundEvent> e : fabricAction.getEffects().entrySet()) {
+                final SoundEvent effect = e.getValue();
+                if (effect == null) continue;
                 locs.add(FabricConfigUtil.getLocationInfo(e.getKey()));
-                effs.add(e.getValue().toString());
+                final Identifier id = BuiltInRegistries.SOUND_EVENT.getKey(effect);
+                effs.add(id != null ? id.toString() : String.valueOf(effect));
             }
             SessionData.set(uuid, Key.A_EFFECTS, effs);
             SessionData.set(uuid, Key.A_EFFECTS_LOCATIONS, locs);
@@ -162,13 +168,13 @@ public class FabricActionFactory implements ActionFactory {
             SessionData.set(uuid, Key.A_POTION_DURATIONS, durations);
             SessionData.set(uuid, Key.A_POTION_STRENGTH, strengths);
         }
-        if (fabricAction.getHunger() != 0) {
+        if (fabricAction.getHunger() > -1) {
             SessionData.set(uuid, Key.A_HUNGER, fabricAction.getHunger());
         }
-        if (fabricAction.getSaturation() != 0) {
+        if (fabricAction.getSaturation() > -1) {
             SessionData.set(uuid, Key.A_SATURATION, fabricAction.getSaturation());
         }
-        if (fabricAction.getHealth() > 0) {
+        if (fabricAction.getHealth() > -1) {
             SessionData.set(uuid, Key.A_HEALTH, fabricAction.getHealth());
         }
         if (fabricAction.getTeleport() != null) {
@@ -185,12 +191,10 @@ public class FabricActionFactory implements ActionFactory {
         }
     }
 
-    @Override
     public void clearData(UUID uuid) {
         SessionData.clear(uuid);
     }
 
-    @Override
     public void deleteAction(UUID uuid) {
         final String actionName = (String) SessionData.get(uuid, Key.ED_EVENT_DELETE);
         if (actionName == null || actionName.isEmpty()) return;
@@ -208,11 +212,11 @@ public class FabricActionFactory implements ActionFactory {
             plugin.getActionFactory().getNamesOfActionsBeingEdited().remove(actionName);
             clearData(uuid);
         } catch (final Exception e) {
-            FabricQuestsPlugin.LOGGER.error("Failed to delete action: {}", actionName, e);
+            plugin.getPluginLogger().error("Failed to delete action: {}", actionName, e);
         }
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
     public void saveAction(UUID uuid) {
         final String actionName = (String) SessionData.get(uuid, Key.A_NAME);
         if (actionName == null || actionName.isEmpty()) return;
@@ -276,16 +280,83 @@ public class FabricActionFactory implements ActionFactory {
                 section.add("potion-effect-amplifiers", gson.toJsonTree(SessionData.get(uuid, Key.A_POTION_STRENGTH)));
             }
             if (SessionData.get(uuid, Key.A_ITEMS) != null && SessionData.get(uuid, Key.A_ITEMS) instanceof LinkedList) {
-                @SuppressWarnings("unchecked")
-                LinkedList<?> itemList = (LinkedList<?>) SessionData.get(uuid, Key.A_ITEMS);
+                final LinkedList<ItemStack> itemList = (LinkedList<ItemStack>) SessionData.get(uuid, Key.A_ITEMS);
+                if (itemList == null) {
+                    return;
+                }
                 final com.google.gson.JsonArray itemsJson = new com.google.gson.JsonArray();
-                for (final Object stack : itemList) {
-                    if (stack instanceof ItemStack) {
-                        ItemStack itemStack = (ItemStack) stack;
-                        itemsJson.add(FabricItemUtil.serializeToJson(itemStack));
+                for (final ItemStack stack : itemList) {
+                    if (stack != null) {
+                        itemsJson.add(FabricItemUtil.serializeToJson(stack));
                     }
                 }
                 section.add("items", itemsJson);
+            }
+            if (SessionData.get(uuid, Key.A_EXPLOSIONS) != null) {
+                section.add("explosions", gson.toJsonTree(SessionData.get(uuid, Key.A_EXPLOSIONS)));
+            }
+            if (SessionData.get(uuid, Key.A_EFFECTS) != null) {
+                section.add("effects", gson.toJsonTree(SessionData.get(uuid, Key.A_EFFECTS)));
+                section.add("effect-locations", gson.toJsonTree(SessionData.get(uuid, Key.A_EFFECTS_LOCATIONS)));
+            }
+            if (SessionData.get(uuid, Key.A_WORLD_STORM) != null) {
+                section.addProperty("storm-world", String.valueOf(SessionData.get(uuid, Key.A_WORLD_STORM)));
+            }
+            if (SessionData.get(uuid, Key.A_WORLD_THUNDER) != null) {
+                section.addProperty("thunder-world", String.valueOf(SessionData.get(uuid, Key.A_WORLD_THUNDER)));
+            }
+            if (SessionData.get(uuid, Key.A_LIGHTNING) != null) {
+                section.add("lightning-strikes", gson.toJsonTree(SessionData.get(uuid, Key.A_LIGHTNING)));
+            }
+            if (SessionData.get(uuid, Key.A_TELEPORT) != null) {
+                section.addProperty("teleport-location", String.valueOf(SessionData.get(uuid, Key.A_TELEPORT)));
+            }
+            if (SessionData.get(uuid, Key.A_MOBS) instanceof List) {
+                final LinkedList<FabricQuestMob> mobList = (LinkedList<FabricQuestMob>) SessionData.get(uuid, Key.A_MOBS);
+                if (mobList == null) {
+                    return;
+                }
+                final JsonArray mobsJson = new JsonArray();
+                for (final FabricQuestMob mob : mobList) {
+                    if (mob == null) {
+                        continue;
+                    }
+                    final JsonObject mobJson = new JsonObject();
+                    if (mob.getName() != null) {
+                        mobJson.addProperty("name", mob.getName());
+                    }
+                    if (mob.getType() != null) {
+                        final Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
+                        mobJson.addProperty("mob-type", id.toString());
+                    }
+                    if (mob.getSpawnAmounts() != null) {
+                        mobJson.addProperty("spawn-amounts", mob.getSpawnAmounts());
+                    }
+                    if (mob.getLevel() != null && mob.getSpawnLocation() != null) {
+                        final Identifier worldId = mob.getLevel().dimension().identifier();
+                        mobJson.addProperty("spawn-location", worldId + " " + mob.getSpawnLocation().getX() + " "
+                                + mob.getSpawnLocation().getY() + " " + mob.getSpawnLocation().getZ());
+                    }
+                    final JsonArray inventoryJson = new JsonArray();
+                    for (final ItemStack stack : mob.getInventory()) {
+                        inventoryJson.add(stack == null || stack.isEmpty() ? com.google.gson.JsonNull.INSTANCE
+                                : FabricItemUtil.serializeToJson(stack));
+                    }
+                    mobJson.add("inventory", inventoryJson);
+                    final JsonArray dropChancesJson = new JsonArray();
+                    for (final Float chance : mob.getDropChances()) {
+                        if (chance == null) {
+                            dropChancesJson.add(com.google.gson.JsonNull.INSTANCE);
+                        } else {
+                            dropChancesJson.add(new com.google.gson.JsonPrimitive(chance));
+                        }
+                    }
+                    mobJson.add("drop-chances", dropChancesJson);
+                    mobsJson.add(mobJson);
+                }
+                if (!mobsJson.isEmpty()) {
+                    section.add("mob-spawns", mobsJson);
+                }
             }
             if (json == null) {
                 final JsonObject newJson = new JsonObject();
@@ -295,7 +366,7 @@ public class FabricActionFactory implements ActionFactory {
                 json.add(actionName, section);
                 Files.write(actionsFile, gson.toJson(json).getBytes());
             }
-            editingActionNames.remove(actionName);
+            namesOfActionsBeingEdited.remove(actionName);
             plugin.reload();
             clearData(uuid);
         } catch (final Exception e) {

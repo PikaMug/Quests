@@ -11,6 +11,7 @@
 package me.pikamug.quests.commands;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.dependencies.FabricDependencies;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
@@ -21,9 +22,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -33,8 +32,6 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public abstract class FabricQuestsSubCommand {
-
-    public static final Logger SERVER_LOGGER = LoggerFactory.getLogger("net.minecraft.server.MinecraftServer");
 
     public abstract String getName();
 
@@ -66,21 +63,25 @@ public abstract class FabricQuestsSubCommand {
      * Sends command feedback. Players receive it through the normal success path; console feedback is
      * logged directly (with legacy color codes converted to ANSI) so that only Quests output is colorized.
      */
-    public static void reply(final CommandSourceStack source, final Supplier<Component> message,
-                             final boolean broadcast) {
+    public static void reply(final CommandSourceStack source, final Supplier<Component> message) {
         if (source.isPlayer()) {
-            source.sendSuccess(() -> message.get(), broadcast);
+            source.sendSuccess(message, false);
         } else {
-            SERVER_LOGGER.info("{}", AnsiUtil.toAnsi(message.get().getString()));
+            FabricQuestsPlugin.getInstance().getPluginLogger()
+                    .info("{}", AnsiUtil.toAnsi(message.get().getString()));
         }
     }
 
-    public static boolean assertNonPlayer(final CommandSourceStack source) {
-        if (!source.isPlayer()) {
-            SERVER_LOGGER.info("{}", AnsiUtil.toAnsi(ChatFormatting.YELLOW + FabricLang.get("consoleError")));
+    public static boolean hasCommandPermission(final CommandSourceStack source, final String permission) {
+        final ServerPlayer player = source.getPlayer();
+        if (player == null) {
             return true;
         }
-        return false;
+        final FabricDependencies dependencies = FabricQuestsPlugin.getInstance().getDependencies();
+        if (!dependencies.hasLuckPerms()) {
+            return true;
+        }
+        return dependencies.hasPermission(player.getUUID(), permission);
     }
 
     /**
@@ -93,8 +94,8 @@ public abstract class FabricQuestsSubCommand {
         if (name == null) {
             return null;
         }
-        final List<ServerPlayer> players = FabricQuestsPlugin.getInstance().getServer().getPlayerList().getPlayers()
-                .stream().collect(java.util.stream.Collectors.toList());
+        final List<ServerPlayer> players
+                = new ArrayList<>(FabricQuestsPlugin.getInstance().getServer().getPlayerList().getPlayers());
         for (final ServerPlayer p : players) {
             if (p.getGameProfile().name().equalsIgnoreCase(name)) {
                 return p;
@@ -149,27 +150,27 @@ public abstract class FabricQuestsSubCommand {
     public static void displayStats(final CommandSourceStack source, final FabricQuester quester) {
         final ServerPlayer player = source.isPlayer() ? source.getPlayer() : null;
         reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(player, "questPoints") + " - "
-                + ChatFormatting.DARK_PURPLE + quester.getQuestPoints()), false);
+                + ChatFormatting.DARK_PURPLE + quester.getQuestPoints()));
         if (quester.getCurrentQuests().isEmpty()) {
             reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(player, "currentQuest")
-                    + " " + ChatFormatting.DARK_PURPLE + lang(player, "none")), false);
+                    + " " + ChatFormatting.DARK_PURPLE + lang(player, "none")));
         } else {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(player, "currentQuest")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(player, "currentQuest")));
             for (final Map.Entry<Quest, Integer> entry : quester.getCurrentQuests().entrySet()) {
                 final String questName = entry.getKey().getName();
                 final int stageNumber = entry.getValue() + 1;
                 reply(source,() -> Component.literal(ChatFormatting.YELLOW + "- " + questName
                         + ChatFormatting.LIGHT_PURPLE + " (" + lang(player, "stageEditorStage") + " " + stageNumber
-                        + ")"), false);
+                        + ")"));
             }
         }
         if (quester.getCompletedQuests().isEmpty()) {
             reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(player, "completedQuest")
-                    + " " + ChatFormatting.DARK_PURPLE + lang(player, "none")), false);
+                    + " " + ChatFormatting.DARK_PURPLE + lang(player, "none")));
         } else {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(player, "completedQuest")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(player, "completedQuest")));
             for (final Quest q : quester.getCompletedQuests()) {
-                reply(source,() -> Component.literal(ChatFormatting.YELLOW + "- " + q.getName()), false);
+                reply(source,() -> Component.literal(ChatFormatting.YELLOW + "- " + q.getName()));
             }
         }
     }

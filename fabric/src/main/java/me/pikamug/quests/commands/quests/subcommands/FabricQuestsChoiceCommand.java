@@ -13,7 +13,6 @@ package me.pikamug.quests.commands.quests.subcommands;
 import com.mojang.brigadier.Command;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.commands.FabricQuestsSubCommand;
-import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.util.FabricLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -64,10 +63,10 @@ public class FabricQuestsChoiceCommand extends FabricQuestsSubCommand {
 
     @Override
     public int execute(final CommandSourceStack source, final String[] args) {
-        if (assertNonPlayer(source)) {
+        final ServerPlayer player = source.getPlayer();
+        if (player == null) {
             return 0;
         }
-        final ServerPlayer player = source.getPlayer();
         final Optional<Conversation> conversation = Conversations.getConversationOf(player.getUUID());
         if (!conversation.isPresent()) {
             player.sendSystemMessage(Component.literal(ChatFormatting.RED + lang(player, "notConversing")));

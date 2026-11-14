@@ -13,6 +13,7 @@ package me.pikamug.quests.dependencies;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.events.FabricEventAccessor;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.LinkedList;
@@ -155,23 +156,100 @@ public class FabricDependencies implements Dependencies {
     }
 
     /**
-     * Returns the names of the YAWP regions the given player is currently
-     * standing in. Returns an empty list when YAWP is not installed, the
-     * player is offline, or the region data cannot be resolved.
+     * Returns the names of the regions the given player is currently standing
+     * in, using YAWP regions and Open Parties and Claims claims. Returns an
+     * empty list when neither mod is installed, the player is offline, or the
+     * region data cannot be resolved.
      *
      * @param player the player to check
      * @return the names of the regions the player is inside
      */
     public List<String> getRegionsAt(ServerPlayer player) {
         final List<String> regions = new LinkedList<>();
-        if (yawp == null || player == null) {
+        if (player == null) {
             return regions;
         }
-        try {
-            return yawp.getRegionsAt(player);
-        } catch (final Exception e) {
-            FabricQuestsPlugin.LOGGER.warn("Failed to resolve YAWP regions at player position", e);
-            return regions;
+        if (yawp != null) {
+            try {
+                addUnique(regions, yawp.getRegionsAt(player));
+            } catch (final Exception e) {
+                FabricQuestsPlugin.LOGGER.warn("Failed to resolve YAWP regions at player position", e);
+            }
+        }
+        if (openParties != null) {
+            try {
+                addUnique(regions, openParties.getClaimNamesAt(plugin.getServer(), player));
+            } catch (final Exception e) {
+                FabricQuestsPlugin.LOGGER.warn("Failed to resolve Open Parties and Claims claims at player position", e);
+            }
+        }
+        return regions;
+    }
+
+    /**
+     * Checks whether the given player is currently inside the named region,
+     * ignoring case and surrounding whitespace. Returns {@code false} when the
+     * player is offline, the name is blank, or no region provider is
+     * installed.
+     */
+    public boolean isInRegion(ServerPlayer player, String regionName) {
+        if (player == null || regionName == null) {
+            return false;
+        }
+        final String target = ChatFormatting.stripFormatting(regionName).trim();
+        if (target.isEmpty()) {
+            return false;
+        }
+        for (final String region : getRegionsAt(player)) {
+            if (region != null && ChatFormatting.stripFormatting(region).trim().equalsIgnoreCase(target)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns whether any region provider (YAWP or Open Parties and Claims)
+     * is available for WorldGuard-style region checks.
+     */
+    public boolean hasRegionSupport() {
+        return yawp != null || openParties != null;
+    }
+
+    /**
+     * Returns the names of all known YAWP regions and Open Parties and Claims
+     * claims, for use in editor prompts. Returns an empty list when no region
+     * provider is installed or the names cannot be resolved.
+     */
+    public List<String> getKnownRegionNames() {
+        final List<String> names = new LinkedList<>();
+        if (plugin.getServer() == null) {
+            return names;
+        }
+        if (yawp != null) {
+            for (final net.minecraft.server.level.ServerLevel level : plugin.getServer().getAllLevels()) {
+                try {
+                    addUnique(names, yawp.getRegionNames(level));
+                } catch (final Exception e) {
+                    FabricQuestsPlugin.LOGGER.warn("Failed to list YAWP regions", e);
+                }
+            }
+        }
+        if (openParties != null) {
+            try {
+                addUnique(names, openParties.getKnownClaimNames(plugin.getServer()));
+            } catch (final Exception e) {
+                FabricQuestsPlugin.LOGGER.warn("Failed to list Open Parties and Claims claims", e);
+            }
+        }
+        return names;
+    }
+
+    private void addUnique(List<String> target, List<String> source) {
+        for (final String value : source) {
+            if (value != null && !value.isEmpty() && !target.contains(value)) {
+                target.add(value);
+            }
         }
     }
 

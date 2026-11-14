@@ -64,9 +64,9 @@ public class FabricConditionJsonStorage implements ConditionStorageImpl {
         return null;
     }
 
-    private static Condition parseCondition(final String name, final JsonObject json)
+    private Condition parseCondition(final String name, final JsonObject json)
             throws ConditionFormatException {
-        final FabricCondition condition = new FabricCondition();
+        final FabricCondition condition = new FabricCondition(plugin);
         condition.setName(name);
         if (json.has("fail-quest")) condition.setFailQuest(json.get("fail-quest").getAsBoolean());
         if (json.has("ride-entity")) {
@@ -146,7 +146,7 @@ public class FabricConditionJsonStorage implements ConditionStorageImpl {
             if (arr.get(i).isJsonObject()) {
                 list.add(FabricItemUtil.deserializeFromJson(arr.get(i).getAsJsonObject()));
             } else {
-                list.add(FabricItemUtil.deserialize(arr.get(i).getAsString()));
+                list.add(FabricItemUtil.readItemStack(arr.get(i).getAsString()));
             }
         }
         return list;

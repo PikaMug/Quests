@@ -2358,7 +2358,7 @@ public class BukkitQuester implements Quester {
         plugin.getServer().getPluginManager().callEvent(preEvent);
 
         final BukkitQuestProgress bukkitQuestProgress = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
-        final int cutIndex = getCurrentStage(quest).getBlocksToCut().indexOf(goal);
+        final int cutIndex = ((BukkitStage)getCurrentStage(quest)).getBlocksToCut().indexOf(goal);
         if (cutIndex >= bukkitQuestProgress.blocksCut.size()) {
             return;
         }

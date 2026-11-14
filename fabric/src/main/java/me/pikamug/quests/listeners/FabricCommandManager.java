@@ -92,19 +92,19 @@ public class FabricCommandManager {
             dispatcher.register(
                     Commands.literal("quest")
                             .requires(Commands.hasPermission(Commands.LEVEL_ALL))
-                            .executes(ctx -> questHandler.handleQuest(ctx.getSource()))
+                            .executes(ctx -> questHandler.check(ctx.getSource()))
                             .then(Commands.argument("quest", StringArgumentType.greedyString())
                                     .suggests(questSuggestions)
-                                    .executes(ctx -> questHandler.handleQuestDetail(ctx.getSource(),
+                                    .executes(ctx -> questHandler.showQuestDetails(ctx.getSource(),
                                             StringArgumentType.getString(ctx, "quest"))))
             );
             dispatcher.register(
                     Commands.literal("q")
                             .requires(Commands.hasPermission(Commands.LEVEL_ALL))
-                            .executes(ctx -> questHandler.handleQuest(ctx.getSource()))
+                            .executes(ctx -> questHandler.check(ctx.getSource()))
                             .then(Commands.argument("quest", StringArgumentType.greedyString())
                                     .suggests(questSuggestions)
-                                    .executes(ctx -> questHandler.handleQuestDetail(ctx.getSource(),
+                                    .executes(ctx -> questHandler.showQuestDetails(ctx.getSource(),
                                             StringArgumentType.getString(ctx, "quest"))))
             );
 

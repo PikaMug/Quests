@@ -32,6 +32,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class FabricEntityListener {
@@ -75,8 +77,12 @@ public class FabricEntityListener {
         final ServerPlayer player = resolveKillerPlayer(level, killer);
         if (player == null || victim.getUUID().equals(player.getUUID())) return;
         final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final Set<String> dispatchedNpcQuestIDs = new HashSet<>();
+        final Set<String> dispatchedPlayerQuestIDs = new HashSet<>();
+        final Set<String> dispatchedMobQuestIDs = new HashSet<>();
 
         for (final Quest quest : plugin.getLoadedQuests()) {
+            if (!quester.meetsCondition(quest, true)) continue;
             if (!quester.getCurrentQuests().containsKey(quest)) continue;
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
@@ -98,7 +104,7 @@ public class FabricEntityListener {
                     }
                 }
                 if (matched) quester.checkQuest(quest);
-                dispatchNpcKill(quester, quest, victim);
+                dispatchNpcKill(quester, quest, victim, dispatchedNpcQuestIDs);
                 continue;
             }
 
@@ -112,7 +118,7 @@ public class FabricEntityListener {
                     quester.finishObjective(quest, ObjectiveType.KILL_PLAYER, 0);
                 }
                 quester.checkQuest(quest);
-                dispatchPlayerKill(quester, quest);
+                dispatchPlayerKill(quester, quest, dispatchedPlayerQuestIDs);
                 continue;
             }
 
@@ -133,14 +139,15 @@ public class FabricEntityListener {
                     }
                 }
                 if (matched) quester.checkQuest(quest);
-                dispatchMobKill(quester, quest, stage, victim, level);
+                dispatchMobKill(quester, quest, victim, level, dispatchedMobQuestIDs);
             }
         }
     }
 
-    private void dispatchMobKill(FabricQuester quester, Quest quest, Stage stage, LivingEntity victim,
-            ServerLevel level) {
-        quester.dispatchMultiplayerEverything(quest, ObjectiveType.KILL_MOB, (q, cq) -> {
+    private void dispatchMobKill(FabricQuester quester, Quest quest, LivingEntity victim, ServerLevel level,
+            Set<String> dispatchedQuestIDs) {
+        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, ObjectiveType.KILL_MOB, (q, cq) -> {
+            if (dispatchedQuestIDs.contains(cq.getId())) return null;
             final Stage qStage = q.getCurrentStage(cq);
             if (qStage == null || qStage.getMobsToKill().isEmpty()) return null;
             final me.pikamug.quests.player.QuestProgress qProgress = q.getQuestProgressOrDefault(cq);
@@ -158,11 +165,13 @@ public class FabricEntityListener {
                 if (q.testComplete(cq)) q.checkQuest(cq);
             }
             return null;
-        });
+        }));
     }
 
-    private void dispatchNpcKill(FabricQuester quester, Quest quest, LivingEntity victim) {
-        quester.dispatchMultiplayerEverything(quest, ObjectiveType.KILL_NPC, (q, cq) -> {
+    private void dispatchNpcKill(FabricQuester quester, Quest quest, LivingEntity victim,
+            Set<String> dispatchedQuestIDs) {
+        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, ObjectiveType.KILL_NPC, (q, cq) -> {
+            if (dispatchedQuestIDs.contains(cq.getId())) return null;
             final Stage qStage = q.getCurrentStage(cq);
             if (qStage == null || qStage.getNpcsToKill().isEmpty()) return null;
             final me.pikamug.quests.player.QuestProgress qProgress = q.getQuestProgressOrDefault(cq);
@@ -179,11 +188,12 @@ public class FabricEntityListener {
                 if (q.testComplete(cq)) q.checkQuest(cq);
             }
             return null;
-        });
+        }));
     }
 
-    private void dispatchPlayerKill(FabricQuester quester, Quest quest) {
-        quester.dispatchMultiplayerEverything(quest, ObjectiveType.KILL_PLAYER, (q, cq) -> {
+    private void dispatchPlayerKill(FabricQuester quester, Quest quest, Set<String> dispatchedQuestIDs) {
+        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, ObjectiveType.KILL_PLAYER, (q, cq) -> {
+            if (dispatchedQuestIDs.contains(cq.getId())) return null;
             final Stage qStage = q.getCurrentStage(cq);
             if (qStage == null || qStage.getPlayersToKill() == null || qStage.getPlayersToKill() <= 0) return null;
             final me.pikamug.quests.player.QuestProgress qProgress = q.getQuestProgressOrDefault(cq);
@@ -194,7 +204,7 @@ public class FabricEntityListener {
             }
             if (q.testComplete(cq)) q.checkQuest(cq);
             return null;
-        });
+        }));
     }
 
     private boolean isWithinKillLocation(Stage stage, int index, double x, double y, double z, ServerLevel level) {
@@ -274,35 +284,69 @@ public class FabricEntityListener {
 
     private void applyMilkMilked(ServerPlayer player) {
         final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final ObjectiveType type = ObjectiveType.MILK_COW;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         for (final Quest quest : plugin.getLoadedQuests()) {
-            if (!quester.getCurrentQuests().containsKey(quest)) continue;
-            final Stage stage = quester.getCurrentStage(quest);
-            if (stage == null || stage.getCowsToMilk() == null || stage.getCowsToMilk() <= 0) continue;
-            final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
-            final int beforeMilk = progress.getCowsMilked();
-            progress.setCowsMilked(beforeMilk + 1);
-            if (beforeMilk < stage.getCowsToMilk() && progress.getCowsMilked() >= stage.getCowsToMilk()) {
-                quester.finishObjective(quest, ObjectiveType.MILK_COW, 0);
+            if (!quester.meetsCondition(quest, true)) continue;
+            if (quester.getCurrentQuests().containsKey(quest)
+                    && quester.getCurrentStage(quest) != null
+                    && quester.getCurrentStage(quest).containsObjective(type)) {
+                applyMilkProgress(quester, quest);
             }
-            quester.checkQuest(quest);
+
+            dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (q, cq) -> {
+                if (!dispatchedQuestIDs.contains(cq.getId())) {
+                    applyMilkProgress((FabricQuester) q, cq);
+                }
+                return null;
+            }));
         }
+    }
+
+    private void applyMilkProgress(FabricQuester quester, Quest quest) {
+        final Stage stage = quester.getCurrentStage(quest);
+        if (stage == null || stage.getCowsToMilk() == null || stage.getCowsToMilk() <= 0) return;
+        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
+        final int beforeMilk = progress.getCowsMilked();
+        progress.setCowsMilked(beforeMilk + 1);
+        if (beforeMilk < stage.getCowsToMilk() && progress.getCowsMilked() >= stage.getCowsToMilk()) {
+            quester.finishObjective(quest, ObjectiveType.MILK_COW, 0);
+        }
+        quester.checkQuest(quest);
     }
 
     private void onFishingCatch(ServerPlayer player) {
         if (plugin.isLoading() || player == null) return;
         final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final ObjectiveType type = ObjectiveType.CATCH_FISH;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         for (final Quest quest : plugin.getLoadedQuests()) {
-            if (!quester.getCurrentQuests().containsKey(quest)) continue;
-            final Stage stage = quester.getCurrentStage(quest);
-            if (stage == null || stage.getFishToCatch() == null || stage.getFishToCatch() <= 0) continue;
-            final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
-            final int beforeFish = progress.getFishCaught();
-            progress.setFishCaught(beforeFish + 1);
-            if (beforeFish < stage.getFishToCatch() && progress.getFishCaught() >= stage.getFishToCatch()) {
-                quester.finishObjective(quest, ObjectiveType.CATCH_FISH, 0);
+            if (!quester.meetsCondition(quest, true)) continue;
+            if (quester.getCurrentQuests().containsKey(quest)
+                    && quester.getCurrentStage(quest) != null
+                    && quester.getCurrentStage(quest).containsObjective(type)) {
+                applyFishingProgress(quester, quest);
             }
-            quester.checkQuest(quest);
+
+            dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (q, cq) -> {
+                if (!dispatchedQuestIDs.contains(cq.getId())) {
+                    applyFishingProgress((FabricQuester) q, cq);
+                }
+                return null;
+            }));
         }
+    }
+
+    private void applyFishingProgress(FabricQuester quester, Quest quest) {
+        final Stage stage = quester.getCurrentStage(quest);
+        if (stage == null || stage.getFishToCatch() == null || stage.getFishToCatch() <= 0) return;
+        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
+        final int beforeFish = progress.getFishCaught();
+        progress.setFishCaught(beforeFish + 1);
+        if (beforeFish < stage.getFishToCatch() && progress.getFishCaught() >= stage.getFishToCatch()) {
+            quester.finishObjective(quest, ObjectiveType.CATCH_FISH, 0);
+        }
+        quester.checkQuest(quest);
     }
 
     private void deferredShearCheck(ServerPlayer player, Level level, Entity entity) {
@@ -325,30 +369,47 @@ public class FabricEntityListener {
 
     private void applySheepSheared(ServerPlayer player, String colorName, String colorEnumName) {
         final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         for (final Quest quest : plugin.getLoadedQuests()) {
-            if (!quester.getCurrentQuests().containsKey(quest)) continue;
-            final Stage stage = quester.getCurrentStage(quest);
-            if (stage == null || stage.getSheepToShear().isEmpty()) continue;
-            boolean matched = false;
-            for (int i = 0; i < stage.getSheepToShear().size(); i++) {
-                final Object goal = stage.getSheepToShear().get(i);
-                if (goal == null) continue;
-                final String lowercase = goal.toString().trim().toLowerCase(java.util.Locale.ENGLISH);
-                if (lowercase.equals(colorName.toLowerCase(java.util.Locale.ENGLISH))
-                        || lowercase.equals(colorEnumName.toLowerCase(java.util.Locale.ENGLISH))) {
-                    final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
-                    final int shearGoal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
-                            ? stage.getSheepNumToShear().get(i) : 1;
-                    final int before = progress.getSheepSheared().get(i);
-                    progress.getSheepSheared().set(i, before + 1);
-                    if (before < shearGoal && progress.getSheepSheared().get(i) >= shearGoal) {
-                        quester.finishObjective(quest, ObjectiveType.SHEAR_SHEEP, i);
-                    }
-                    matched = true;
-                }
+            if (!quester.meetsCondition(quest, true)) continue;
+            if (quester.getCurrentQuests().containsKey(quest)
+                    && quester.getCurrentStage(quest) != null
+                    && quester.getCurrentStage(quest).containsObjective(type)) {
+                applySheepProgress(quester, quest, colorName, colorEnumName);
             }
-            if (matched) quester.checkQuest(quest);
+
+            dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (q, cq) -> {
+                if (!dispatchedQuestIDs.contains(cq.getId())) {
+                    applySheepProgress((FabricQuester) q, cq, colorName, colorEnumName);
+                }
+                return null;
+            }));
         }
+    }
+
+    private void applySheepProgress(FabricQuester quester, Quest quest, String colorName, String colorEnumName) {
+        final Stage stage = quester.getCurrentStage(quest);
+        if (stage == null || stage.getSheepToShear().isEmpty()) return;
+        boolean matched = false;
+        for (int i = 0; i < stage.getSheepToShear().size(); i++) {
+            final Object goal = stage.getSheepToShear().get(i);
+            if (goal == null) continue;
+            final String lowercase = goal.toString().trim().toLowerCase(java.util.Locale.ENGLISH);
+            if (lowercase.equals(colorName.toLowerCase(java.util.Locale.ENGLISH))
+                    || lowercase.equals(colorEnumName.toLowerCase(java.util.Locale.ENGLISH))) {
+                final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
+                final int shearGoal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
+                        ? stage.getSheepNumToShear().get(i) : 1;
+                final int before = progress.getSheepSheared().get(i);
+                progress.getSheepSheared().set(i, before + 1);
+                if (before < shearGoal && progress.getSheepSheared().get(i) >= shearGoal) {
+                    quester.finishObjective(quest, ObjectiveType.SHEAR_SHEEP, i);
+                }
+                matched = true;
+            }
+        }
+        if (matched) quester.checkQuest(quest);
     }
 
     private void deferredTameCheck(ServerPlayer player, Level level, Entity entity) {
@@ -373,25 +434,42 @@ public class FabricEntityListener {
 
     private void applyMobTamed(ServerPlayer player, EntityType<?> type) {
         final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final ObjectiveType objectiveType = ObjectiveType.TAME_MOB;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         for (final Quest quest : plugin.getLoadedQuests()) {
-            if (!quester.getCurrentQuests().containsKey(quest)) continue;
-            final Stage stage = quester.getCurrentStage(quest);
-            if (stage == null || stage.getMobsToTame().isEmpty()) continue;
-            boolean matched = false;
-            for (int i = 0; i < stage.getMobsToTame().size(); i++) {
-                if (matchesEntityName(stage.getMobsToTame().get(i), type)) {
-                    final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
-                    final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
-                            ? stage.getMobNumToTame().get(i) : 1;
-                    final int before = progress.getMobsTamed().get(i);
-                    progress.getMobsTamed().set(i, before + 1);
-                    if (before < goal && progress.getMobsTamed().get(i) >= goal) {
-                        quester.finishObjective(quest, ObjectiveType.TAME_MOB, i);
-                    }
-                    matched = true;
-                }
+            if (!quester.meetsCondition(quest, true)) continue;
+            if (quester.getCurrentQuests().containsKey(quest)
+                    && quester.getCurrentStage(quest) != null
+                    && quester.getCurrentStage(quest).containsObjective(objectiveType)) {
+                applyTameProgress(quester, quest, type);
             }
-            if (matched) quester.checkQuest(quest);
+
+            dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, objectiveType, (q, cq) -> {
+                if (!dispatchedQuestIDs.contains(cq.getId())) {
+                    applyTameProgress((FabricQuester) q, cq, type);
+                }
+                return null;
+            }));
         }
+    }
+
+    private void applyTameProgress(FabricQuester quester, Quest quest, EntityType<?> type) {
+        final Stage stage = quester.getCurrentStage(quest);
+        if (stage == null || stage.getMobsToTame().isEmpty()) return;
+        boolean matched = false;
+        for (int i = 0; i < stage.getMobsToTame().size(); i++) {
+            if (matchesEntityName(stage.getMobsToTame().get(i), type)) {
+                final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
+                final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
+                        ? stage.getMobNumToTame().get(i) : 1;
+                final int before = progress.getMobsTamed().get(i);
+                progress.getMobsTamed().set(i, before + 1);
+                if (before < goal && progress.getMobsTamed().get(i) >= goal) {
+                    quester.finishObjective(quest, ObjectiveType.TAME_MOB, i);
+                }
+                matched = true;
+            }
+        }
+        if (matched) quester.checkQuest(quest);
     }
 }

@@ -62,10 +62,10 @@ public class FabricQuestsEditorCommand extends FabricQuestsSubCommand {
 
     @Override
     public int execute(final CommandSourceStack source, final String[] args) {
-        if (!source.isPlayer()) {
+        final ServerPlayer player = source.getPlayer();
+        if (player == null) {
             return 0;
         }
-        final ServerPlayer player = source.getPlayer();
         if (Conversations.getConversationOf(player.getUUID()).isPresent()) {
             player.sendSystemMessage(Component.literal(ChatFormatting.RED + lang(player, "duplicateEditor")));
             return Command.SINGLE_SUCCESS;

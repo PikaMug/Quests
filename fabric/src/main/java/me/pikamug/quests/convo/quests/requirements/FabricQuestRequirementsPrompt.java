@@ -48,7 +48,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
     private final FabricQuestsPlugin plugin;
     private final String classPrefix;
     private boolean hasRequirement = false;
-    private final int size = 12;
+    private final int size = 11;
     
     public FabricQuestRequirementsPrompt(final @NotNull UUID uuid) {
         super(uuid);
@@ -79,13 +79,11 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
         case 5:
         case 6:
         case 7:
-        case 10:
+        case 9:
             return ChatFormatting.BLUE;
         case 8:
             return ChatFormatting.GRAY;
-        case 9:
-            return ChatFormatting.GRAY;
-        case 11:
+        case 10:
             if (SessionData.get(uuid, Key.REQ_FAIL_MESSAGE) == null) {
                 if (!hasRequirement) {
                     return ChatFormatting.GRAY;
@@ -95,7 +93,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
             } else {
                 return ChatFormatting.BLUE;
             }
-        case 12:
+        case 11:
             return ChatFormatting.GREEN;
         default:
             return null;
@@ -120,18 +118,16 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
         case 7:
             return ChatFormatting.YELLOW + FabricLang.get("reqSetQuestBlocks");
         case 8:
-            return ChatFormatting.GRAY + FabricLang.get("reqSetMcMMO");
-        case 9:
             return ChatFormatting.GRAY + FabricLang.get("reqSetHeroes");
-        case 10:
+        case 9:
             return ChatFormatting.DARK_PURPLE + FabricLang.get("reqSetCustom");
-        case 11:
+        case 10:
             if (!hasRequirement) {
                 return ChatFormatting.GRAY + FabricLang.get("overrideCreateSet");
             } else {
                 return ChatFormatting.YELLOW + FabricLang.get("overrideCreateSet");
             }
-        case 12:
+        case 11:
             return ChatFormatting.YELLOW + FabricLang.get("done");
         default:
             return null;
@@ -221,8 +217,6 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
         case 8:
             return ChatFormatting.GRAY + "(" + FabricLang.get("notInstalled") + ")";
         case 9:
-            return ChatFormatting.GRAY + "(" + FabricLang.get("notInstalled") + ")";
-        case 10:
             if (SessionData.get(uuid, Key.REQ_CUSTOM) == null) {
                 return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
             } else {
@@ -235,7 +229,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 }
                 return text.toString();
             }
-        case 11:
+        case 10:
             if (SessionData.get(uuid, Key.REQ_FAIL_MESSAGE) == null) {
                 if (!hasRequirement) {
                     return ChatFormatting.GRAY + "(" + FabricLang.get("stageEditorOptional") + ")";
@@ -253,7 +247,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 }
                 return text.toString();
             }
-        case 12:
+        case 11:
             return "";
         default:
             return null;
@@ -294,7 +288,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
     public void acceptInput(final Number input) {
         switch (input.intValue()) {
         case 1:
-            new QuestRequirementsMoneyPrompt(uuid).start();
+            new FabricQuestRequirementsPrompt(uuid).start();
             break;
         case 2:
             new QuestRequirementsQuestPointsPrompt(uuid).start();
@@ -318,12 +312,9 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
             new FabricQuestRequirementsPrompt(uuid).start();
             break;
         case 9:
-            new FabricQuestRequirementsPrompt(uuid).start();
-            break;
-        case 10:
             new QuestCustomRequirementModulePrompt(uuid).start();
             break;
-        case 11:
+        case 10:
             if (hasRequirement) {
                 new FabricOverridePrompt(uuid, this, FabricLang.get("overrideCreateEnter")).start();
             } else {
@@ -334,7 +325,7 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 new FabricQuestRequirementsPrompt(uuid).start();
             }
             break;
-        case 12:
+        case 11:
             plugin.getQuestFactory().returnToMenu(uuid);
             break;
         default:
@@ -351,7 +342,6 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 || SessionData.get(uuid, Key.REQ_PERMISSION) != null
                 || SessionData.get(uuid, Key.REQ_QUEST) != null
                 || SessionData.get(uuid, Key.REQ_QUEST_BLOCK) != null
-                || SessionData.get(uuid, Key.REQ_MCMMO_SKILLS) != null
                 || SessionData.get(uuid, Key.REQ_HEROES_PRIMARY_CLASS) != null
                 || SessionData.get(uuid, Key.REQ_HEROES_SECONDARY_CLASS) != null
                 || SessionData.get(uuid, Key.REQ_CUSTOM) != null) {
@@ -871,234 +861,6 @@ public class FabricQuestRequirementsPrompt extends FabricQuestsEditorIntegerProm
                 }
             }
             new FabricQuestRequirementsPrompt(uuid).start();
-        }
-    }
-
-    public class QuestRequirementsMcMMOListPrompt extends FabricQuestsEditorIntegerPrompt {
-
-        public QuestRequirementsMcMMOListPrompt(final @NotNull UUID uuid) {
-            super(uuid);
-        }
-        
-        private final int size = 3;
-        
-        @Override
-        public int getSize() {
-            return size;
-        }
-        
-        @Override
-        public String getTitle() {
-            return FabricLang.get("mcMMORequirementsTitle");
-        }
-        
-        @Override
-        public ChatFormatting getNumberColor(final int number) {
-            switch (number) {
-                case 1:
-                case 2:
-                    return ChatFormatting.BLUE;
-                case 3:
-                    return ChatFormatting.GREEN;
-                default:
-                    return null;
-            }
-        }
-        
-        @Override
-        public String getSelectionText(final int number) {
-            switch(number) {
-            case 1:
-                return ChatFormatting.YELLOW + FabricLang.get("reqSetSkills");
-            case 2:
-                return ChatFormatting.YELLOW + FabricLang.get("reqSetSkillAmounts");
-            case 3:
-                return ChatFormatting.GREEN + FabricLang.get("done");
-            default:
-                return null;
-            }
-        }
-        
-        @Override
-        @SuppressWarnings("unchecked")
-        public String getAdditionalText(final int number) {
-            switch(number) {
-            case 1:
-                if (SessionData.get(uuid, Key.REQ_MCMMO_SKILLS) == null) {
-                    return ChatFormatting.GRAY + " (" + FabricLang.get("noneSet") + ")";
-                } else {
-                    final StringBuilder text = new StringBuilder();
-                    final LinkedList<String> skills = (LinkedList<String>) SessionData.get(uuid, Key.REQ_MCMMO_SKILLS);
-                    if (skills != null) {
-                        for (final String skill : skills) {
-                            text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA)
-                                    .append(skill);
-                        }
-                    }
-                    return text.toString();
-                }
-            case 2:
-                if (SessionData.get(uuid, Key.REQ_MCMMO_SKILL_AMOUNTS) == null) {
-                    return ChatFormatting.GRAY + " (" + FabricLang.get("noneSet") + ")";
-                } else {
-                    final StringBuilder text = new StringBuilder();
-                    final LinkedList<Integer> skillAmounts
-                            = (LinkedList<Integer>) SessionData.get(uuid, Key.REQ_MCMMO_SKILL_AMOUNTS);
-                    if (skillAmounts != null) {
-                        for (final int i : skillAmounts) {
-                            text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA).append(i);
-                        }
-                    }
-                    return text.toString();
-                }
-            case 3:
-                return "";
-            default:
-                return null;
-            }
-        }
-        
-        @Override
-        public @NotNull String getPromptText() {
-            final StringBuilder text = new StringBuilder(ChatFormatting.AQUA + getTitle() + "\n");
-            for (int i = 1; i <= size; i++) {
-                text.append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i).append(ChatFormatting.RESET)
-                        .append(" - ").append(getSelectionText(i)).append(" ").append(getAdditionalText(i)).append("\n");
-            }
-            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
-        }
-        
-        @Override
-        public void acceptInput(final Number input) {
-            switch(input.intValue()) {
-            case 1:
-                new QuestMcMMOSkillsPrompt(uuid).start();
-                break;
-            case 2:
-                new QuestMcMMOAmountsPrompt(uuid).start();
-                break;
-            case 3:
-                new FabricQuestRequirementsPrompt(uuid).start();
-                break;
-            default:
-                new QuestRequirementsMcMMOListPrompt(uuid).start();
-                break;
-            }
-        }
-    }
-
-    public class QuestMcMMOSkillsPrompt extends FabricQuestsEditorStringPrompt {
-        
-        public QuestMcMMOSkillsPrompt(final @NotNull UUID uuid) {
-            super(uuid);
-        }
-
-        @Override
-        public String getTitle() {
-            return FabricLang.get("skillListTitle");
-        }
-
-        @Override
-        public String getQueryText() {
-            return FabricLang.get("rewMcMMOPrompt");
-        }
-
-        @Override
-        public @NotNull String getPromptText() {
-            final StringBuilder skillList = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
-            skillList.append(ChatFormatting.GRAY).append("(").append(FabricLang.get("none")).append(")");
-            skillList.append("\n").append(ChatFormatting.YELLOW).append(getQueryText());
-            return skillList.toString();
-        }
-
-        @Override
-        public void acceptInput(final String input) {
-            if (input == null) {
-                return;
-            }
-            final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
-            if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel")) && !input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
-                final LinkedList<String> skills = new LinkedList<>();
-                for (final String s : input.split(" ")) {
-                    final String formatted = FabricMiscUtil.getCapitalized(s);
-                    skills.add(formatted);
-                }
-                SessionData.set(uuid, Key.REQ_MCMMO_SKILLS, skills);
-                new QuestRequirementsMcMMOListPrompt(uuid).start();
-                return;
-            } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
-                if (sender != null) {
-                    sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("reqMcMMOCleared")));
-                }
-                SessionData.set(uuid, Key.REQ_MCMMO_SKILLS, null);
-                new QuestRequirementsMcMMOListPrompt(uuid).start();
-                return;
-            } else if (input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                new QuestRequirementsMcMMOListPrompt(uuid).start();
-                return;
-            }
-            new QuestMcMMOSkillsPrompt(uuid).start();
-        }
-    }
-
-    public class QuestMcMMOAmountsPrompt extends FabricQuestsEditorStringPrompt {
-        
-        public QuestMcMMOAmountsPrompt(final @NotNull UUID uuid) {
-            super(uuid);
-        }
-
-        @Override
-        public String getTitle() {
-            return null;
-        }
-
-        @Override
-        public String getQueryText() {
-            return FabricLang.get("reqMcMMOAmountsPrompt");
-        }
-
-        @Override
-        public @NotNull String getPromptText() {
-            return ChatFormatting.YELLOW + getQueryText();
-        }
-
-        @Override
-        public void acceptInput(final String input) {
-            if (input == null) {
-                return;
-            }
-            final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
-            if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel")) && !input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
-                final LinkedList<Integer> amounts = new LinkedList<>();
-                for (final String s : input.split(" ")) {
-                    try {
-                        final int i = Integer.parseInt(s);
-                        amounts.add(i);
-                    } catch (final NumberFormatException nfe) {
-                        String text = FabricLang.get("reqNotANumber");
-                        text = text.replace("<input>", s);
-                        if (sender != null) {
-                            sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + text));
-                        }
-                        new QuestMcMMOAmountsPrompt(uuid).start();
-                        return;
-                    }
-                }
-                SessionData.set(uuid, Key.REQ_MCMMO_SKILL_AMOUNTS, amounts);
-                new QuestRequirementsMcMMOListPrompt(uuid).start();
-                return;
-            } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
-                if (sender != null) {
-                    sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("reqMcMMOAmountsCleared")));
-                }
-                SessionData.set(uuid, Key.REQ_MCMMO_SKILL_AMOUNTS, null);
-                new QuestRequirementsMcMMOListPrompt(uuid).start();
-                return;
-            } else if (input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                new QuestRequirementsMcMMOListPrompt(uuid).start();
-                return;
-            }
-            new QuestMcMMOAmountsPrompt(uuid).start();
         }
     }
 

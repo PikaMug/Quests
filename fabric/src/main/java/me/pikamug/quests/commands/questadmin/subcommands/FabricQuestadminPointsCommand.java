@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class FabricQuestadminPointsCommand extends FabricQuestsSubCommand {
 
@@ -96,8 +97,8 @@ public class FabricQuestadminPointsCommand extends FabricQuestsSubCommand {
         if (onlineTarget != null) {
             final String msg2 = lang(onlineTarget, "questPointsSet")
                     .replace("<points>", lang(onlineTarget, "questPoints"))
-                    .replace("<player>", source.isPlayer() ? source.getPlayer().getName().getString() : "Console")
-                    .replace("<number>", String.valueOf(amount));
+                    .replace("<player>", source.isPlayer() ? Objects.requireNonNull(source.getPlayer())
+                            .getName().getString() : "Console").replace("<number>", String.valueOf(amount));
             onlineTarget.sendSystemMessage(Component.literal(ChatFormatting.GREEN + msg2));
         }
         quester.saveData();

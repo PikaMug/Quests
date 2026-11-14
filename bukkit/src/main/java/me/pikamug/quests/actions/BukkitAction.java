@@ -296,12 +296,10 @@ public class BukkitAction implements Action {
         this.book = book;
     }
 
-    @Override
     public String getDenizenScript() {
         return denizenScript;
     }
 
-    @Override
     public void setDenizenScript(final String scriptName) {
         this.denizenScript = scriptName;
     }

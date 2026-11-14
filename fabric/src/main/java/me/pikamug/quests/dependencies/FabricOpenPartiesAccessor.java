@@ -10,9 +10,14 @@
 
 package me.pikamug.quests.dependencies;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import xaero.pac.common.claims.player.api.IPlayerChunkClaimAPI;
 import xaero.pac.common.server.api.OpenPACServerAPI;
+import xaero.pac.common.server.claims.api.IServerClaimsManagerAPI;
+import xaero.pac.common.server.claims.player.api.IServerPlayerClaimInfoAPI;
 import xaero.pac.common.server.parties.party.api.IPartyManagerAPI;
 import xaero.pac.common.server.parties.party.api.IServerPartyAPI;
 
@@ -21,8 +26,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Delegates party lookups to Open Parties and Claims. Only instantiated when
- * the mod is present, so its API classes are never linked otherwise.
+ * Delegates party and claim lookups to Open Parties and Claims. Only
+ * instantiated when the mod is present, so its API classes are never linked
+ * otherwise.
  */
 public class FabricOpenPartiesAccessor {
 
@@ -48,6 +54,82 @@ public class FabricOpenPartiesAccessor {
             }
         });
         return members;
+    }
+
+    public List<String> getClaimNamesAt(MinecraftServer server, ServerPlayer player) {
+        final List<String> names = new LinkedList<>();
+        if (server == null || player == null) return names;
+        final OpenPACServerAPI api = OpenPACServerAPI.get(server);
+        if (api == null) return names;
+        final IServerClaimsManagerAPI claimsManager = api.getServerClaimsManager();
+        if (claimsManager == null) return names;
+        final Identifier dimension = player.level().dimension().identifier();
+        final IPlayerChunkClaimAPI claim = claimsManager.get(dimension, player.blockPosition());
+        if (claim == null) return names;
+        if (claimsManager.hasPlayerInfo(claim.getPlayerId())) {
+            final IServerPlayerClaimInfoAPI info = claimsManager.getPlayerInfo(claim.getPlayerId());
+            addName(names, info.getClaimsName());
+            addName(names, info.getClaimsName(claim.getSubConfigIndex()));
+            addName(names, info.getPlayerUsername());
+            addName(names, info.getPlayerId().toString());
+            if (info.isPartyOwned()) {
+                final IServerPartyAPI party = getParty(server, info.getPlayerId());
+                if (party != null) {
+                    addName(names, party.getDefaultName());
+                }
+            }
+        }
+        addName(names, claimsManager.getDefaultName(claim, false).getString());
+        addName(names, claimsManager.getFullName(claim, dimension, false).getString());
+        addName(names, claimsManager.getDefaultName(claim, true).getString());
+        addName(names, claimsManager.getFullName(claim, dimension, true).getString());
+        return names;
+    }
+
+    public List<String> getKnownClaimNames(MinecraftServer server) {
+        final List<String> names = new LinkedList<>();
+        if (server == null) return names;
+        final OpenPACServerAPI api = OpenPACServerAPI.get(server);
+        if (api == null) return names;
+        final IServerClaimsManagerAPI claimsManager = api.getServerClaimsManager();
+        if (claimsManager == null) return names;
+        claimsManager.getPlayerInfoStream().forEach(info -> {
+            if (info == null) return;
+            addName(names, info.getPlayerUsername());
+            addName(names, info.getPlayerId().toString());
+            addName(names, info.getClaimsName());
+            info.getStream().forEach(dimensionEntry -> {
+                if (dimensionEntry == null || dimensionEntry.getValue() == null) return;
+                final Identifier dimension = dimensionEntry.getKey();
+                dimensionEntry.getValue().getStream().forEach(positionList -> {
+                    if (positionList == null || positionList.getClaimState() == null) return;
+                    final IPlayerChunkClaimAPI claim = positionList.getClaimState();
+                    addName(names, info.getClaimsName(claim.getSubConfigIndex()));
+                    addName(names, claimsManager.getDefaultName(claim, false).getString());
+                    addName(names, claimsManager.getFullName(claim, dimension, false).getString());
+                    addName(names, claimsManager.getDefaultName(claim, true).getString());
+                    addName(names, claimsManager.getFullName(claim, dimension, true).getString());
+                });
+            });
+            if (info.isPartyOwned()) {
+                final IServerPartyAPI party = getParty(server, info.getPlayerId());
+                if (party != null) {
+                    addName(names, party.getDefaultName());
+                }
+            }
+        });
+        return names;
+    }
+
+    private void addName(List<String> names, String name) {
+        if (name == null || name.isEmpty()) return;
+        if (!names.contains(name)) {
+            names.add(name);
+        }
+        final String stripped = ChatFormatting.stripFormatting(name);
+        if (stripped != null && !stripped.isEmpty() && !names.contains(stripped)) {
+            names.add(stripped);
+        }
     }
 
     private IServerPartyAPI getParty(MinecraftServer server, UUID memberId) {

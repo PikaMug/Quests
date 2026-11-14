@@ -309,7 +309,7 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
                 final Condition c = plugin.getCondition(input);
                 if (c != null) {
                     for (final Quest quest : plugin.getLoadedQuests()) {
-                        for (final Stage stage : quest.getOrderedStages()) {
+                        for (final Stage stage : quest.getStages()) {
                             if (stage.getCondition() != null
                                     && stage.getCondition().getName().equalsIgnoreCase(c.getName())) {
                                 used.add(quest.getName());

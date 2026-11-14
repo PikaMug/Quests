@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.pikamug.quests.commands.FabricQuestsSubCommand.hasCommandPermission;
 import static me.pikamug.quests.commands.FabricQuestsSubCommand.lang;
 import static me.pikamug.quests.commands.FabricQuestsSubCommand.reply;
 
@@ -86,25 +87,31 @@ public class FabricQuestsCommandHandler {
 
     public int check(final CommandSourceStack source, final String[] args) {
         if (args.length < 1) {
-            return handleQuestsHelp(source);
+            return printHelp(source);
         }
         final FabricQuestsSubCommand sub = subCommands.get(args[0].toLowerCase());
         if (sub == null) {
             return printQuestUnknownCommand(args[0], source);
+        } else if (!canExecute(source, sub)) {
+            reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "noPermission")));
+            return 0;
         } else if (args.length < sub.getMaxArguments()) {
-            return getQuestCommandUsage(source, sub.getName());
+            return getCommandUsage(source, sub.getName());
         } else if (args.length > sub.getMaxArguments() + 1 && !args[0].toLowerCase().equals("editor")) {
-            return getQuestCommandUsage(source, sub.getName());
+            return getCommandUsage(source, sub.getName());
         } else {
             return sub.execute(source, args);
         }
     }
 
-    public int handleQuestsHelp(final CommandSourceStack source) {
+    public int printHelp(final CommandSourceStack source) {
+        if (!hasCommandPermission(source, "quests.quests")) {
+            reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "noPermission")));
+            return 0;
+        }
         final ServerPlayer player = source.isPlayer() ? source.getPlayer() : null;
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questHelpTitle")), false);
-        reply(source,() -> Component.literal(ChatFormatting.YELLOW + "/quests " + lang(source, "questDisplayHelp")),
-                false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questHelpTitle")));
+        reply(source,() -> Component.literal(ChatFormatting.YELLOW + "/quests " + lang(source, "questDisplayHelp")));
         final boolean translate = plugin.getConfigSettings().canTranslateSubCommands();
         printQuestsHelpLine(source, translate, player, "list", "COMMAND_LIST");
         printQuestsHelpLine(source, translate, player, "take", "COMMAND_TAKE");
@@ -119,12 +126,14 @@ public class FabricQuestsCommandHandler {
         if (player != null) {
             player.sendSystemMessage(Component.literal(ChatFormatting.DARK_AQUA + "/quest " + ChatFormatting.YELLOW
                     + lang(player, "COMMAND_QUEST_HELP")));
-            player.sendSystemMessage(Component.literal(ChatFormatting.DARK_AQUA + "/quest " + ChatFormatting.YELLOW
-                    + lang(player, "COMMAND_QUESTINFO_HELP")));
+            if (hasCommandPermission(source, "quests.questinfo")) {
+                player.sendSystemMessage(Component.literal(ChatFormatting.DARK_AQUA + "/quest " + ChatFormatting.YELLOW
+                        + lang(player, "COMMAND_QUESTINFO_HELP")));
+            }
         }
         if (hasAdminRoot(source)) {
             reply(source,() -> Component.literal(ChatFormatting.YELLOW + "/questadmin " + ChatFormatting.RED
-                    + lang(source, "COMMAND_QUESTADMIN_HELP")), false);
+                    + lang(source, "COMMAND_QUESTADMIN_HELP")));
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -133,19 +142,19 @@ public class FabricQuestsCommandHandler {
                                      final ServerPlayer player, final String sub, final String key) {
         final String name = translate ? lang(player, key) : sub;
         reply(source,() -> Component.literal(ChatFormatting.YELLOW + "/quests "
-                + lang(source, key + "_HELP").replace("<command>", name)), false);
+                + lang(source, key + "_HELP").replace("<command>", name)));
     }
 
     private int printQuestUnknownCommand(final String sub, final CommandSourceStack source) {
-        reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "questsUnknownCommand")), false);
+        reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "questsUnknownCommand")));
         return Command.SINGLE_SUCCESS;
     }
 
-    private int getQuestCommandUsage(final CommandSourceStack source, final String cmd) {
+    private int getCommandUsage(final CommandSourceStack source, final String cmd) {
         reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "usage") + ": "
                 + ChatFormatting.YELLOW + "/quests " + lang(source, FabricLang.getKeyFromPrefix("COMMAND_", cmd))
                 + " " + lang(source, FabricLang.getKeyFromPrefix("COMMAND_", cmd) + "_HELP")
-                .replace("<command>", cmd.toLowerCase())), false);
+                .replace("<command>", cmd.toLowerCase())));
         return 0;
     }
 
@@ -171,18 +180,27 @@ public class FabricQuestsCommandHandler {
         return sub.tabComplete(source, args);
     }
 
+    private boolean canExecute(final CommandSourceStack source, final FabricQuestsSubCommand sub) {
+        if (sub.getName().equals("editor") || sub.getName().equals("actions")
+                || sub.getName().equals("conditions")) {
+            return canEditor(source, sub.getName());
+        }
+        return hasCommandPermission(source, sub.getPermission());
+    }
+
     public boolean canEditor(final CommandSourceStack source, final String sub) {
         if (!source.isPlayer()) return true;
         final ServerPlayer player = source.getPlayer();
         if (FabricMiscUtil.hasPermission(player, PermissionLevel.GAMEMASTERS)) return true;
-        return plugin.getDependencies().hasPermission(player.getUUID(), "quests." + sub + ".editor");
+        return hasCommandPermission(source, "quests." + sub + ".editor")
+                || hasCommandPermission(source, "quests.mode.trial");
     }
 
     private boolean hasAdminRoot(final CommandSourceStack source) {
         if (!source.isPlayer()) return true;
         final ServerPlayer player = source.getPlayer();
         if (FabricMiscUtil.hasPermission(player, PermissionLevel.GAMEMASTERS)) return true;
-        return plugin.getDependencies().hasPermission(player.getUUID(), "quests.admin")
-                || plugin.getDependencies().hasPermission(player.getUUID(), "quests.admin.*");
+        return hasCommandPermission(source, "quests.admin")
+                || hasCommandPermission(source, "quests.admin.*");
     }
 }

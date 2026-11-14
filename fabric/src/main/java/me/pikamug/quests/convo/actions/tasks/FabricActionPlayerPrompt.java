@@ -15,8 +15,10 @@ import me.pikamug.quests.convo.actions.FabricActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.FabricActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.FabricActionMainPrompt;
 import me.pikamug.quests.convo.generic.FabricItemStackPrompt;
+import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.RomanNumeral;
@@ -36,14 +38,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final FabricQuestsPlugin plugin;
-
-    public static final ConcurrentHashMap<UUID, BlockPos> selectedTeleportLocations = new ConcurrentHashMap<>();
 
     public FabricActionPlayerPrompt(final @NotNull UUID uuid) {
         super(uuid);
@@ -261,7 +260,8 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
                     new FabricActionPlayerPrompt(uuid).start();
                     break;
                 }
-                selectedTeleportLocations.put(uuid, BlockPos.ZERO);
+                plugin.getActionFactory().getSelectedTeleportLocations()
+                        .put(uuid, new FabricLocation(player.level(), BlockPos.ZERO));
                 new ActionPlayerTeleportPrompt(uuid).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("consoleError")));
@@ -1003,11 +1003,11 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
                 return;
             }
             if (input.equalsIgnoreCase(FabricLang.get("cmdDone"))) {
-                final BlockPos block = selectedTeleportLocations.get(uuid);
-                if (block != null) {
-                    final String locStr = block.getX() + " " + block.getY() + " " + block.getZ();
+                final FabricLocation loc = plugin.getActionFactory().getSelectedTeleportLocations().get(uuid);
+                if (loc != null && loc.getLevel() != null) {
+                    final String locStr = FabricConfigUtil.getLocationInfo(loc);
                     SessionData.set(uuid, Key.A_TELEPORT, locStr);
-                    selectedTeleportLocations.remove(uuid);
+                    plugin.getActionFactory().getSelectedTeleportLocations().remove(uuid);
                 } else {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("eventEditorSelectBlockFirst")));
                     new ActionPlayerTeleportPrompt(uuid).start();
@@ -1016,10 +1016,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
                 new FabricActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.A_TELEPORT, null);
-                selectedTeleportLocations.remove(uuid);
+                plugin.getActionFactory().getSelectedTeleportLocations().remove(uuid);
                 new FabricActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                selectedTeleportLocations.remove(uuid);
+                plugin.getActionFactory().getSelectedTeleportLocations().remove(uuid);
                 new FabricActionMainPrompt(uuid).start();
             } else {
                 new ActionPlayerTeleportPrompt(uuid).start();

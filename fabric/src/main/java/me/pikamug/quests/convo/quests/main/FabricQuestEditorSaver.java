@@ -18,10 +18,11 @@ import com.google.gson.JsonParser;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.conditions.Condition;
+import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.util.FabricItemUtil;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -38,6 +40,8 @@ import java.util.UUID;
  * Every value is read from the editor's session data using the {@link Key} constants.
  */
 public final class FabricQuestEditorSaver {
+
+    private static final Gson GSON = new Gson();
 
     private FabricQuestEditorSaver() {
     }
@@ -48,7 +52,7 @@ public final class FabricQuestEditorSaver {
      *         if the quest has no name set
      */
     public static boolean save(UUID uuid, String questId, FabricQuestsPlugin plugin) throws IOException {
-        final JsonObject questData = buildQuest(uuid);
+        final JsonObject questData = buildQuest(uuid, plugin);
         if (questData == null) {
             return false;
         }
@@ -75,7 +79,7 @@ public final class FabricQuestEditorSaver {
         return true;
     }
 
-    private static JsonObject buildQuest(UUID uuid) {
+    private static JsonObject buildQuest(UUID uuid, FabricQuestsPlugin plugin) {
         final String name = (String) SessionData.get(uuid, Key.Q_NAME);
         if (name == null || name.isEmpty()) {
             return null;
@@ -87,11 +91,14 @@ public final class FabricQuestEditorSaver {
         if (SessionData.get(uuid, Key.Q_START_NPC) != null) {
             json.addProperty("npc-giver-uuid", (String) SessionData.get(uuid, Key.Q_START_NPC));
         }
-        if (SessionData.get(uuid, Key.Q_START_BLOCK) != null) {
-            final BlockPos pos = (BlockPos) SessionData.get(uuid, Key.Q_START_BLOCK);
-            json.addProperty("block-start-x", pos.getX());
-            json.addProperty("block-start-y", pos.getY());
-            json.addProperty("block-start-z", pos.getZ());
+        if (SessionData.get(uuid, Key.Q_START_BLOCK) instanceof FabricLocation) {
+            final FabricLocation loc = (FabricLocation) SessionData.get(uuid, Key.Q_START_BLOCK);
+            if (loc.getLevel() != null) {
+                json.addProperty("block-start-world", loc.getWorldId());
+                json.addProperty("block-start-x", loc.getBlockPos().getX());
+                json.addProperty("block-start-y", loc.getBlockPos().getY());
+                json.addProperty("block-start-z", loc.getBlockPos().getZ());
+            }
         }
         if (SessionData.get(uuid, Key.Q_REGION) != null) {
             json.addProperty("region", (String) SessionData.get(uuid, Key.Q_REGION));
@@ -118,7 +125,7 @@ public final class FabricQuestEditorSaver {
             json.add("options", options);
         }
 
-        final JsonArray stages = buildStages(uuid);
+        final JsonArray stages = buildStages(uuid, plugin);
         if (!stages.isEmpty()) {
             json.add("stages", stages);
         }
@@ -144,6 +151,8 @@ public final class FabricQuestEditorSaver {
                 json.addProperty("fail-requirement-message", fail.toString());
             }
         }
+        addCustomSection(json, "custom-requirements", "req", SessionData.get(uuid, Key.REQ_CUSTOM),
+                SessionData.get(uuid, Key.REQ_CUSTOM_DATA));
         return json;
     }
 
@@ -173,6 +182,8 @@ public final class FabricQuestEditorSaver {
         addStringArray(json, "permission-worlds", SessionData.get(uuid, Key.REW_PERMISSION_WORLDS));
         addStringArray(json, "details-override", SessionData.get(uuid, Key.REW_DETAILS_OVERRIDE));
         addItemArray(json, "items", SessionData.get(uuid, Key.REW_ITEMS));
+        addCustomSection(json, "custom-rewards", "req", SessionData.get(uuid, Key.REW_CUSTOM),
+                SessionData.get(uuid, Key.REW_CUSTOM_DATA));
         return json;
     }
 
@@ -181,10 +192,6 @@ public final class FabricQuestEditorSaver {
         addBoolean(json, "allow-commands", SessionData.get(uuid, Key.OPT_ALLOW_COMMANDS));
         addBoolean(json, "allow-quitting", SessionData.get(uuid, Key.OPT_ALLOW_QUITTING));
         addBoolean(json, "ignore-silk-touch", SessionData.get(uuid, Key.OPT_IGNORE_SILK_TOUCH));
-        final Object party = SessionData.get(uuid, Key.OPT_EXTERNAL_PARTY_PLUGIN);
-        if (party != null) {
-            json.addProperty("external-party-plugin", party.toString());
-        }
         addBoolean(json, "use-parties-plugin", SessionData.get(uuid, Key.OPT_USE_PARTIES_PLUGIN));
         addInt(json, "share-progress-level", SessionData.get(uuid, Key.OPT_SHARE_PROGRESS_LEVEL));
         addBoolean(json, "same-quest-only", SessionData.get(uuid, Key.OPT_SHARE_SAME_QUEST_ONLY));
@@ -198,7 +205,7 @@ public final class FabricQuestEditorSaver {
         return json;
     }
 
-    private static JsonArray buildStages(UUID uuid) {
+    private static JsonArray buildStages(UUID uuid, FabricQuestsPlugin plugin) {
         final JsonArray array = new JsonArray();
         int num = 1;
         while (SessionData.get(uuid, "stage" + num) != null) {
@@ -212,15 +219,17 @@ public final class FabricQuestEditorSaver {
             addStringArray(json, "password-phrases", SessionData.get(uuid, p + Key.S_PASSWORD_PHRASES));
 
             addBlockLists(json, "break", SessionData.get(uuid, p + Key.S_BREAK_NAMES),
-                    SessionData.get(uuid, p + Key.S_BREAK_AMOUNTS));
+                    SessionData.get(uuid, p + Key.S_BREAK_AMOUNTS),
+                    SessionData.get(uuid, p + Key.S_BREAK_DURABILITY));
             addBlockLists(json, "damage", SessionData.get(uuid, p + Key.S_DAMAGE_NAMES),
-                    SessionData.get(uuid, p + Key.S_DAMAGE_AMOUNTS));
+                    SessionData.get(uuid, p + Key.S_DAMAGE_AMOUNTS),
+                    SessionData.get(uuid, p + Key.S_DAMAGE_DURABILITY));
             addBlockLists(json, "place", SessionData.get(uuid, p + Key.S_PLACE_NAMES),
-                    SessionData.get(uuid, p + Key.S_PLACE_AMOUNTS));
+                    SessionData.get(uuid, p + Key.S_PLACE_AMOUNTS),
+                    SessionData.get(uuid, p + Key.S_PLACE_DURABILITY));
             addBlockLists(json, "use", SessionData.get(uuid, p + Key.S_USE_NAMES),
-                    SessionData.get(uuid, p + Key.S_USE_AMOUNTS));
-            addBlockLists(json, "cut", SessionData.get(uuid, p + Key.S_CUT_NAMES),
-                    SessionData.get(uuid, p + Key.S_CUT_AMOUNTS));
+                    SessionData.get(uuid, p + Key.S_USE_AMOUNTS),
+                    SessionData.get(uuid, p + Key.S_USE_DURABILITY));
 
             addItemArray(json, "items-to-craft", SessionData.get(uuid, p + Key.S_CRAFT_ITEMS));
             addItemArray(json, "items-to-smelt", SessionData.get(uuid, p + Key.S_SMELT_ITEMS));
@@ -264,15 +273,114 @@ public final class FabricQuestEditorSaver {
             if (condition != null) {
                 json.addProperty("condition", nameOf(condition));
             }
+            addCustomObjectives(json, uuid, plugin, p);
             array.add(json);
             num++;
         }
         return array;
     }
 
-    private static void addBlockLists(JsonObject json, String type, Object names, Object amounts) {
+    private static void addBlockLists(JsonObject json, String type, Object names, Object amounts,
+                                      Object durability) {
         addStringArray(json, type + "-block-names", names);
         addIntArray(json, type + "-block-amounts", amounts);
+        addIntArray(json, type + "-block-durability", durability);
+    }
+
+    private static void addCustomSection(JsonObject json, String sectionKey, String entryPrefix,
+                                         Object names, Object data) {
+        if (!(names instanceof List)) {
+            return;
+        }
+        final List<?> nameList = (List<?>) names;
+        final List<?> dataList = data instanceof List ? (List<?>) data : List.of();
+        final JsonObject section = new JsonObject();
+        for (int i = 0; i < nameList.size(); i++) {
+            final Object name = nameList.get(i);
+            if (name == null) {
+                continue;
+            }
+            final JsonObject entry = new JsonObject();
+            entry.addProperty("name", name.toString());
+            if (i < dataList.size() && dataList.get(i) instanceof Map) {
+                @SuppressWarnings("unchecked")
+                final Map<String, Object> dataMap = (Map<String, Object>) dataList.get(i);
+                entry.add("data", mapToJson(dataMap));
+            }
+            section.add(entryPrefix + (i + 1), entry);
+        }
+        if (!section.isEmpty()) {
+            json.add(sectionKey, section);
+        }
+    }
+
+    private static void addCustomObjectives(JsonObject json, UUID uuid, FabricQuestsPlugin plugin, String prefix) {
+        final Object names = SessionData.get(uuid, prefix + Key.S_CUSTOM_OBJECTIVES);
+        if (!(names instanceof List)) {
+            return;
+        }
+        final List<?> nameList = (List<?>) names;
+        final Object counts = SessionData.get(uuid, prefix + Key.S_CUSTOM_OBJECTIVES_COUNT);
+        final List<?> countList = counts instanceof List ? (List<?>) counts : List.of();
+        final Object data = SessionData.get(uuid, prefix + Key.S_CUSTOM_OBJECTIVES_DATA);
+        final List<?> dataList = data instanceof List ? (List<?>) data : List.of();
+        final JsonObject section = new JsonObject();
+        for (int i = 0; i < nameList.size(); i++) {
+            final Object name = nameList.get(i);
+            if (name == null) {
+                continue;
+            }
+            final JsonObject entry = new JsonObject();
+            entry.addProperty("name", name.toString());
+            if (i < countList.size() && countList.get(i) instanceof Number) {
+                final int count = ((Number) countList.get(i)).intValue();
+                if (count >= 0) {
+                    entry.addProperty("count", count);
+                }
+            }
+            final JsonObject dataJson = new JsonObject();
+            final CustomObjective found = findCustomObjective(plugin, name.toString());
+            if (found != null) {
+                for (final Map.Entry<String, Object> prompt : found.getData()) {
+                    Object value = prompt.getValue();
+                    for (final Object datum : dataList) {
+                        if (datum instanceof Map.Entry) {
+                            final Map.Entry<?, ?> entryData = (Map.Entry<?, ?>) datum;
+                            if (prompt.getKey().equals(String.valueOf(entryData.getKey()))) {
+                                value = entryData.getValue();
+                            }
+                        }
+                    }
+                    dataJson.add(prompt.getKey(), GSON.toJsonTree(value));
+                }
+            }
+            if (!dataJson.isEmpty()) {
+                entry.add("data", dataJson);
+            }
+            section.add("custom" + (i + 1), entry);
+        }
+        if (!section.isEmpty()) {
+            json.add("custom-objectives", section);
+        }
+    }
+
+    private static CustomObjective findCustomObjective(FabricQuestsPlugin plugin, String name) {
+        for (final CustomObjective objective : plugin.getCustomObjectives()) {
+            if (objective.getName().equalsIgnoreCase(name)) {
+                return objective;
+            }
+        }
+        return null;
+    }
+
+    private static JsonObject mapToJson(Map<String, Object> map) {
+        final JsonObject json = new JsonObject();
+        for (final Map.Entry<String, Object> entry : map.entrySet()) {
+            if (entry.getKey() != null) {
+                json.add(entry.getKey(), GSON.toJsonTree(entry.getValue()));
+            }
+        }
+        return json;
     }
 
     private static void addTriggeredActions(JsonObject json, String eventsKey, String triggersKey,

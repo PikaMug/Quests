@@ -45,7 +45,7 @@ public interface Quest extends Comparable<Quest> {
 
     Stage getStage(final int index);
 
-    LinkedList<Stage> getOrderedStages();
+    LinkedList<Stage> getStages();
 
     UUID getNpcStart();
 

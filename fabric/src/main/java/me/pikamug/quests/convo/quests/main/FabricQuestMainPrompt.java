@@ -17,11 +17,11 @@ import me.pikamug.quests.convo.quests.FabricQuestsEditorStringPrompt;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -85,7 +85,11 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                 return ChatFormatting.GRAY;
             }
         case 6:
-            return ChatFormatting.GRAY;
+            if (plugin.getDependencies().hasRegionSupport()) {
+                return ChatFormatting.BLUE;
+            } else {
+                return ChatFormatting.GRAY;
+            }
         case 7:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 return ChatFormatting.BLUE;
@@ -123,7 +127,11 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                 return ChatFormatting.GRAY + FabricLang.get("questEditorBlockStart");
             }
         case 6:
-            return ChatFormatting.GRAY + FabricLang.get("questWGSetRegion");
+            if (plugin.getDependencies().hasRegionSupport()) {
+                return ChatFormatting.YELLOW + FabricLang.get("questWGSetRegion");
+            } else {
+                return ChatFormatting.GRAY + FabricLang.get("questWGSetRegion");
+            }
         case 7:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
                 return ChatFormatting.YELLOW + FabricLang.get("questEditorSetGUI");
@@ -186,15 +194,18 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                 return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
             } else {
                 final Object blockData = SessionData.get(uuid, Key.Q_START_BLOCK);
-                if (blockData instanceof BlockPos) {
-                    final BlockPos pos = (BlockPos) blockData;
-                    return ChatFormatting.GRAY + "(" + ChatFormatting.AQUA + pos.getX() + ", "
-                            + pos.getY() + ", " + pos.getZ() + ChatFormatting.RESET + ChatFormatting.GRAY + ")";
+                if (blockData instanceof FabricLocation && ((FabricLocation) blockData).getLevel() != null) {
+                    final FabricLocation loc = (FabricLocation) blockData;
+                    return ChatFormatting.GRAY + "(" + ChatFormatting.AQUA + loc.getWorldId() + ", "
+                            + loc.getBlockPos().getX() + ", " + loc.getBlockPos().getY() + ", "
+                            + loc.getBlockPos().getZ() + ChatFormatting.RESET + ChatFormatting.GRAY + ")";
                 }
                 return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
             }
         case 6:
-            if (SessionData.get(uuid, Key.Q_REGION) == null) {
+            if (!plugin.getDependencies().hasRegionSupport()) {
+                return ChatFormatting.GRAY + "(" + FabricLang.get("notInstalled") + ")";
+            } else if (SessionData.get(uuid, Key.Q_REGION) == null) {
                 return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
             } else {
                 return ChatFormatting.GRAY + "(" + ChatFormatting.AQUA + SessionData.get(uuid, Key.Q_REGION)
@@ -265,7 +276,11 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
             }
             break;
         case 6:
-            new FabricQuestMainPrompt(uuid).start();
+            if (plugin.getDependencies().hasRegionSupport()) {
+                new FabricQuestRegionPrompt(uuid).start();
+            } else {
+                new FabricQuestMainPrompt(uuid).start();
+            }
             break;
         case 7:
             if (plugin.getDependencies().hasAnyNpcDependencies()) {
@@ -546,8 +561,8 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
             }
             if (input.equalsIgnoreCase(FabricLang.get("cmdDone")) || input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
                 if (input.equalsIgnoreCase(FabricLang.get("cmdDone"))) {
-                    final BlockPos selected = plugin.getSelectedBlockStarts().get(uuid);
-                    if (selected == null) {
+                    final FabricLocation selected = plugin.getSelectedBlockStarts().get(uuid);
+                    if (selected == null || selected.getLevel() == null) {
                         sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW
                                 + FabricLang.get("questEditorNoStartBlockSelected")));
                         new FabricQuestBlockStartPrompt(uuid).start();
@@ -588,7 +603,19 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         public @NotNull String getPromptText() {
             final StringBuilder text = new StringBuilder(ChatFormatting.AQUA + getTitle() + "\n");
-            text.append(ChatFormatting.GRAY).append("(").append(FabricLang.get("none")).append(")\n");
+            final List<String> names = plugin.getDependencies().getKnownRegionNames();
+            if (names.isEmpty()) {
+                text.append(ChatFormatting.GRAY).append("(").append(FabricLang.get("none")).append(")\n");
+            } else {
+                Collections.sort(names);
+                for (int i = 0; i < names.size(); i++) {
+                    text.append(ChatFormatting.GREEN).append(names.get(i));
+                    if (i < names.size() - 1) {
+                        text.append(ChatFormatting.GRAY).append(", ");
+                    }
+                }
+                text.append("\n");
+            }
             return text.toString() + ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -599,6 +626,26 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
             }
             final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
             if (sender == null) {
+                return;
+            }
+            if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel"))
+                    && !input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
+                String found = null;
+                for (final String region : plugin.getDependencies().getKnownRegionNames()) {
+                    if (region.equalsIgnoreCase(input)) {
+                        found = region;
+                        break;
+                    }
+                }
+                if (found == null) {
+                    String error = FabricLang.get("questWGInvalidRegion");
+                    error = error.replace("<region>", ChatFormatting.RED + input + ChatFormatting.YELLOW);
+                    sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + error));
+                    new FabricQuestRegionPrompt(uuid).start();
+                    return;
+                }
+                SessionData.set(uuid, Key.Q_REGION, found);
+                new FabricQuestMainPrompt(uuid).start();
                 return;
             }
             if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {

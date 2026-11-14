@@ -489,7 +489,7 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
             super(uuid);
         }
 
-        private final int size = 7;
+        private final int size = 6;
 
         @Override
         public int getSize() {
@@ -509,9 +509,8 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
             case 3:
             case 4:
             case 5:
-            case 6:
                 return ChatFormatting.BLUE;
-            case 7:
+            case 6:
                 return ChatFormatting.GREEN;
             default:
                 return null;
@@ -522,18 +521,16 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
         public String getSelectionText(final int number) {
             switch (number) {
             case 1:
-                return ChatFormatting.YELLOW + FabricLang.get("optExternalPartyPlugin");
-            case 2:
                 return ChatFormatting.YELLOW + FabricLang.get("optUsePartiesPlugin");
-            case 3:
+            case 2:
                 return ChatFormatting.YELLOW + FabricLang.get("optShareProgressLevel");
-            case 4:
+            case 3:
                 return ChatFormatting.YELLOW + FabricLang.get("optShareOnlySameQuest");
-            case 5:
+            case 4:
                 return ChatFormatting.YELLOW + FabricLang.get("optShareDistance");
-            case 6:
+            case 5:
                 return ChatFormatting.YELLOW + FabricLang.get("optHandleOfflinePlayer");
-            case 7:
+            case 6:
                 return ChatFormatting.YELLOW + FabricLang.get("done");
             default:
                 return null;
@@ -544,13 +541,6 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
         public String getAdditionalText(final int number) {
             switch (number) {
             case 1:
-                final String externalOpt = (String) SessionData.get(uuid, Key.OPT_EXTERNAL_PARTY_PLUGIN);
-                if (externalOpt != null) {
-                    return ChatFormatting.GRAY + "(" + ChatFormatting.AQUA + externalOpt + ChatFormatting.GRAY + ")";
-                } else {
-                    return ChatFormatting.GRAY + "(" + FabricLang.get("notInstalled") + ")";
-                }
-            case 2:
                 final Boolean partiesOpt = (Boolean) SessionData.get(uuid, Key.OPT_USE_PARTIES_PLUGIN);
                 if (partiesOpt == null) {
                     final boolean defaultOpt = new FabricOptions().canUsePartiesPlugin();
@@ -562,7 +552,7 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
                             + FabricLang.get(String.valueOf(partiesOpt)) : ChatFormatting.RED
                             + FabricLang.get(String.valueOf(partiesOpt))) + ChatFormatting.GRAY + ")";
                 }
-            case 3:
+            case 2:
                 final Integer shareOpt = (Integer) SessionData.get(uuid, Key.OPT_SHARE_PROGRESS_LEVEL);
                 if (shareOpt == null) {
                     final int defaultOpt = new FabricOptions().getShareProgressLevel();
@@ -570,7 +560,7 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
                 } else {
                     return ChatFormatting.GRAY + "(" + ChatFormatting.AQUA + shareOpt + ChatFormatting.GRAY + ")";
                 }
-            case 4:
+            case 3:
                 final Boolean requireOpt = (Boolean) SessionData.get(uuid, Key.OPT_SHARE_SAME_QUEST_ONLY);
                 if (requireOpt == null) {
                     final boolean defaultOpt = new FabricOptions().canShareSameQuestOnly();
@@ -582,7 +572,7 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
                             + FabricLang.get(String.valueOf(requireOpt)) : ChatFormatting.RED
                             + FabricLang.get(String.valueOf(requireOpt))) + ChatFormatting.GRAY + ")";
                 }
-            case 5:
+            case 4:
                 final Double distanceOpt = (Double) SessionData.get(uuid, Key.OPT_SHARE_DISTANCE);
                 if (distanceOpt == null) {
                     final double defaultOpt = new FabricOptions().getShareDistance();
@@ -590,7 +580,7 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
                 } else {
                     return ChatFormatting.GRAY + "(" + ChatFormatting.AQUA + distanceOpt + ChatFormatting.GRAY + ")";
                 }
-            case 6:
+            case 5:
                 final Boolean handleOpt = (Boolean) SessionData.get(uuid, Key.OPT_HANDLE_OFFLINE_PLAYERS);
                 if (handleOpt == null) {
                     final boolean defaultOpt = new FabricOptions().canHandleOfflinePlayers();
@@ -602,7 +592,7 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
                             + FabricLang.get(String.valueOf(handleOpt)) : ChatFormatting.RED
                             + FabricLang.get(String.valueOf(handleOpt))) + ChatFormatting.GRAY + ")";
                 }
-            case 7:
+            case 6:
                 return "";
             default:
                 return null;
@@ -627,36 +617,31 @@ public class FabricQuestOptionsPrompt extends FabricQuestsEditorIntegerPrompt {
             }
             switch (input.intValue()) {
             case 1:
-                tempKey = Key.OPT_EXTERNAL_PARTY_PLUGIN;
-                tempPrompt = new FabricQuestOptionsMultiplayerPrompt(uuid);
-                new FabricQuestOptionsTrueFalsePrompt(uuid).start();
-                break;
-            case 2:
                 tempKey = Key.OPT_USE_PARTIES_PLUGIN;
                 tempPrompt = new FabricQuestOptionsMultiplayerPrompt(uuid);
                 new FabricQuestOptionsTrueFalsePrompt(uuid).start();
                 break;
-            case 3:
+            case 2:
                 tempKey = Key.OPT_SHARE_PROGRESS_LEVEL;
                 tempPrompt = new FabricQuestOptionsMultiplayerPrompt(uuid);
                 new FabricQuestOptionsLevelPrompt(uuid).start();
                 break;
-            case 4:
+            case 3:
                 tempKey = Key.OPT_SHARE_SAME_QUEST_ONLY;
                 tempPrompt = new FabricQuestOptionsMultiplayerPrompt(uuid);
                 new FabricQuestOptionsTrueFalsePrompt(uuid).start();
                 break;
-            case 5:
+            case 4:
                 tempKey = Key.OPT_SHARE_DISTANCE;
                 tempPrompt = new FabricQuestOptionsMultiplayerPrompt(uuid);
                 new FabricQuestOptionsDistancePrompt(uuid).start();
                 break;
-            case 6:
+            case 5:
                 tempKey = Key.OPT_HANDLE_OFFLINE_PLAYERS;
                 tempPrompt = new FabricQuestOptionsMultiplayerPrompt(uuid);
                 new FabricQuestOptionsTrueFalsePrompt(uuid).start();
                 break;
-            case 7:
+            case 6:
                 tempKey = null;
                 tempPrompt = null;
                 try {

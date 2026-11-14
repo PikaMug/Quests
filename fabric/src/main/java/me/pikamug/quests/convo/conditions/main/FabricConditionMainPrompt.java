@@ -483,7 +483,7 @@ public class FabricConditionMainPrompt extends FabricConditionsEditorIntegerProm
             if (modifiedName != null) {
                 modName = modifiedName;
                 for (final Quest q : plugin.getLoadedQuests()) {
-                    for (final Stage s : q.getOrderedStages()) {
+                    for (final Stage s : q.getStages()) {
                         if (s.getCondition() != null && s.getCondition().getName() != null) {
                             if (s.getCondition().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());

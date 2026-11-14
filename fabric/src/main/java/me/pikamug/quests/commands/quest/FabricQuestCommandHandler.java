@@ -12,6 +12,7 @@ package me.pikamug.quests.commands.quest;
 
 import com.mojang.brigadier.Command;
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.commands.FabricQuestsSubCommand;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Requirements;
@@ -25,16 +26,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class FabricQuestCommandHandler {
-
-    private static final Logger SERVER_LOGGER = LoggerFactory.getLogger("net.minecraft.server.MinecraftServer");
 
     private final FabricQuestsPlugin plugin;
 
@@ -42,15 +40,19 @@ public class FabricQuestCommandHandler {
         this.plugin = plugin;
     }
 
-    public int handleQuest(final CommandSourceStack source) {
+    public int check(final CommandSourceStack source) {
         if (!source.isPlayer()) {
-            reply(source,() -> Component.literal("§c" + FabricLang.get("consoleError")), false);
+            reply(source,() -> Component.literal(ChatFormatting.RED + FabricLang.get("consoleError")));
             return 0;
         }
-        final ServerPlayer player = source.getPlayer();
+        final ServerPlayer player = Objects.requireNonNull(source.getPlayer());
+        if (!FabricQuestsSubCommand.hasCommandPermission(source, "quests.quest")) {
+            reply(source,() -> Component.literal(ChatFormatting.RED + FabricLang.get(player, "noPermission")));
+            return 0;
+        }
         final FabricQuester quester = plugin.getQuester(player.getUUID());
         if (quester.getCurrentQuests().isEmpty()) {
-            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + lang(player, "noActiveQuest")));
+            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get(player, "noActiveQuest")));
             return Command.SINGLE_SUCCESS;
         }
         for (final Quest quest : quester.getCurrentQuests().keySet()) {
@@ -58,13 +60,13 @@ public class FabricQuestCommandHandler {
             quest.updateCompass(quester, stage);
             if (quester.getQuestProgressOrDefault(quest).getDelayStartTime() == 0
                     || quester.getStageTime(quest) < 0L) {
-                final String msg = lang(player, "questObjectivesTitle").replace("<quest>", quest.getName());
+                final String msg = FabricLang.get(player, "questObjectivesTitle").replace("<quest>", quest.getName());
                 player.sendSystemMessage(Component.literal(ChatFormatting.GOLD + msg));
                 quester.showCurrentObjectives(quest, quester, false);
             } else {
                 final long time = quester.getStageTime(quest);
-                final String msg = ChatFormatting.YELLOW + "(" + lang(player, "delay") + ") "
-                        + ChatFormatting.RED + lang(player, "plnTooEarly")
+                final String msg = ChatFormatting.YELLOW + "(" + FabricLang.get(player, "delay") + ") "
+                        + ChatFormatting.RED + FabricLang.get(player, "plnTooEarly")
                         .replace("<quest>", quest.getName())
                         .replace("<time>", FabricMiscUtil.getTime(time));
                 player.sendSystemMessage(Component.literal(msg));
@@ -73,15 +75,19 @@ public class FabricQuestCommandHandler {
         return Command.SINGLE_SUCCESS;
     }
 
-    public int handleQuestDetail(final CommandSourceStack source, final String name) {
+    public int showQuestDetails(final CommandSourceStack source, final String name) {
         if (!source.isPlayer()) {
-            reply(source,() -> Component.literal("§c" + FabricLang.get("consoleError")), false);
+            reply(source,() -> Component.literal(ChatFormatting.RED + FabricLang.get("consoleError")));
             return 0;
         }
-        final ServerPlayer player = source.getPlayer();
+        final ServerPlayer player = Objects.requireNonNull(source.getPlayer());
+        if (!FabricQuestsSubCommand.hasCommandPermission(source, "quests.questinfo")) {
+            reply(source,() -> Component.literal(ChatFormatting.RED + FabricLang.get(player, "noPermission")));
+            return 0;
+        }
         final Quest quest = plugin.getQuest(name != null ? name.toLowerCase() : null);
         if (quest == null) {
-            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + lang(player, "questNotFound")
+            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get(player, "questNotFound")
                     .replace("<input>", name != null ? name : "")));
             return 0;
         }
@@ -89,7 +95,7 @@ public class FabricQuestCommandHandler {
         player.sendSystemMessage(Component.literal(ChatFormatting.GOLD + "- " + quest.getName() + " -"));
         player.sendSystemMessage(Component.literal(" "));
         if (quest.getNpcStart() != null) {
-            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + lang(player, "speakTo")
+            player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get(player, "speakTo")
                     .replace("<npc>", quest.getNpcStartName())));
         } else {
             player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + quest.getDescription()));
@@ -98,24 +104,24 @@ public class FabricQuestCommandHandler {
         if (plugin.getConfigSettings().canShowQuestReqs()) {
             final Requirements reqs = quest.getRequirements();
             if (reqs != null && reqs.hasRequirement()) {
-                player.sendSystemMessage(Component.literal(ChatFormatting.GOLD + lang(player, "requirements")));
+                player.sendSystemMessage(Component.literal(ChatFormatting.GOLD + FabricLang.get(player, "requirements")));
                 for (final String perm : reqs.getPermissions()) {
                     if (perm == null) continue;
                     if (plugin.getDependencies().hasPermission(player.getUUID(), perm)) {
                         player.sendSystemMessage(Component.literal(ChatFormatting.GREEN
-                                + lang(player, "permissionDisplay") + " " + perm));
+                                + FabricLang.get(player, "permissionDisplay") + " " + perm));
                     } else {
                         player.sendSystemMessage(Component.literal(ChatFormatting.RED
-                                + lang(player, "permissionDisplay") + " " + perm));
+                                + FabricLang.get(player, "permissionDisplay") + " " + perm));
                     }
                 }
                 if (reqs.getQuestPoints() != 0) {
                     if (quester.getQuestPoints() >= reqs.getQuestPoints()) {
                         player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- " + ChatFormatting.GREEN
-                                + reqs.getQuestPoints() + " " + lang(player, "questPoints")));
+                                + reqs.getQuestPoints() + " " + FabricLang.get(player, "questPoints")));
                     } else {
                         player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- " + ChatFormatting.RED
-                                + reqs.getQuestPoints() + " " + lang(player, "questPoints")));
+                                + reqs.getQuestPoints() + " " + FabricLang.get(player, "questPoints")));
                     }
                 }
                 for (final Object item : reqs.getItems()) {
@@ -133,10 +139,10 @@ public class FabricQuestCommandHandler {
                 for (final Quest completed : quester.getCompletedQuests()) {
                     if (reqs.getNeededQuestIds().contains(completed.getId())) {
                         player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- " + ChatFormatting.GREEN
-                                + lang(player, "complete") + " " + ChatFormatting.ITALIC + completed.getName()));
+                                + FabricLang.get(player, "complete") + " " + ChatFormatting.ITALIC + completed.getName()));
                     } else {
                         player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- " + ChatFormatting.RED
-                                + lang(player, "complete") + " " + ChatFormatting.ITALIC + completed.getName()));
+                                + FabricLang.get(player, "complete") + " " + ChatFormatting.ITALIC + completed.getName()));
                     }
                 }
                 final Map<String, String> completedMap = new LinkedHashMap<>();
@@ -145,13 +151,13 @@ public class FabricQuestCommandHandler {
                 }
                 for (final String questId : reqs.getBlockQuestIds()) {
                     if (completedMap.containsKey(questId)) {
-                        final String msg = lang(player, "haveCompleted")
+                        final String msg = FabricLang.get(player, "haveCompleted")
                                 .replace("<quest>", completedMap.get(questId));
                         player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- "
                                 + ChatFormatting.RED + msg));
                     } else {
                         final Quest blocked = plugin.getQuestById(questId);
-                        final String msg = lang(player, "cannotComplete")
+                        final String msg = FabricLang.get(player, "cannotComplete")
                                 .replace("<quest>", blocked != null ? blocked.getName() : questId);
                         player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- "
                                 + ChatFormatting.GREEN + msg));
@@ -173,23 +179,15 @@ public class FabricQuestCommandHandler {
         return false;
     }
 
-    private String lang(final CommandSourceStack source, final String key) {
-        return FabricLang.get(source.isPlayer() ? source.getPlayer() : null, key);
-    }
-
-    private String lang(final ServerPlayer player, final String key) {
-        return FabricLang.get(player, key);
-    }
-
     /**
      * Sends command feedback. Players receive it through the normal success path; console feedback is
      * logged directly (with legacy color codes converted to ANSI) so that only Quests output is colorized.
      */
-    private void reply(final CommandSourceStack source, final Supplier<Component> message, final boolean broadcast) {
+    private void reply(final CommandSourceStack source, final Supplier<Component> message) {
         if (source.isPlayer()) {
-            source.sendSuccess(() -> message.get(), broadcast);
+            source.sendSuccess(message, false);
         } else {
-            SERVER_LOGGER.info("{}", AnsiUtil.toAnsi(message.get().getString()));
+            plugin.getPluginLogger().info("{}", AnsiUtil.toAnsi(message.get().getString()));
         }
     }
 }

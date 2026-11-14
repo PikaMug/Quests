@@ -25,7 +25,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,18 +37,18 @@ import java.util.UUID;
 public class BukkitConditionFactory implements ConditionFactory {
 
     private final BukkitQuestsPlugin plugin;
-    private List<String> editingConditionNames = new LinkedList<>();
+    private List<String> namesOfConditionsBeingEdited = new LinkedList<>();
 
     public BukkitConditionFactory(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
     }
     
     public List<String> getNamesOfConditionsBeingEdited() {
-        return editingConditionNames;
+        return namesOfConditionsBeingEdited;
     }
     
     public void setNamesOfConditionsBeingEdited(final Collection<String> conditionNames) {
-        this.editingConditionNames = new LinkedList<>(conditionNames);
+        this.namesOfConditionsBeingEdited = new LinkedList<>(conditionNames);
     }
     
     public void returnToMenu(final UUID uuid) {
@@ -67,53 +66,40 @@ public class BukkitConditionFactory implements ConditionFactory {
             SessionData.set(uuid, Key.C_FAIL_QUEST, false);
         }
         if (bukkitCondition.getEntitiesWhileRiding() != null && !bukkitCondition.getEntitiesWhileRiding().isEmpty()) {
-            final LinkedList<String> entities = new LinkedList<>(bukkitCondition.getEntitiesWhileRiding());
-            SessionData.set(uuid, Key.C_WHILE_RIDING_ENTITY, entities);
+            SessionData.set(uuid, Key.C_WHILE_RIDING_ENTITY, new LinkedList<>(bukkitCondition.getEntitiesWhileRiding()));
         }
         if (bukkitCondition.getNpcsWhileRiding() != null && !bukkitCondition.getNpcsWhileRiding().isEmpty()) {
-            final LinkedList<UUID> npcs = new LinkedList<>(bukkitCondition.getNpcsWhileRiding());
-            SessionData.set(uuid, Key.C_WHILE_RIDING_NPC, npcs);
+            SessionData.set(uuid, Key.C_WHILE_RIDING_NPC, new LinkedList<>(bukkitCondition.getNpcsWhileRiding()));
         }
         if (bukkitCondition.getPermissions() != null && !bukkitCondition.getPermissions().isEmpty()) {
-            final LinkedList<String> permissions = new LinkedList<>(bukkitCondition.getPermissions());
-            SessionData.set(uuid, Key.C_WHILE_PERMISSION, permissions);
+            SessionData.set(uuid, Key.C_WHILE_PERMISSION, new LinkedList<>(bukkitCondition.getPermissions()));
         }
         if (bukkitCondition.getItemsWhileHoldingMainHand() != null && !bukkitCondition.getItemsWhileHoldingMainHand().isEmpty()) {
-            final LinkedList<ItemStack> items = new LinkedList<>(bukkitCondition.getItemsWhileHoldingMainHand());
-            SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, items);
+            SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, new LinkedList<>(bukkitCondition.getItemsWhileHoldingMainHand()));
         }
         if (bukkitCondition.getItemsWhileWearing() != null && !bukkitCondition.getItemsWhileWearing().isEmpty()) {
-            final LinkedList<ItemStack> items = new LinkedList<>(bukkitCondition.getItemsWhileWearing());
-            SessionData.set(uuid, Key.C_WHILE_WEARING, items);
+            SessionData.set(uuid, Key.C_WHILE_WEARING, new LinkedList<>(bukkitCondition.getItemsWhileWearing()));
         }
         if (bukkitCondition.getWorldsWhileStayingWithin() != null && !bukkitCondition.getWorldsWhileStayingWithin().isEmpty()) {
-            final LinkedList<String> worlds = new LinkedList<>(bukkitCondition.getBiomesWhileStayingWithin());
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_WORLD, worlds);
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_WORLD, new LinkedList<>(bukkitCondition.getBiomesWhileStayingWithin()));
         }
         if (bukkitCondition.getTickStartWhileStayingWithin() > -1) {
-            final int tick = bukkitCondition.getTickStartWhileStayingWithin();
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_START, tick);
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_START, bukkitCondition.getTickStartWhileStayingWithin());
         }
         if (bukkitCondition.getTickEndWhileStayingWithin() > -1) {
-            final int tick = bukkitCondition.getTickEndWhileStayingWithin();
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_END, tick);
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_END, bukkitCondition.getTickEndWhileStayingWithin());
         }
         if (bukkitCondition.getBiomesWhileStayingWithin() != null && !bukkitCondition.getBiomesWhileStayingWithin().isEmpty()) {
-            final LinkedList<String> biomes = new LinkedList<>(bukkitCondition.getBiomesWhileStayingWithin());
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_BIOME, biomes);
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_BIOME, new LinkedList<>(bukkitCondition.getBiomesWhileStayingWithin()));
         }
         if (bukkitCondition.getRegionsWhileStayingWithin() != null && !bukkitCondition.getRegionsWhileStayingWithin().isEmpty()) {
-            final LinkedList<String> regions = new LinkedList<>(bukkitCondition.getRegionsWhileStayingWithin());
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_REGION, regions);
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_REGION, new LinkedList<>(bukkitCondition.getRegionsWhileStayingWithin()));
         }
-        if (bukkitCondition.getPlaceholdersCheckIdentifier() != null
-                && !bukkitCondition.getPlaceholdersCheckIdentifier().isEmpty()) {
-            final LinkedList<String> identifiers = new LinkedList<>(bukkitCondition.getPlaceholdersCheckIdentifier());
-            SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_ID, identifiers);
+        if (bukkitCondition.getPlaceholdersCheckIdentifier() != null && !bukkitCondition.getPlaceholdersCheckIdentifier().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_ID, new LinkedList<>(bukkitCondition.getPlaceholdersCheckIdentifier()));
         }
         if (bukkitCondition.getPlaceholdersCheckValue() != null && !bukkitCondition.getPlaceholdersCheckValue().isEmpty()) {
-            final LinkedList<String> values = new LinkedList<>(bukkitCondition.getPlaceholdersCheckValue());
-            SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_VAL, values);
+            SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_VAL, new LinkedList<>(bukkitCondition.getPlaceholdersCheckValue()));
         }
     }
 
@@ -183,7 +169,7 @@ public class BukkitConditionFactory implements ConditionFactory {
             plugin.setLoadedConditions(temp);
         }
         final ConfigurationSection section = data.createSection("conditions." + SessionData.get(uuid, Key.C_NAME));
-        editingConditionNames.remove((String) SessionData.get(uuid, Key.C_NAME));
+        namesOfConditionsBeingEdited.remove((String) SessionData.get(uuid, Key.C_NAME));
         if (SessionData.get(uuid, Key.C_FAIL_QUEST) != null) {
             final Boolean b = (Boolean) SessionData.get(uuid, Key.C_FAIL_QUEST);
             if (b != null) {

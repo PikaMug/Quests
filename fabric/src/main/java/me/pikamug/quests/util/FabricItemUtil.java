@@ -34,12 +34,12 @@ public class FabricItemUtil {
         return item.getItem() == goal.getItem();
     }
 
-    public static String serialize(ItemStack item) {
+    public static String serializeItemStack(ItemStack item) {
         if (item == null || item.isEmpty()) return "AIR";
         return item.getItem().toString() + (item.getCount() > 1 ? " x" + item.getCount() : "");
     }
 
-    public static ItemStack deserialize(String str) {
+    public static ItemStack readItemStack(String str) {
         if (str == null || str.isEmpty() || str.equalsIgnoreCase("AIR")) {
             return ItemStack.EMPTY;
         }
@@ -97,7 +97,7 @@ public class FabricItemUtil {
             try {
                 final com.google.gson.JsonObject obj = element.getAsJsonObject();
                 if (obj.has("id") && obj.get("id").isJsonPrimitive()) {
-                    final ItemStack legacy = deserialize(obj.get("id").getAsString());
+                    final ItemStack legacy = readItemStack(obj.get("id").getAsString());
                     if (!legacy.isEmpty()) {
                         if (obj.has("count") && obj.get("count").isJsonPrimitive()) {
                             try { legacy.setCount(Math.max(1, Math.min(obj.get("count").getAsInt(), 64))); } catch (Exception ignored) {}

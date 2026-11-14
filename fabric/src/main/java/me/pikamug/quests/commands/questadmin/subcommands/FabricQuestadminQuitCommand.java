@@ -24,6 +24,7 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class FabricQuestadminQuitCommand extends FabricQuestsSubCommand {
 
@@ -92,8 +93,8 @@ public class FabricQuestadminQuitCommand extends FabricQuestsSubCommand {
         reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1), false);
         final ServerPlayer onlineTarget = source.getServer().getPlayerList().getPlayer(quester.getUUID());
         final String msg2 = lang(onlineTarget, "questForcedQuit")
-                .replace("<player>", source.isPlayer() ? source.getPlayer().getName().getString() : "Console")
-                .replace("<quest>", quest.getName());
+                .replace("<player>", source.isPlayer() ? Objects.requireNonNull(source.getPlayer())
+                        .getName().getString() : "Console").replace("<quest>", quest.getName());
         quester.quitQuest(quest, msg2);
         return Command.SINGLE_SUCCESS;
     }

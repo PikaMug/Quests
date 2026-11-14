@@ -24,6 +24,7 @@ import me.pikamug.quests.convo.quests.objectives.FabricQuestNpcsPrompt;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
@@ -232,8 +233,7 @@ public class FabricQuestStageMainPrompt extends FabricQuestsEditorIntegerPrompt 
             if (SessionData.get(uuid, stagePrefix + Key.S_BREAK_NAMES) == null
                     && SessionData.get(uuid, stagePrefix + Key.S_DAMAGE_NAMES) == null
                     && SessionData.get(uuid, stagePrefix + Key.S_PLACE_NAMES) == null
-                    && SessionData.get(uuid, stagePrefix + Key.S_USE_NAMES) == null
-                    && SessionData.get(uuid, stagePrefix + Key.S_CUT_NAMES) == null) {
+                    && SessionData.get(uuid, stagePrefix + Key.S_USE_NAMES) == null) {
                 return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
             } else {
                 return "";
@@ -560,7 +560,6 @@ public class FabricQuestStageMainPrompt extends FabricQuestsEditorIntegerPrompt 
                 || SessionData.get(uuid, stagePrefix + Key.S_DAMAGE_NAMES) != null
                 || SessionData.get(uuid, stagePrefix + Key.S_PLACE_NAMES) != null
                 || SessionData.get(uuid, stagePrefix + Key.S_USE_NAMES) != null
-                || SessionData.get(uuid, stagePrefix + Key.S_CUT_NAMES) != null
                 || SessionData.get(uuid, stagePrefix + Key.S_CRAFT_ITEMS) != null
                 || SessionData.get(uuid, stagePrefix + Key.S_SMELT_ITEMS) != null
                 || SessionData.get(uuid, stagePrefix + Key.S_ENCHANT_ITEMS) != null
@@ -864,7 +863,8 @@ public class FabricQuestStageMainPrompt extends FabricQuestsEditorIntegerPrompt 
                             ? (LinkedList<String>) SessionData.get(uuid, stagePrefix + Key.S_REACH_LOCATIONS)
                             : new LinkedList<>();
                     if (locations != null) {
-                        locations.add(FabricConfigUtil.getLocationInfo(block));
+                        locations.add(FabricConfigUtil.getLocationInfo(
+                                new FabricLocation(sender.level(), block)));
                     }
                     SessionData.set(uuid, stagePrefix + Key.S_REACH_LOCATIONS, locations);
 

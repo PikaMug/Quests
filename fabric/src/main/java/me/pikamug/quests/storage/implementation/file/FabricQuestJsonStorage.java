@@ -15,6 +15,9 @@ import me.pikamug.quests.quests.components.FabricStage;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.storage.implementation.QuestStorageImpl;
 import me.pikamug.quests.util.FabricItemUtil;
+import me.pikamug.quests.util.FabricLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 
 import java.io.Reader;
@@ -114,8 +117,21 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         return indexEntry("quests.json", name);
     }
 
+    private ServerLevel getLevel(final String name) {
+        if (plugin.getServer() == null) {
+            return null;
+        }
+        for (final ServerLevel level : plugin.getServer().getAllLevels()) {
+            final String id = level.dimension().identifier().toString();
+            if (id.equalsIgnoreCase(name) || level.dimension().identifier().getPath().equalsIgnoreCase(name)) {
+                return level;
+            }
+        }
+        return null;
+    }
+
     private Quest parseQuest(String name, JsonObject json) {
-        final FabricQuest quest = new FabricQuest();
+        final FabricQuest quest = new FabricQuest(plugin);
         quest.setId(name);
         if (json.has("name")) quest.setName(json.get("name").getAsString());
         if (json.has("ask-message")) quest.setDescription(json.get("ask-message").getAsString());
@@ -123,19 +139,26 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (json.has("region")) quest.setRegionStart(json.get("region").getAsString());
         if (json.has("block-start-x") && json.has("block-start-y") && json.has("block-start-z")) {
             try {
-                quest.setBlockStart(new net.minecraft.core.BlockPos(
+                final BlockPos pos = new BlockPos(
                         json.get("block-start-x").getAsInt(),
                         json.get("block-start-y").getAsInt(),
-                        json.get("block-start-z").getAsInt()));
+                        json.get("block-start-z").getAsInt());
+                ServerLevel level = null;
+                if (json.has("block-start-world")) {
+                    level = getLevel(json.get("block-start-world").getAsString());
+                }
+                if (level == null && plugin.getServer() != null) {
+                    level = plugin.getServer().overworld();
+                }
+                if (level != null) {
+                    quest.setBlockStart(new FabricLocation(level, pos));
+                }
             } catch (final Exception ignored) {}
         }
         if (json.has("npc-giver-uuid")) {
             try {
                 quest.setNpcStart(UUID.fromString(json.get("npc-giver-uuid").getAsString()));
             } catch (final Exception ignored) {}
-        }
-        if (json.has("npc-giver-name")) {
-            quest.setNpcStartName(json.get("npc-giver-name").getAsString());
         }
         if (json.has("gui-display")) {
             // Gui display is stored as a string for now
@@ -183,7 +206,6 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (json.has("complete-message")) stage.setCompleteMessage(json.get("complete-message").getAsString());
         if (json.has("delay")) stage.setDelay(json.get("delay").getAsLong());
         if (json.has("delay-message")) stage.setDelayMessage(json.get("delay-message").getAsString());
-        if (json.has("script-to-run")) stage.setScript(json.get("script-to-run").getAsString());
         if (json.has("password-displays")) {
             final JsonArray arr = json.getAsJsonArray("password-displays");
             final LinkedList<String> list = new LinkedList<>();
@@ -197,10 +219,14 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             stage.setPasswordPhrases(list);
         }
         // Block objectives
-        parseBlockList(json, "break-block-names", "break-block-amounts", stage, "break");
-        parseBlockList(json, "damage-block-names", "damage-block-amounts", stage, "damage");
-        parseBlockList(json, "place-block-names", "place-block-amounts", stage, "place");
-        parseBlockList(json, "use-block-names", "use-block-amounts", stage, "use");
+        parseBlockList(json, "break-block-names", "break-block-amounts", "break-block-durability",
+                stage, "break");
+        parseBlockList(json, "damage-block-names", "damage-block-amounts", "damage-block-durability",
+                stage, "damage");
+        parseBlockList(json, "place-block-names", "place-block-amounts", "place-block-durability",
+                stage, "place");
+        parseBlockList(json, "use-block-names", "use-block-amounts", "use-block-durability",
+                stage, "use");
         // Note: cut-block objectives are intentionally not supported in this port
         // Item objectives
         parseItemList(json, "items-to-craft", stage, "craft");
@@ -372,11 +398,11 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             return;
         }
         switch (type) {
-            case "start" -> stage.setStartAction(action);
-            case "finish" -> stage.setFinishAction(action);
-            case "fail" -> stage.setFailAction(action);
-            case "death" -> stage.setDeathAction(action);
-            case "disconnect" -> stage.setDisconnectAction(action);
+            case "start": stage.setStartAction(action);
+            case "finish": stage.setFinishAction(action);
+            case "fail": stage.setFailAction(action);
+            case "death": stage.setDeathAction(action);
+            case "disconnect": stage.setDisconnectAction(action);
         }
     }
 
@@ -422,7 +448,8 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         return null;
     }
 
-    private void parseBlockList(JsonObject json, String key, String amountKey, FabricStage stage, String type) {
+    private void parseBlockList(JsonObject json, String key, String amountKey, String durabilityKey,
+                                FabricStage stage, String type) {
         if (json.has(key)) {
             final JsonArray arr = json.getAsJsonArray(key);
             final LinkedList<Object> list = new LinkedList<>();
@@ -440,19 +467,36 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             while (amounts.size() < list.size()) {
                 amounts.add(1);
             }
+            final LinkedList<Short> durability = new LinkedList<>();
+            if (json.has(durabilityKey)) {
+                for (final JsonElement e : json.getAsJsonArray(durabilityKey)) {
+                    final short value = e.getAsShort();
+                    durability.add(value < 0 ? (short) 0 : value);
+                }
+            }
+            while (durability.size() < list.size()) {
+                durability.add((short) 0);
+            }
             switch (type) {
-                case "break" -> {
+                case "break": {
                     stage.setBlocksToBreak(list);
                     stage.setBlocksToBreakAmounts(amounts);
+                    stage.setBlocksToBreakDurability(durability);
                 }
-                case "damage" -> stage.setBlocksToDamage(list);
-                case "place" -> {
+                case "damage": {
+                    stage.setBlocksToDamage(list);
+                    stage.setBlocksToDamageAmounts(amounts);
+                    stage.setBlocksToDamageDurability(durability);
+                }
+                case "place": {
                     stage.setBlocksToPlace(list);
                     stage.setBlocksToPlaceAmounts(amounts);
+                    stage.setBlocksToPlaceDurability(durability);
                 }
-                case "use" -> {
+                case "use": {
                     stage.setBlocksToUse(list);
                     stage.setBlocksToUseAmounts(amounts);
+                    stage.setBlocksToUseDurability(durability);
                 }
             }
         }
@@ -486,16 +530,16 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                 if (e.isJsonObject()) {
                     list.add(FabricItemUtil.deserializeFromJson(e.getAsJsonObject()));
                 } else {
-                    list.add(FabricItemUtil.deserialize(e.getAsString()));
+                    list.add(FabricItemUtil.readItemStack(e.getAsString()));
                 }
             });
             switch (type) {
-                case "craft" -> stage.setItemsToCraft(list);
-                case "smelt" -> stage.setItemsToSmelt(list);
-                case "enchant" -> stage.setItemsToEnchant(list);
-                case "brew" -> stage.setItemsToBrew(list);
-                case "consume" -> stage.setItemsToConsume(list);
-                case "deliver" -> stage.setItemsToDeliver(list);
+                case "craft": stage.setItemsToCraft(list);
+                case "smelt": stage.setItemsToSmelt(list);
+                case "enchant": stage.setItemsToEnchant(list);
+                case "brew": stage.setItemsToBrew(list);
+                case "consume": stage.setItemsToConsume(list);
+                case "deliver": stage.setItemsToDeliver(list);
             }
         }
     }
@@ -623,7 +667,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             if (e.isJsonObject()) {
                 list.add(FabricItemUtil.deserializeFromJson(e));
             } else {
-                list.add(FabricItemUtil.deserialize(e.getAsString()));
+                list.add(FabricItemUtil.readItemStack(e.getAsString()));
             }
         });
         return list;
@@ -634,7 +678,6 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         if (json.has("allow-commands")) opt.setAllowCommands(json.get("allow-commands").getAsBoolean());
         if (json.has("allow-quitting")) opt.setAllowQuitting(json.get("allow-quitting").getAsBoolean());
         if (json.has("ignore-silk-touch")) opt.setIgnoreSilkTouch(json.get("ignore-silk-touch").getAsBoolean());
-        if (json.has("external-party-plugin")) opt.setExternalPartyPlugin(json.get("external-party-plugin").getAsString());
         if (json.has("use-parties-plugin")) opt.setUsePartiesPlugin(json.get("use-parties-plugin").getAsBoolean());
         if (json.has("share-progress-level")) opt.setShareProgressLevel(json.get("share-progress-level").getAsInt());
         if (json.has("same-quest-only")) opt.setShareSameQuestOnly(json.get("same-quest-only").getAsBoolean());

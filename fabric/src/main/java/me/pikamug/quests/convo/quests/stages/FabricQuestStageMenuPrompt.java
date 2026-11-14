@@ -147,10 +147,6 @@ public class FabricQuestStageMenuPrompt extends FabricQuestsEditorIntegerPrompt 
                 SessionData.set(uuid, newPref + Key.S_USE_AMOUNTS, SessionData.get(uuid, pref + Key.S_USE_AMOUNTS));
                 SessionData.set(uuid, newPref + Key.S_USE_DURABILITY, SessionData.get(uuid, pref
                         + Key.S_USE_DURABILITY));
-                SessionData.set(uuid, newPref + Key.S_CUT_NAMES, SessionData.get(uuid, pref + Key.S_CUT_NAMES));
-                SessionData.set(uuid, newPref + Key.S_CUT_AMOUNTS, SessionData.get(uuid, pref + Key.S_CUT_AMOUNTS));
-                SessionData.set(uuid, newPref + Key.S_CUT_DURABILITY, SessionData.get(uuid, pref
-                        + Key.S_CUT_DURABILITY));
                 SessionData.set(uuid, newPref + Key.S_CRAFT_ITEMS, SessionData.get(uuid, pref + Key.S_CRAFT_ITEMS));
                 SessionData.set(uuid, newPref + Key.S_SMELT_ITEMS, SessionData.get(uuid, pref + Key.S_SMELT_ITEMS));
                 SessionData.set(uuid, newPref + Key.S_ENCHANT_ITEMS, SessionData.get(uuid, pref + Key.S_ENCHANT_ITEMS));
@@ -212,7 +208,6 @@ public class FabricQuestStageMenuPrompt extends FabricQuestsEditorIntegerPrompt 
                 SessionData.set(uuid, newPref + Key.S_DELAY, SessionData.get(uuid, pref + Key.S_DELAY));
                 SessionData.set(uuid, newPref + Key.S_DELAY_MESSAGE, SessionData.get(uuid, pref
                         + Key.S_DELAY_MESSAGE));
-                SessionData.set(uuid, newPref + Key.S_DENIZEN, SessionData.get(uuid, pref + Key.S_DENIZEN));
                 SessionData.set(uuid, newPref + Key.S_COMPLETE_MESSAGE, SessionData.get(uuid, pref
                         + Key.S_COMPLETE_MESSAGE));
                 SessionData.set(uuid, newPref + Key.S_START_MESSAGE, SessionData.get(uuid, pref + Key.S_START_MESSAGE));
@@ -229,9 +224,6 @@ public class FabricQuestStageMenuPrompt extends FabricQuestsEditorIntegerPrompt 
             SessionData.set(uuid, pref + Key.S_USE_NAMES, null);
             SessionData.set(uuid, pref + Key.S_USE_AMOUNTS, null);
             SessionData.set(uuid, pref + Key.S_USE_DURABILITY, null);
-            SessionData.set(uuid, pref + Key.S_CUT_NAMES, null);
-            SessionData.set(uuid, pref + Key.S_CUT_AMOUNTS, null);
-            SessionData.set(uuid, pref + Key.S_CUT_DURABILITY, null);
             SessionData.set(uuid, pref + Key.S_CRAFT_ITEMS, null);
             SessionData.set(uuid, pref + Key.S_SMELT_ITEMS, null);
             SessionData.set(uuid, pref + Key.S_ENCHANT_ITEMS, null);
@@ -272,7 +264,6 @@ public class FabricQuestStageMenuPrompt extends FabricQuestsEditorIntegerPrompt 
             SessionData.set(uuid, pref + Key.S_OVERRIDE_DISPLAY, null);
             SessionData.set(uuid, pref + Key.S_DELAY, null);
             SessionData.set(uuid, pref + Key.S_DELAY_MESSAGE, null);
-            SessionData.set(uuid, pref + Key.S_DENIZEN, null);
             SessionData.set(uuid, pref + Key.S_COMPLETE_MESSAGE, null);
             SessionData.set(uuid, pref + Key.S_START_MESSAGE, null);
             if (last) {

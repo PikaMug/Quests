@@ -31,7 +31,7 @@ public class FabricActionTimer implements Runnable {
     @Override
     public void run() {
         if (cancelled) return;
-        quester.getActionTimers().remove(this);
+        quester.getTimers().remove(this);
         if (time < 1) {
             quest.failQuest(quester);
             quester.updateJournal();

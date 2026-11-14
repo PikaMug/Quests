@@ -50,7 +50,7 @@ public class FabricMiscUtil {
         });
     }
 
-    public static String getEntityName(EntityType<?> type) {
+    public static String getPrettyMobName(EntityType<?> type) {
         if (type == null) return "Unknown";
         return type.getDescription().getString();
     }

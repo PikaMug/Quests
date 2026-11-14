@@ -14,7 +14,6 @@ public class FabricOptions implements Options {
     private boolean allowCommands = true;
     private boolean allowQuitting = true;
     private boolean ignoreSilkTouch = true;
-    private String externalPartyPlugin = null;
     private boolean usePartiesPlugin = true;
     private boolean handleOfflinePlayers = false;
     private double shareDistance = 0.0D;
@@ -50,12 +49,13 @@ public class FabricOptions implements Options {
         this.ignoreSilkTouch = ignoreSilkTouch;
     }
 
+    @Override
     public String getExternalPartyPlugin() {
-        return externalPartyPlugin;
+        return null;
     }
 
+    @Override
     public void setExternalPartyPlugin(final String externalPartyPlugin) {
-        this.externalPartyPlugin = externalPartyPlugin;
     }
 
     public boolean canUsePartiesPlugin() {

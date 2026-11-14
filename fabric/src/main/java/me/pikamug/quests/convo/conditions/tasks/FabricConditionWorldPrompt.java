@@ -28,6 +28,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.biome.Biome;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -62,8 +63,13 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
             case 1:
             case 2:
             case 3:
-            case 4:
                 return ChatFormatting.BLUE;
+            case 4:
+                if (plugin.getDependencies().hasRegionSupport()) {
+                    return ChatFormatting.BLUE;
+                } else {
+                    return ChatFormatting.GRAY;
+                }
             case 5:
                 return ChatFormatting.GREEN;
             default:
@@ -81,7 +87,11 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
         case 3:
             return ChatFormatting.YELLOW + FabricLang.get("conditionEditorStayWithinBiome");
         case 4:
-            return ChatFormatting.GRAY + FabricLang.get("conditionEditorStayWithinRegion");
+            if (plugin.getDependencies().hasRegionSupport()) {
+                return ChatFormatting.YELLOW + FabricLang.get("conditionEditorStayWithinRegion");
+            } else {
+                return ChatFormatting.GRAY + FabricLang.get("conditionEditorStayWithinRegion");
+            }
         case 5:
             return ChatFormatting.GREEN + FabricLang.get("done");
         default:
@@ -128,7 +138,22 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
                 return text.toString();
             }
         case 4:
-            return ChatFormatting.GRAY + "(" + FabricLang.get("notInstalled") + ")";
+            if (!plugin.getDependencies().hasRegionSupport()) {
+                return ChatFormatting.GRAY + "(" + FabricLang.get("notInstalled") + ")";
+            } else if (SessionData.get(uuid, Key.C_WHILE_WITHIN_REGION) == null) {
+                return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
+            } else {
+                final StringBuilder text = new StringBuilder();
+                final List<String> whileWithinRegion
+                        = (List<String>) SessionData.get(uuid, Key.C_WHILE_WITHIN_REGION);
+                if (whileWithinRegion != null) {
+                    for (final String s : whileWithinRegion) {
+                        text.append("\n").append(ChatFormatting.GRAY).append("     - ")
+                                .append(ChatFormatting.BLUE).append(s);
+                    }
+                }
+                return text.toString();
+            }
         case 5:
             return "";
         default:
@@ -164,7 +189,11 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
             new ConditionBiomesPrompt(uuid).start();
             break;
         case 4:
-            new FabricConditionWorldPrompt(uuid).start();
+            if (plugin.getDependencies().hasRegionSupport()) {
+                new ConditionRegionsPrompt(uuid).start();
+            } else {
+                new FabricConditionWorldPrompt(uuid).start();
+            }
             break;
         case 5:
             try {
@@ -525,6 +554,76 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
                     }
                 }
                 SessionData.set(uuid, Key.C_WHILE_WITHIN_BIOME, biomes);
+            }
+            new FabricConditionWorldPrompt(uuid).start();
+        }
+    }
+
+    public class ConditionRegionsPrompt extends FabricConditionsEditorStringPrompt {
+
+        public ConditionRegionsPrompt(final @NotNull UUID uuid) {
+            super(uuid);
+        }
+
+        @Override
+        public String getTitle() {
+            return FabricLang.get("conditionEditorRegionsTitle");
+        }
+
+        @Override
+        public String getQueryText() {
+            return FabricLang.get("conditionEditorRegionsPrompt");
+        }
+
+        @Override
+        public @NotNull String getPromptText() {
+            final StringBuilder regions = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
+            final List<String> names = plugin.getDependencies().getKnownRegionNames();
+            if (names.isEmpty()) {
+                regions.append(ChatFormatting.GRAY).append("(").append(FabricLang.get("none")).append(")\n");
+            } else {
+                Collections.sort(names);
+                for (int i = 0; i < names.size(); i++) {
+                    regions.append(ChatFormatting.GREEN).append(names.get(i));
+                    if (i < names.size() - 1) {
+                        regions.append(ChatFormatting.GRAY).append(", ");
+                    }
+                }
+                regions.append("\n");
+            }
+            return regions.toString() + ChatFormatting.YELLOW + getQueryText();
+        }
+
+        @Override
+        public void acceptInput(final String input) {
+            if (input == null) {
+                return;
+            }
+            final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
+            if (sender == null) {
+                return;
+            }
+            if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
+                final LinkedList<String> regions = new LinkedList<>();
+                final List<String> known = plugin.getDependencies().getKnownRegionNames();
+                for (final String r : input.split(" ")) {
+                    String found = null;
+                    for (final String region : known) {
+                        if (region.equalsIgnoreCase(r)) {
+                            found = region;
+                            break;
+                        }
+                    }
+                    if (found == null) {
+                        String error = FabricLang.get("questWGInvalidRegion");
+                        error = error.replace("<region>", ChatFormatting.RED + r + ChatFormatting.YELLOW);
+                        sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + error));
+                        new ConditionRegionsPrompt(uuid).start();
+                        return;
+                    }
+                    regions.add(found);
+                }
+                SessionData.set(uuid, Key.C_WHILE_WITHIN_REGION, regions);
             }
             new FabricConditionWorldPrompt(uuid).start();
         }

@@ -61,17 +61,18 @@ public class FabricQuestsListCommand extends FabricQuestsSubCommand {
 
     @Override
     public int execute(final CommandSourceStack source, final String[] args) {
-        if (!source.isPlayer()) {
+        final ServerPlayer player = source.getPlayer();
+        if (player == null) {
             int num = 1;
-            reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questListTitle")), false);
+            reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questListTitle")));
             if (plugin.getLoadedQuests().isEmpty()) {
-                reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "noQuests")), false);
+                reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "noQuests")));
                 return Command.SINGLE_SUCCESS;
             }
             for (final Quest q : plugin.getLoadedQuests()) {
                 final int lineNo = num;
                 reply(source,() -> Component.literal(ChatFormatting.YELLOW + String.valueOf(lineNo)
-                        + ". " + q.getName()), false);
+                        + ". " + q.getName()));
                 num++;
             }
             return Command.SINGLE_SUCCESS;
@@ -83,16 +84,14 @@ public class FabricQuestsListCommand extends FabricQuestsSubCommand {
             try {
                 page = Integer.parseInt(args[1]);
             } catch (final NumberFormatException e) {
-                reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "pageSelectionNum")),
-                        false);
+                reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "pageSelectionNum")));
                 return 0;
             }
         }
         if (page < 1) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "pageSelectionPosNum")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "pageSelectionPosNum")));
             return 0;
         }
-        final ServerPlayer player = source.getPlayer();
         final FabricQuester quester = plugin.getQuester(player.getUUID());
         quester.listQuests(quester, page);
         return Command.SINGLE_SUCCESS;

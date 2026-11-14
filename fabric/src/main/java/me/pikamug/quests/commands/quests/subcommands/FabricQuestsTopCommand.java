@@ -14,7 +14,6 @@ import com.mojang.brigadier.Command;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.commands.FabricQuestsSubCommand;
 import me.pikamug.quests.player.Quester;
-import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricLang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -75,14 +74,14 @@ public class FabricQuestsTopCommand extends FabricQuestsSubCommand {
             try {
                 topNumber = Integer.parseInt(args[1]);
             } catch (final NumberFormatException e) {
-                reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(player, "inputNum")), false);
+                reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(player, "inputNum")));
                 return 0;
             }
         }
         if (topNumber < 1 || topNumber > limit) {
             reply(source,() -> Component.literal(ChatFormatting.YELLOW
                     + lang(player, "invalidRange").replace("<least>", "1")
-                    .replace("<greatest>", String.valueOf(limit))), false);
+                    .replace("<greatest>", String.valueOf(limit))));
             return Command.SINGLE_SUCCESS;
         }
         final Map<String, Integer> questPoints = new LinkedHashMap<>();
@@ -94,14 +93,14 @@ public class FabricQuestsTopCommand extends FabricQuestsSubCommand {
         final List<Map.Entry<String, Integer>> sorted = new ArrayList<>(questPoints.entrySet());
         sorted.sort(Map.Entry.comparingByValue(java.util.Collections.reverseOrder()));
         reply(source,() -> Component.literal(ChatFormatting.GOLD
-                + lang(player, "topQuestersTitle").replace("<number>", String.valueOf(topNumber))), false);
+                + lang(player, "topQuestersTitle").replace("<number>", String.valueOf(topNumber))));
         int printed = 0;
         for (final Map.Entry<String, Integer> entry : sorted) {
             printed++;
             final int lineNo = printed;
             reply(source,() -> Component.literal(ChatFormatting.YELLOW + String.valueOf(lineNo) + ". "
-                    + entry.getKey() + " - " + ChatFormatting.DARK_PURPLE + String.valueOf(entry.getValue())
-                    + ChatFormatting.YELLOW + " " + lang(player, "questPoints")), false);
+                    + entry.getKey() + " - " + ChatFormatting.DARK_PURPLE + entry.getValue()
+                    + ChatFormatting.YELLOW + " " + lang(player, "questPoints")));
             if (printed >= topNumber) break;
         }
         return Command.SINGLE_SUCCESS;

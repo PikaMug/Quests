@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static me.pikamug.quests.commands.FabricQuestsSubCommand.hasCommandPermission;
 import static me.pikamug.quests.commands.FabricQuestsSubCommand.lang;
 import static me.pikamug.quests.commands.FabricQuestsSubCommand.reply;
 
@@ -92,21 +93,28 @@ public class FabricQuestadminCommandHandler {
 
     public int check(final CommandSourceStack source, final String[] args) {
         if (args.length < 1) {
-            return handleAdminHelp(source);
+            return printAdminHelp(source);
         }
         final FabricQuestsSubCommand sub = subCommands.get(args[0].toLowerCase());
         if (sub == null) {
             return printQuestAdminUnknownCommand(args[0], source);
+        } else if (!hasAdminNode(source, sub.getName())) {
+            reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "noPermission")), false);
+            return 0;
         } else if (args.length < sub.getMaxArguments()) {
-            return getQuestAdminCommandUsage(source, sub.getName());
+            return getAdminCommandUsage(source, sub.getName());
         } else if (args.length > sub.getMaxArguments() + 1) {
-            return getQuestAdminCommandUsage(source, sub.getName());
+            return getAdminCommandUsage(source, sub.getName());
         } else {
             return sub.execute(source, args);
         }
     }
 
-    public int handleAdminHelp(final CommandSourceStack source) {
+    public int printAdminHelp(final CommandSourceStack source) {
+        if (!hasAdminRoot(source)) {
+            reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "noPermission")), false);
+            return 0;
+        }
         reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questAdminHelpTitle")), false);
         reply(source,() -> Component.literal(ChatFormatting.YELLOW + "/questadmin" + ChatFormatting.RED + " "
                 + lang(source, "COMMAND_QUESTADMIN_HELP")), false);
@@ -139,7 +147,7 @@ public class FabricQuestadminCommandHandler {
         return Command.SINGLE_SUCCESS;
     }
 
-    private int getQuestAdminCommandUsage(final CommandSourceStack source, final String cmd) {
+    private int getAdminCommandUsage(final CommandSourceStack source, final String cmd) {
         reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "usage") + ": "
                 + ChatFormatting.YELLOW + "/questadmin " + lang(source,
                 FabricLang.getKeyFromPrefix("COMMAND_QUESTADMIN_", cmd) + "_HELP")
@@ -173,15 +181,15 @@ public class FabricQuestadminCommandHandler {
         if (!source.isPlayer()) return true;
         final ServerPlayer player = source.getPlayer();
         if (FabricMiscUtil.hasPermission(player, PermissionLevel.GAMEMASTERS)) return true;
-        return plugin.getDependencies().hasPermission(player.getUUID(), ADMIN)
-                || plugin.getDependencies().hasPermission(player.getUUID(), ADMIN + ".*");
+        return hasCommandPermission(source, ADMIN)
+                || hasCommandPermission(source, ADMIN + ".*");
     }
 
     public boolean hasAdminNode(final CommandSourceStack source, final String sub) {
         if (!source.isPlayer()) return true;
         final ServerPlayer player = source.getPlayer();
         if (FabricMiscUtil.hasPermission(player, PermissionLevel.GAMEMASTERS)) return true;
-        return plugin.getDependencies().hasPermission(player.getUUID(), ADMIN + ".*")
-                || plugin.getDependencies().hasPermission(player.getUUID(), ADMIN + "." + sub);
+        return hasCommandPermission(source, ADMIN + ".*")
+                || hasCommandPermission(source, ADMIN + "." + sub);
     }
 }

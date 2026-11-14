@@ -23,6 +23,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.vehicle.VehicleEntity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -94,7 +95,7 @@ public class FabricConditionEntityPrompt extends FabricConditionsEditorIntegerPr
                     for (final String s: whileRidingEntity) {
                         final EntityType<?> type = FabricMiscUtil.getEntityType(s);
                         text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.BLUE)
-                                .append(type != null ? FabricMiscUtil.getEntityName(type) : s);
+                                .append(type != null ? FabricMiscUtil.getPrettyMobName(type) : s);
                     }
                 }
                 return text.toString();
@@ -184,10 +185,11 @@ public class FabricConditionEntityPrompt extends FabricConditionsEditorIntegerPr
             final LinkedList<EntityType<?>> mobList = new LinkedList<>();
             BuiltInRegistries.ENTITY_TYPE.stream()
                     .filter(et -> et != FabricMiscUtil.PLAYER)
+                    .filter(et -> VehicleEntity.class.isAssignableFrom(et.getBaseClass()))
                     .sorted(Comparator.comparing(et -> et.getDescription().getString()))
                     .forEach(mobList::add);
             for (int i = 0; i < mobList.size(); i++) {
-                mobs.append(ChatFormatting.AQUA).append(FabricMiscUtil.getEntityName(mobList.get(i)));
+                mobs.append(ChatFormatting.AQUA).append(FabricMiscUtil.getPrettyMobName(mobList.get(i)));
                 if (i < (mobList.size() - 1)) {
                     mobs.append(ChatFormatting.GRAY).append(", ");
                 }
@@ -209,7 +211,7 @@ public class FabricConditionEntityPrompt extends FabricConditionsEditorIntegerPr
                 final LinkedList<String> mobTypes = new LinkedList<>();
                 for (final String s : input.split(" ")) {
                     final EntityType<?> type = FabricMiscUtil.getEntityType(s);
-                    if (type != null) {
+                    if (type != null && VehicleEntity.class.isAssignableFrom(type.getBaseClass())) {
                         mobTypes.add(s);
                         SessionData.set(uuid, Key.C_WHILE_RIDING_ENTITY, mobTypes);
                     } else {

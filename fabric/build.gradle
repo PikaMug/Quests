@@ -109,6 +109,10 @@ java {
     withSourcesJar()
 }
 
+tasks.named("sourcesJar") {
+    dependsOn("generateVersionSource")
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.release = 25
     options.encoding = "UTF-8"

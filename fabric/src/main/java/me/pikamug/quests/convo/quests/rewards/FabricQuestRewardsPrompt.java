@@ -47,7 +47,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
     private final FabricQuestsPlugin plugin;
     private final String classPrefix;
     private boolean hasReward = false;
-    private final int size = 12;
+    private final int size = 10;
 
     public FabricQuestRewardsPrompt(final @NotNull UUID uuid) {
         super(uuid);
@@ -77,15 +77,11 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
         case 4:
         case 5:
         case 6:
-        case 10:
+        case 8:
             return ChatFormatting.BLUE;
         case 7:
             return ChatFormatting.GRAY;
-        case 8:
-            return ChatFormatting.GRAY;
         case 9:
-            return ChatFormatting.GRAY;
-        case 11:
             if (SessionData.get(uuid, Key.REW_DETAILS_OVERRIDE) == null) {
                 if (!hasReward) {
                     return ChatFormatting.GRAY;
@@ -95,7 +91,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
             } else {
                 return ChatFormatting.BLUE;
             }
-        case 12:
+        case 10:
             return ChatFormatting.GREEN;
         default:
             return null;
@@ -118,20 +114,16 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
         case 6:
             return ChatFormatting.YELLOW + FabricLang.get("rewSetPermission");
         case 7:
-            return ChatFormatting.GRAY + FabricLang.get("rewSetMcMMO");
-        case 8:
             return ChatFormatting.GRAY + FabricLang.get("rewSetHeroes");
-        case 9:
-            return ChatFormatting.GRAY + FabricLang.get("rewSetPartiesExperience");
-        case 10:
+        case 8:
             return ChatFormatting.DARK_PURPLE + FabricLang.get("rewSetCustom");
-        case 11:
+        case 9:
             if (!hasReward) {
                 return ChatFormatting.GRAY + FabricLang.get("overrideCreateSet");
             } else {
                 return ChatFormatting.YELLOW + FabricLang.get("overrideCreateSet");
             }
-        case 12:
+        case 10:
             return ChatFormatting.YELLOW + FabricLang.get("done");
         default:
             return null;
@@ -224,15 +216,6 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
         case 7:
             return ChatFormatting.GRAY + "(" + FabricLang.get("notInstalled") + ")";
         case 8:
-            return ChatFormatting.GRAY + "(" + FabricLang.get("notInstalled") + ")";
-        case 9:
-            if (SessionData.get(uuid, Key.REW_PARTIES_EXPERIENCE) == null) {
-                return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
-            } else {
-                return ChatFormatting.GRAY + "(" + ChatFormatting.AQUA + SessionData.get(uuid, Key.REW_PARTIES_EXPERIENCE) + " "
-                        + FabricLang.get("points") + ChatFormatting.GRAY + ")";
-            }
-        case 10:
             if (SessionData.get(uuid, Key.REW_CUSTOM) == null) {
                 return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
             } else {
@@ -245,7 +228,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 }
                 return text.toString();
             }
-        case 11:
+        case 9:
             if (SessionData.get(uuid, Key.REW_DETAILS_OVERRIDE) == null) {
                 if (!hasReward) {
                     return ChatFormatting.GRAY + "(" + FabricLang.get("stageEditorOptional") + ")";
@@ -263,7 +246,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 }
                 return text.toString();
             }
-        case 12:
+        case 10:
             return "";
         default:
             return null;
@@ -308,7 +291,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
         }
         switch (input.intValue()) {
         case 1:
-            new QuestRewardsMoneyPrompt(uuid).start();
+            new FabricQuestRewardsPrompt(uuid).start();
             break;
         case 2:
             new QuestRewardsQuestPointsPrompt(uuid).start();
@@ -339,15 +322,9 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
             new FabricQuestRewardsPrompt(uuid).start();
             break;
         case 8:
-            new FabricQuestRewardsPrompt(uuid).start();
-            break;
-        case 9:
-            new QuestRewardsPartiesExperiencePrompt(uuid).start();
-            break;
-        case 10:
             new QuestCustomRewardModulePrompt(uuid).start();
             break;
-        case 11:
+        case 9:
             if (hasReward) {
                 new FabricOverridePrompt(uuid, this, FabricLang.get("overrideCreateEnter")).start();
             } else {
@@ -355,7 +332,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 new FabricQuestRewardsPrompt(uuid).start();
             }
             break;
-        case 12:
+        case 10:
             plugin.getQuestFactory().returnToMenu(uuid);
             break;
         default:
@@ -371,9 +348,7 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
                 || SessionData.get(uuid, Key.REW_EXP) != null
                 || SessionData.get(uuid, Key.REW_COMMAND) != null
                 || SessionData.get(uuid, Key.REW_PERMISSION) != null
-                || SessionData.get(uuid, Key.REW_MCMMO_SKILLS) != null
                 || SessionData.get(uuid, Key.REW_HEROES_CLASSES) != null
-                || SessionData.get(uuid, Key.REW_PARTIES_EXPERIENCE) != null
                 || SessionData.get(uuid, Key.REW_PHAT_LOOTS) != null
                 || SessionData.get(uuid, Key.REW_CUSTOM) != null) {
             hasReward = true;
@@ -992,257 +967,6 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
         }
     }
 
-    public class QuestRewardsMcMMOListPrompt extends FabricQuestsEditorIntegerPrompt {
-
-        public QuestRewardsMcMMOListPrompt(final @NotNull UUID uuid) {
-            super(uuid);
-        }
-        
-        private final int size = 4;
-        
-        @Override
-        public int getSize() {
-            return size;
-        }
-        
-        @Override
-        public String getTitle() {
-            return FabricLang.get("mcMMORewardsTitle");
-        }
-        
-        @Override
-        public ChatFormatting getNumberColor(final int number) {
-            switch (number) {
-                case 1:
-                case 2:
-                    return ChatFormatting.BLUE;
-                case 3:
-                    return ChatFormatting.RED;
-                case 4:
-                    return ChatFormatting.GREEN;
-                default:
-                    return null;
-            }
-        }
-        
-        @Override
-        public String getSelectionText(final int number) {
-            switch(number) {
-            case 1:
-                return ChatFormatting.YELLOW + FabricLang.get("reqSetSkills");
-            case 2:
-                return ChatFormatting.YELLOW + FabricLang.get("reqSetSkillAmounts");
-            case 3:
-                return ChatFormatting.RED + FabricLang.get("clear");
-            case 4:
-                return ChatFormatting.GREEN + FabricLang.get("done");
-            default:
-                return null;
-            }
-        }
-        
-        @Override
-        @SuppressWarnings("unchecked")
-        public String getAdditionalText(final int number) {
-            switch(number) {
-            case 1:
-                if (SessionData.get(uuid, Key.REW_MCMMO_SKILLS) == null) {
-                    return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
-                } else {
-                    final StringBuilder text = new StringBuilder();
-                    final List<String> skills = (List<String>) SessionData.get(uuid, Key.REW_MCMMO_SKILLS);
-                    if (skills != null) {
-                        for (final String s : skills) {
-                            text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA).append(s);
-                        }
-                    }
-                    return text.toString();
-                }
-            case 2:
-                if (SessionData.get(uuid, Key.REW_MCMMO_AMOUNTS) == null) {
-                    return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
-                } else {
-                    final StringBuilder text = new StringBuilder();
-                    final List<Integer> amounts = (List<Integer>) SessionData.get(uuid, Key.REW_MCMMO_AMOUNTS);
-                    if (amounts != null) {
-                        for (final Integer i : amounts) {
-                            text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA).append(i);
-                        }
-                    }
-                    return text.toString();
-                }
-            case 3:
-            case 4:
-                return "";
-            default:
-                return null;
-            }
-        }
-
-        @Override
-        public @NotNull String getPromptText() {
-            final StringBuilder text = new StringBuilder(ChatFormatting.AQUA + "- " + getTitle() + " -");
-            for (int i = 1; i <= size; i++) {
-                text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
-                        .append(ChatFormatting.RESET).append(" - ").append(getSelectionText(i)).append(" ")
-                        .append(getAdditionalText(i));
-            }
-            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public void acceptInput(final Number input) {
-            final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
-            if (sender == null) {
-                return;
-            }
-            switch(input.intValue()) {
-            case 1:
-                new QuestMcMMOSkillsPrompt(uuid).start();
-                break;
-            case 2:
-                if (SessionData.get(uuid, Key.REW_MCMMO_SKILLS) == null) {
-                    sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("rewSetMcMMOSkillsFirst")));
-                    new QuestRewardsMcMMOListPrompt(uuid).start();
-                } else {
-                    new QuestMcMMOAmountsPrompt(uuid).start();
-                }
-                break;
-            case 3:
-                sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("rewMcMMOCleared")));
-                SessionData.set(uuid, Key.REW_MCMMO_SKILLS, null);
-                SessionData.set(uuid, Key.REW_MCMMO_AMOUNTS, null);
-                new QuestRewardsMcMMOListPrompt(uuid).start();
-                break;
-            case 4:
-                final int one;
-                final int two;
-                final List<Integer> skills = (List<Integer>) SessionData.get(uuid, Key.REW_MCMMO_SKILLS);
-                final List<Integer> amounts = (List<Integer>) SessionData.get(uuid, Key.REW_MCMMO_AMOUNTS);
-                if (skills != null) {
-                    one = skills.size();
-                } else {
-                    one = 0;
-                }
-                if (amounts != null) {
-                    two = amounts.size();
-                } else {
-                    two = 0;
-                }
-                if (one == two) {
-                    new FabricQuestRewardsPrompt(uuid).start();
-                } else {
-                    sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("listsNotSameSize")));
-                    new QuestRewardsMcMMOListPrompt(uuid).start();
-                }
-                break;
-            default:
-                new QuestRewardsMcMMOListPrompt(uuid).start();
-                break;
-            }
-        }
-    }
-
-    public class QuestMcMMOSkillsPrompt extends FabricQuestsEditorStringPrompt {
-        
-        public QuestMcMMOSkillsPrompt(final @NotNull UUID uuid) {
-            super(uuid);
-        }
-
-        @Override
-        public String getTitle() {
-            return FabricLang.get("skillListTitle");
-        }
-
-        @Override
-        public String getQueryText() {
-            return FabricLang.get("rewMcMMOPrompt");
-        }
-
-        @Override
-        public @NotNull String getPromptText() {
-            final StringBuilder skillList = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
-            skillList.append(ChatFormatting.GRAY).append("(").append(FabricLang.get("none")).append(")");
-            skillList.append("\n").append(ChatFormatting.YELLOW).append(getQueryText());
-            return skillList.toString();
-        }
-
-        @Override
-        public void acceptInput(final String input) {
-            if (input == null) {
-                return;
-            }
-            final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
-            if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                final String[] args = input.split(" ");
-                final List<String> skills = new LinkedList<>();
-                for (final String s : args) {
-                    if (!skills.contains(s)) {
-                        skills.add(FabricMiscUtil.getCapitalized(s));
-                    } else {
-                        if (sender != null) {
-                            sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("listDuplicate")));
-                        }
-                        new QuestMcMMOSkillsPrompt(uuid).start();
-                        return;
-                    }
-                }
-                SessionData.set(uuid, Key.REW_MCMMO_SKILLS, skills);
-            }
-            new QuestRewardsMcMMOListPrompt(uuid).start();
-        }
-    }
-
-    public class QuestMcMMOAmountsPrompt extends FabricQuestsEditorStringPrompt {
-        
-        public QuestMcMMOAmountsPrompt(final @NotNull UUID uuid) {
-            super(uuid);
-        }
-
-        @Override
-        public String getTitle() {
-            return null;
-        }
-
-        @Override
-        public String getQueryText() {
-            return FabricLang.get("reqMcMMOAmountsPrompt");
-        }
-
-        @Override
-        public @NotNull String getPromptText() {
-            return ChatFormatting.YELLOW + getQueryText();
-        }
-
-        @Override
-        public void acceptInput(final String input) {
-            if (input == null) {
-                return;
-            }
-            final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
-            if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                final String[] args = input.split(" ");
-                final List<Integer> amounts = new LinkedList<>();
-                for (final String s : args) {
-                    try {
-                        amounts.add(Integer.parseInt(s));
-                    } catch (final NumberFormatException e) {
-                        String text = FabricLang.get("reqNotANumber");
-                        text = text.replace("<input>", s);
-                        if (sender != null) {
-                            sender.sendSystemMessage(Component.literal(ChatFormatting.RED + text));
-                        }
-                        new QuestMcMMOAmountsPrompt(uuid).start();
-                        return;
-                    }
-                }
-                SessionData.set(uuid, Key.REW_MCMMO_AMOUNTS, amounts);
-            }
-            new QuestRewardsMcMMOListPrompt(uuid).start();
-        }
-    }
-
     public class QuestRewardsHeroesListPrompt extends FabricQuestsEditorIntegerPrompt {
 
         public QuestRewardsHeroesListPrompt(final @NotNull UUID uuid) {
@@ -1488,63 +1212,6 @@ public class FabricQuestRewardsPrompt extends FabricQuestsEditorIntegerPrompt {
             new QuestRewardsHeroesListPrompt(uuid).start();
         }
     }
-    
-    public class QuestRewardsPartiesExperiencePrompt extends FabricQuestsEditorStringPrompt {
-        
-        public QuestRewardsPartiesExperiencePrompt(final @NotNull UUID uuid) {
-            super(uuid);
-        }
-        
-        @Override
-        public String getTitle() {
-            return null;
-        }
-        
-        @Override
-        public String getQueryText() {
-            return FabricLang.get("rewPartiesExperiencePrompt");
-        }
-        
-        @Override
-        public @NotNull String getPromptText() {
-            return ChatFormatting.YELLOW + getQueryText();
-        }
-        
-        @Override
-        public void acceptInput(final String input) {
-            if (input == null) {
-                return;
-            }
-            final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
-            if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel")) && !input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
-                try {
-                    final int i = Integer.parseInt(input);
-                    if (i > 0) {
-                        SessionData.set(uuid, Key.REW_PARTIES_EXPERIENCE, i);
-                    } else {
-                        if (sender != null) {
-                            sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("inputPosNum")));
-                        }
-                        new QuestRewardsPartiesExperiencePrompt(uuid).start();
-                        return;
-                    }
-                } catch (final NumberFormatException e) {
-                    if (sender != null) {
-                        sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("reqNotANumber")
-                                .replace("<input>", input)));
-                    }
-                    new QuestRewardsPartiesExperiencePrompt(uuid).start();
-                    return;
-                }
-            } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
-                SessionData.set(uuid, Key.REW_PARTIES_EXPERIENCE, null);
-                new FabricQuestRewardsPrompt(uuid).start();
-                return;
-            }
-            new FabricQuestRewardsPrompt(uuid).start();
-        }
-    }
-
     public class QuestCustomRewardModulePrompt extends FabricQuestsEditorStringPrompt {
 
         public QuestCustomRewardModulePrompt(final @NotNull UUID uuid) {

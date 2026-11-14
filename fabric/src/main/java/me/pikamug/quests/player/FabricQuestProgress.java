@@ -292,73 +292,6 @@ public class FabricQuestProgress implements QuestProgress {
         }
     };
     
-    public LinkedList<Integer> blocksCut = new LinkedList<Integer>() {
-
-        private static final long serialVersionUID = -8204359763290995081L;
-
-        @Override
-        public boolean add(final Integer e) {
-            final boolean b = super.add(e);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void add(final int index, final Integer element) {
-            super.add(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean addAll(final Collection<? extends Integer> c) {
-            final boolean b = super.addAll(c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public boolean addAll(final int index, final Collection<? extends Integer> c) {
-            final boolean b = super.addAll(index, c);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            if (doJournalUpdate)
-                quester.updateJournal();
-        }
-
-        @Override
-        public boolean remove(final Object o) {
-            final boolean b = super.remove(o);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return b;
-        }
-
-        @Override
-        public Integer remove(final int index) {
-            final Integer s = super.remove(index);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-
-        @Override
-        public Integer set(final int index, final Integer element) {
-            final Integer s = super.set(index, element);
-            if (doJournalUpdate)
-                quester.updateJournal();
-            return s;
-        }
-    };
-    
     public LinkedList<Integer> itemsCrafted = new LinkedList<Integer>() {
 
         private static final long serialVersionUID = 2774356294049526106L;
@@ -1357,14 +1290,10 @@ public class FabricQuestProgress implements QuestProgress {
 
     @Override
     public LinkedList<Integer> getBlocksCut() {
-        return blocksCut;
+        return new LinkedList<>();
     }
 
     public void setBlocksCut(final LinkedList<Integer> blocksCut) {
-        this.blocksCut = blocksCut;
-        if (doJournalUpdate) {
-            quester.updateJournal();
-        }
     }
 
     @Override

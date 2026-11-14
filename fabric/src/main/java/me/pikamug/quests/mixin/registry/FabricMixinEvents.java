@@ -20,6 +20,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.BrewingStandMenu;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 
@@ -151,6 +153,11 @@ public final class FabricMixinEvents {
         void onItemBrewed(ServerPlayer player, ItemStack stack);
     }
 
+    public interface BrewingActionHandler {
+        boolean allowBrewingAction(ServerPlayer player, BrewingStandMenu menu, int slot, int button,
+                ContainerInput input);
+    }
+
     public interface ItemConsumedHandler {
         void onItemConsumed(ServerPlayer player, ItemStack stack);
     }
@@ -182,6 +189,7 @@ public final class FabricMixinEvents {
     private static final List<ItemSmeltedHandler> ITEM_SMELTED = new CopyOnWriteArrayList<>();
     private static final List<ItemEnchantedHandler> ITEM_ENCHANTED = new CopyOnWriteArrayList<>();
     private static final List<ItemBrewedHandler> ITEM_BREWED = new CopyOnWriteArrayList<>();
+    private static final List<BrewingActionHandler> BREWING_ACTION = new CopyOnWriteArrayList<>();
     private static final List<ItemConsumedHandler> ITEM_CONSUMED = new CopyOnWriteArrayList<>();
 
     // --- registration ------------------------------------------------------
@@ -284,6 +292,10 @@ public final class FabricMixinEvents {
 
     public static void registerItemBrewed(final ItemBrewedHandler handler) {
         ITEM_BREWED.add(handler);
+    }
+
+    public static void registerBrewingAction(final BrewingActionHandler handler) {
+        BREWING_ACTION.add(handler);
     }
 
     public static void registerItemConsumed(final ItemConsumedHandler handler) {
@@ -469,6 +481,15 @@ public final class FabricMixinEvents {
         for (final ItemBrewedHandler handler : ITEM_BREWED) {
             handler.onItemBrewed(player, stack);
         }
+    }
+
+    public static boolean invokeBrewingActionAllowed(final ServerPlayer player, final BrewingStandMenu menu,
+            final int slot, final int button, final ContainerInput input) {
+        if (player == null || menu == null || input == null) return true;
+        for (final BrewingActionHandler handler : BREWING_ACTION) {
+            if (!handler.allowBrewingAction(player, menu, slot, button, input)) return false;
+        }
+        return true;
     }
 
     public static void invokeItemConsumed(final ServerPlayer player, final ItemStack stack) {

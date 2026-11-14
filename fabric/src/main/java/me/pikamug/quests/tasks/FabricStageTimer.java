@@ -43,7 +43,7 @@ public class FabricStageTimer implements Runnable {
         if (quester.getCurrentStage(quest).getFinishAction() != null) {
             quester.getCurrentStage(quest).getFinishAction().fire(quester, quest);
         }
-        if (quest.getOrderedStages().indexOf(quester.getCurrentStage(quest)) == (quest.getOrderedStages().size() - 1)) {
+        if (quest.getStages().indexOf(quester.getCurrentStage(quest)) == (quest.getStages().size() - 1)) {
             quest.completeQuest(quester);
         } else {
             final int stageNum = quester.getCurrentQuests().get(quest) + 1;

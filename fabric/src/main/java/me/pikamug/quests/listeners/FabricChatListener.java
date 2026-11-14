@@ -18,10 +18,13 @@ import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricLang;
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class FabricChatListener {
 
@@ -37,6 +40,7 @@ public class FabricChatListener {
             if (plugin.isLoading() || player == null || content == null) return true;
             final FabricQuester quester = plugin.getQuester(player.getUUID());
             for (final Quest quest : plugin.getLoadedQuests()) {
+                if (!quester.meetsCondition(quest, true)) continue;
                 if (!quester.getCurrentQuests().containsKey(quest)) continue;
                 final Stage stage = quester.getCurrentStage(quest);
                 if (stage == null || stage.getPasswordPhrases().isEmpty()) continue;
@@ -63,25 +67,29 @@ public class FabricChatListener {
     private void handleChat(ServerPlayer player, String content) {
         if (content == null) return;
         final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final ObjectiveType type = ObjectiveType.PASSWORD;
+        final Set<String> dispatchedQuestIDs = new HashSet<>();
         for (final Quest quest : plugin.getLoadedQuests()) {
+            if (!quester.meetsCondition(quest, true)) continue;
             if (!quester.getCurrentQuests().containsKey(quest)) continue;
             final Stage stage = quester.getCurrentStage(quest);
             if (stage == null) continue;
 
             if (!stage.getPasswordPhrases().isEmpty()) {
-                boolean matched = false;
                 for (int i = 0; i < stage.getPasswordPhrases().size(); i++) {
                     final String phrase = stage.getPasswordPhrases().get(i);
                     if (phrase != null && phrase.equalsIgnoreCase(content)) {
-                        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
-                        if (!progress.getPasswordsSaid().get(i)) {
-                            progress.getPasswordsSaid().set(i, true);
-                            quester.finishObjective(quest, ObjectiveType.PASSWORD, i);
-                        }
-                        matched = true;
+                        applyPasswordProgress(quester, quest, i);
+                        final int finalIndex = i;
+                        dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (q, cq) -> {
+                            if (!dispatchedQuestIDs.contains(cq.getId())) {
+                                applyPasswordProgress((FabricQuester) q, cq, finalIndex);
+                            }
+                            return null;
+                        }));
+                        break;
                     }
                 }
-                if (matched) quester.checkQuest(quest);
             }
 
             if (!stage.getChatActions().isEmpty()) {
@@ -92,6 +100,18 @@ public class FabricChatListener {
                 }
             }
         }
+    }
+
+    private void applyPasswordProgress(FabricQuester quester, Quest quest, int index) {
+        final Stage stage = quester.getCurrentStage(quest);
+        if (stage == null || index < 0 || index >= stage.getPasswordPhrases().size()) return;
+        final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
+        if (progress == null || index >= progress.getPasswordsSaid().size()) return;
+        if (!progress.getPasswordsSaid().get(index)) {
+            progress.getPasswordsSaid().set(index, true);
+            quester.finishObjective(quest, ObjectiveType.PASSWORD, index);
+        }
+        quester.checkQuest(quest);
     }
 
     private void handleCommand(ServerPlayer player, String content) {
@@ -108,7 +128,7 @@ public class FabricChatListener {
             final boolean allowed = quest.getOptions().canAllowCommands()
                     || lowerContent.startsWith("/quest");
             if (!allowed) {
-                quester.sendMessage("§c" + FabricLang.get(quester.getPlayer(), "optCommandsDenied")
+                quester.sendMessage(ChatFormatting.RED + FabricLang.get(quester.getPlayer(), "optCommandsDenied")
                         .replace("<quest>", quest.getName()));
                 continue;
             }

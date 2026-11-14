@@ -16,6 +16,7 @@ import me.pikamug.quests.convo.quests.FabricQuestsEditorStringPrompt;
 import me.pikamug.quests.convo.quests.stages.FabricQuestStageMainPrompt;
 import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
@@ -114,7 +115,7 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
                         for (int i = 0; i < mobs.size(); i++) {
                             if (FabricMiscUtil.getProperMobType(mobs.get(i)) != null) {
                                 text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA)
-                                        .append(FabricMiscUtil.getEntityName(Objects.requireNonNull(FabricMiscUtil
+                                        .append(FabricMiscUtil.getPrettyMobName(Objects.requireNonNull(FabricMiscUtil
                                                 .getProperMobType(mobs.get(i))))).append(ChatFormatting.GRAY).append(" x ")
                                         .append(ChatFormatting.DARK_AQUA).append(amounts.get(i));
                             }
@@ -131,7 +132,7 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
                                 String msg = FabricLang.get("blocksWithin");
                                 msg = msg.replace("<amount>", String.valueOf(radii.get(i)));
                                 text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.BLUE)
-                                        .append(FabricMiscUtil.getEntityName(Objects.requireNonNull(FabricMiscUtil
+                                        .append(FabricMiscUtil.getPrettyMobName(Objects.requireNonNull(FabricMiscUtil
                                                 .getProperMobType(mobs.get(i))))).append(ChatFormatting.GRAY).append(" x ")
                                         .append(ChatFormatting.DARK_AQUA).append(amounts.get(i)).append(ChatFormatting.GRAY)
                                         .append(msg).append(ChatFormatting.YELLOW).append(names.get(i)).append(" (")
@@ -699,7 +700,8 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
                         locations = new LinkedList<>();
                     }
                     if (locations != null) {
-                        locations.add(FabricConfigUtil.getLocationInfo(sender.blockPosition()));
+                        locations.add(FabricConfigUtil.getLocationInfo(
+                                new FabricLocation(sender.level(), sender.blockPosition())));
                     }
                     SessionData.set(uuid, pref + Key.S_MOB_KILL_LOCATIONS, locations);
                     final ConcurrentHashMap<UUID, net.minecraft.world.level.block.Block> temp

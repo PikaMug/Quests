@@ -11,7 +11,6 @@
 package me.pikamug.quests.actions;
 
 import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.entity.FabricQuestMob;
 import me.pikamug.quests.entity.QuestMob;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
@@ -19,32 +18,24 @@ import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.tasks.FabricActionTimer;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricConfigUtil;
+import me.pikamug.quests.util.FabricInventoryUtil;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.WeatherData;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,10 +43,10 @@ import java.util.Map;
 public class FabricAction implements Action {
 
     private final FabricQuestsPlugin plugin;
-    private String name;
-    private String message;
-    private boolean clearInv = false;
-    private boolean failQuest = false;
+    private String name = "";
+    protected String message = null;
+    protected boolean clearInv = false;
+    protected boolean failQuest = false;
     protected LinkedList<FabricLocation> explosions = new LinkedList<>();
     protected Map<FabricLocation, SoundEvent> effects = new HashMap<>();
     protected LinkedList<ItemStack> items = new LinkedList<>();
@@ -65,7 +56,28 @@ public class FabricAction implements Action {
     protected int thunderDuration = 0;
     protected int timer = 0;
     protected boolean cancelTimer = false;
-    protected LinkedList<QuestMob> mobSpawns = new LinkedList<>();
+    protected LinkedList<QuestMob> mobSpawns = new LinkedList<QuestMob>() {
+
+        private static final long serialVersionUID = -761974607799449780L;
+
+        @Override
+        public boolean equals(final Object o) {
+            if (o instanceof LinkedList) {
+                @SuppressWarnings("unchecked")
+                final
+                LinkedList<QuestMob> other = (LinkedList<QuestMob>) o;
+                if (size() != other.size()) {
+                    return false;
+                }
+                for (int i = 0; i < size(); i++) {
+                    if (!get(i).equals(other.get(i))) {
+                        return false;
+                    }
+                }
+            }
+            return false;
+        }
+    };
     protected LinkedList<FabricLocation> lightningStrikes = new LinkedList<>();
     protected LinkedList<String> commands = new LinkedList<>();
     protected LinkedList<MobEffectInstance> potionEffects = new LinkedList<>();
@@ -293,16 +305,15 @@ public class FabricAction implements Action {
         final FabricQuester fabricQuester = (FabricQuester)quester;
         final ServerPlayer player = fabricQuester.getPlayer();
         if (player == null) return;
-        final ServerLevel level = player.level();
         final MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
         if (message != null) {
-            quester.sendMessage(FabricConfigUtil.parseString(message));
+            for (final String s : FabricConfigUtil.parseStringWithPossibleLineBreaks(message, quest, player)) {
+                quester.sendMessage(s);
+            }
         }
         if (clearInv) {
             player.getInventory().clearContent();
         }
-
-        // Explosions
         if (explosions != null && !explosions.isEmpty()) {
             for (final FabricLocation loc : explosions) {
                 if (loc != null && loc.getLevel() != null) {
@@ -310,111 +321,44 @@ public class FabricAction implements Action {
                 }
             }
         }
-
-        // Effects (particles)
         if (effects != null && !effects.isEmpty()) {
             for (final Map.Entry<FabricLocation, SoundEvent> entry : effects.entrySet()) {
                 final FabricLocation loc = entry.getKey();
-                if (loc == null || loc.getLevel() == null) continue;
-                Object effectObj = entry.getValue();
-                if (effectObj instanceof String) {
-                    String effectStr = (String) effectObj;
-                    final ParticleType<?> particle = BuiltInRegistries.PARTICLE_TYPE
-                            .getValue(Identifier.tryBuild("minecraft", effectStr.toLowerCase()));
-                    if (particle instanceof ParticleOptions) {
-                        ParticleOptions particles = (ParticleOptions) particle;
-                        loc.getLevel().sendParticles(particles, loc.getX(), loc.getY(), loc.getZ(), 1, 0, 0, 0, 0);
-                    }
-                } else if (effectObj instanceof SoundEvent) {
-                    SoundEvent eff = (SoundEvent) effectObj;
-                    loc.getLevel().playSound(null, loc.getX(), loc.getY(), loc.getZ(), eff, SoundSource.MASTER);
-                }
+                final SoundEvent sound = entry.getValue();
+                if (loc == null || loc.getLevel() == null || sound == null) continue;
+                loc.getLevel().playSound(null, loc.getX(), loc.getY(), loc.getZ(), sound, SoundSource.MASTER);
             }
         }
-
-        // Fail quest
-        if (failQuest && quest != null) {
-            quest.failQuest(quester);
-        }
-
-        // Weather
-        final WeatherData weatherData = level.getWeatherData();
-        if (stormDuration > 0) {
-            weatherData.setClearWeatherTime(0);
-            weatherData.setRaining(true);
-            weatherData.setRainTime(stormDuration * 20);
-            weatherData.setThundering(false);
-        }
-        if (thunderDuration > 0) {
-            weatherData.setClearWeatherTime(0);
-            weatherData.setRaining(false);
-            weatherData.setRainTime(thunderDuration * 20);
-            weatherData.setThundering(true);
-        }
-
-        // Hunger and saturation
-        if (hunger != 0) {
-            final FoodData foodData = player.getFoodData();
-            foodData.setFoodLevel(Math.max(0, Math.min(20, foodData.getFoodLevel() + hunger)));
-        }
-        if (saturation != 0) {
-            final FoodData foodData = player.getFoodData();
-            foodData.setSaturation(Math.max(0, Math.min(foodData.getFoodLevel(), foodData.getSaturationLevel() + saturation)));
-        }
-
-        // Health
-        if (health > 0) {
-            player.setHealth(Math.max(1.0f, Math.min(player.getMaxHealth(), player.getHealth() + health)));
-        }
-
-        // Teleport
-        if (teleport != null) {
-            if (teleport.getLevel() != null && player.isAlive()) {
-                player.teleportTo(teleport.getLevel(), teleport.getX(), teleport.getY(), teleport.getZ(),
-                        java.util.Collections.emptySet(), teleport.getYaw(), teleport.getPitch(), false);
-            }
-        }
-
-        // Potion effects
-        if (potionEffects != null && !potionEffects.isEmpty()) {
-            for (final MobEffectInstance effect : potionEffects) {
-                player.addEffect(effect);
-            }
-        }
-
-        // Item rewards
         if (items != null && !items.isEmpty()) {
             for (final ItemStack stack : items) {
                 try {
-                    me.pikamug.quests.util.FabricInventoryUtil.addItem(player, stack);
+                    FabricInventoryUtil.addItem(player, stack);
                 } catch (final Exception e) {
                     FabricQuestsPlugin.LOGGER.warn("Unable to add null item to inventory of {} during quest {} event {}",
                             player.getName().getString(),
-                            quest != null ? quest.getName() : "?",
-                            name, e);
+                            quest != null ? quest.getName() : "?", name, e);
                     player.sendSystemMessage(net.minecraft.network.chat.Component.literal(
                             "<red>Quests encountered a problem with an item. Please contact an administrator."));
                 }
             }
         }
-
-        // Commands
-        if (commands != null && !commands.isEmpty()) {
-            for (final String command : commands) {
-                if (server != null) {
-                    server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), command.replace("%player%", player.getName().getString()));
-                }
-            }
+        if (stormWorld != null) {
+            final WeatherData weatherData = stormWorld.getWeatherData();
+            weatherData.setClearWeatherTime(0);
+            weatherData.setRaining(true);
+            weatherData.setRainTime(stormDuration);
         }
-
-        // Mob spawns
+        if (thunderWorld != null) {
+            final WeatherData weatherData = thunderWorld.getWeatherData();
+            weatherData.setClearWeatherTime(0);
+            weatherData.setThundering(true);
+            weatherData.setThunderTime(thunderDuration);
+        }
         if (mobSpawns != null && !mobSpawns.isEmpty()) {
-            for (final QuestMob mob : mobSpawns) {
-                spawnMob(player, level, mob);
+            for (final QuestMob questMob : mobSpawns) {
+                questMob.spawn();
             }
         }
-
-        // Lightning strikes
         if (lightningStrikes != null && !lightningStrikes.isEmpty()) {
             for (final FabricLocation loc : lightningStrikes) {
                 if (loc == null || loc.getLevel() == null) continue;
@@ -425,100 +369,62 @@ public class FabricAction implements Action {
                 }
             }
         }
-
-        // Timer
+        if (commands != null && !commands.isEmpty()) {
+            for (String command : commands) {
+                if (server != null) {
+                    command = command.replace("<player>", player.getName().getString());
+                    server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), command);
+                }
+            }
+        }
+        if (potionEffects != null && !potionEffects.isEmpty()) {
+            for (final MobEffectInstance effect : potionEffects) {
+                player.addEffect(effect);
+            }
+        }
+        if (hunger != -1) {
+            player.getFoodData().setFoodLevel(hunger);
+        }
+        if (saturation != -1) {
+            player.getFoodData().setSaturation(saturation);
+        }
+        if (health != -1) {
+            player.setHealth(health);
+        }
+        if (teleport != null) {
+            if (teleport.getLevel() != null /*&& player.isAlive()*/) {
+                player.teleportTo(teleport.getLevel(), teleport.getX(), teleport.getY(), teleport.getZ(),
+                        java.util.Collections.emptySet(), teleport.getYaw(), teleport.getPitch(), false);
+            }
+        }
+        if (failQuest && quest != null) {
+            quest.failQuest(quester, true);
+        }
         if (timer > 0) {
-            final FabricQuester fq = (FabricQuester) quester;
             quester.sendMessage(FabricLang.get(player, "timerStart")
                     .replace("<time>", FabricMiscUtil.formatTime(timer * 1000L))
                     .replace("<quest>", quest != null ? quest.getName() : ""));
             final List<Integer> toNotify = Arrays.asList(60, 30, 10, 5, 4, 3, 2, 1);
             for (final int seconds : toNotify) {
                 if (timer > seconds) {
-                    final FabricActionTimer notifyTimer = new FabricActionTimer(fq, quest, seconds);
+                    final FabricActionTimer notifyTimer = new FabricActionTimer(fabricQuester, quest, seconds);
                     FabricScheduler.runLater(notifyTimer, (timer - seconds) * 20L);
-                    fq.getActionTimers().put(notifyTimer, quest);
+                    fabricQuester.getTimers().put(notifyTimer, quest);
                 }
             }
-            final FabricActionTimer failTimer = new FabricActionTimer(fq, quest, 0);
+            final FabricActionTimer failTimer = new FabricActionTimer(fabricQuester, quest, 0);
             FabricScheduler.runLater(failTimer, timer * 20L);
-            fq.getActionTimers().put(failTimer, quest);
+            fabricQuester.getTimers().put(failTimer, quest);
         }
         if (cancelTimer) {
-            final Iterator<Map.Entry<FabricActionTimer, Quest>> it =
-                    ((FabricQuester) quester).getActionTimers().entrySet().iterator();
-            while (it.hasNext()) {
-                final Map.Entry<FabricActionTimer, Quest> entry = it.next();
-                if (quest != null && entry.getValue().getId().equals(quest.getId())) {
-                    entry.getKey().cancel();
-                    it.remove();
+            for (final Map.Entry<Runnable, Quest> entry : fabricQuester.getTimers().entrySet()) {
+                if (entry.getValue().getId().equals(quest.getId())) {
+                    if (entry.getKey() instanceof FabricActionTimer) {
+                        ((FabricActionTimer) entry.getKey()).cancel();
+                    }
+                    fabricQuester.getTimers().remove(entry.getKey());
                 }
             }
-        }
-    }
-
-    private void spawnMob(ServerPlayer player, ServerLevel level, QuestMob mob) {
-        if (!(mob instanceof FabricQuestMob))
-            return;
-        FabricQuestMob fabricMob = (FabricQuestMob) mob;
-        if (fabricMob.getEntityType() == null) return;
-        final EntityType<?> entityType = fabricMob.getEntityType();
-        final Integer amount = fabricMob.getSpawnAmounts();
-        final int max = amount != null ? amount : 1;
-        for (int i = 0; i < max; i++) {
-            final Entity entity = entityType.create(level, EntitySpawnReason.COMMAND);
-            if (entity instanceof Mob) {
-                Mob mobEntity = (Mob) entity;
-                mobEntity.setPos(player.getX() + (Math.random() * 4) - 2,
-                        player.getY() + (Math.random() * 4) - 2,
-                        player.getZ() + (Math.random() * 4) - 2);
-                mobEntity.setYRot((float) (Math.random() * 360));
-                mobEntity.setXRot(0);
-                mobEntity.finalizeSpawn(level, level.getCurrentDifficultyAt(mobEntity.blockPosition()),
-                        EntitySpawnReason.COMMAND, null);
-                level.addFreshEntity(mobEntity);
-            }
-        }
-    }
-
-    private ServerPlayer getPlayer(Quester quester) {
-        final MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
-        if (server == null) return null;
-        return server.getPlayerList().getPlayer(quester.getUUID());
-    }
-
-    private FabricLocation parseLocation(MinecraftServer server, String locStr) {
-        if (server == null || locStr == null || locStr.isEmpty()) return null;
-        final String[] parts = locStr.split(":");
-        if (parts.length < 2) return null;
-        final String worldName = parts[0];
-        final String[] coords = parts[1].split(",");
-        if (coords.length < 3) return null;
-        ServerLevel level = null;
-        for (final ServerLevel sl : server.getAllLevels()) {
-            final String path = sl.dimension().identifier().getPath();
-            final String full = sl.dimension().identifier().toString();
-            if (path.equalsIgnoreCase(worldName) || full.equalsIgnoreCase(worldName)) {
-                level = sl;
-                break;
-            }
-        }
-        if (level == null) return null;
-        try {
-            final double x = Double.parseDouble(coords[0]);
-            final double y = Double.parseDouble(coords[1]);
-            final double z = Double.parseDouble(coords[2]);
-            float yaw = 0.0f;
-            float pitch = 0.0f;
-            if (coords.length > 3) {
-                try { yaw = Float.parseFloat(coords[3]); } catch (Exception ignored) {}
-            }
-            if (coords.length > 4) {
-                try { pitch = Float.parseFloat(coords[4]); } catch (Exception ignored) {}
-            }
-            return new FabricLocation(level, x, y, z, yaw, pitch);
-        } catch (final NumberFormatException e) {
-            return null;
         }
     }
 }

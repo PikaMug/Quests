@@ -43,6 +43,7 @@ import me.pikamug.quests.tasks.FabricPlayerMoveThread;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.ConsoleVt;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.FabricQuestsLogger;
 import net.fabricmc.api.DedicatedServerModInitializer;
@@ -60,6 +61,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,7 +90,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
     private Collection<Condition> conditions = ConcurrentHashMap.newKeySet();
     private Collection<UUID> questNpcUuids = ConcurrentHashMap.newKeySet();
     private final Map<UUID, net.minecraft.core.BlockPos> tempBlocks = new ConcurrentHashMap<>();
-    private final Map<UUID, net.minecraft.core.BlockPos> selectedBlockStarts = new ConcurrentHashMap<>();
+    private final Map<UUID, FabricLocation> selectedBlockStarts = new ConcurrentHashMap<>();
     private FabricQuestFactory questFactory;
     private FabricActionFactory actionFactory;
     private FabricConditionFactory conditionFactory;
@@ -198,6 +200,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
                 getQuester(p.getUUID()).saveData();
             }
         }
+        FabricScheduler.cancelAllTasks();
         LOGGER.info("Closing storage...");
         if (storage != null) {
             storage.close();
@@ -276,14 +279,65 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         return customRequirements;
     }
 
+    public Optional<CustomObjective> getCustomObjective(final String className) {
+        for (final CustomObjective co : customObjectives) {
+            if (co.getClass().getName().equals(className)) {
+                return Optional.of(co);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void setCustomObjectives(final List<CustomObjective> customObjectives) {
+        this.customObjectives = customObjectives;
+    }
+
+    public Optional<CustomRequirement> getCustomRequirement(final String className) {
+        for (final CustomRequirement cr : customRequirements) {
+            if (cr.getClass().getName().equals(className)) {
+                return Optional.of(cr);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void setCustomRequirements(final List<CustomRequirement> customRequirements) {
+        this.customRequirements = customRequirements;
+    }
+
+    public Optional<CustomReward> getCustomReward(final String className) {
+        for (final CustomReward cr : customRewards) {
+            if (cr.getClass().getName().equals(className)) {
+                return Optional.of(cr);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void setCustomRewards(final List<CustomReward> customRewards) {
+        this.customRewards = customRewards;
+    }
+
     @Override
     public Collection<Quest> getLoadedQuests() {
         return quests;
     }
 
+    public void setLoadedQuests(final Collection<Quest> quests) {
+        final Set<Quest> newQuests = ConcurrentHashMap.newKeySet();
+        newQuests.addAll(quests);
+        this.quests = newQuests;
+    }
+
     @Override
     public Collection<Action> getLoadedActions() {
         return actions;
+    }
+
+    public void setLoadedActions(final Collection<Action> actions) {
+        final Set<Action> newActions = ConcurrentHashMap.newKeySet();
+        newActions.addAll(actions);
+        this.actions = newActions;
     }
 
     public Action getAction(final String name) {
@@ -311,6 +365,12 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
     @Override
     public Collection<Condition> getLoadedConditions() {
         return conditions;
+    }
+
+    public void setLoadedConditions(final Collection<Condition> conditions) {
+        final Set<Condition> newConditions = ConcurrentHashMap.newKeySet();
+        newConditions.addAll(conditions);
+        this.conditions = newConditions;
     }
 
     public Condition getCondition(final String name) {
@@ -492,7 +552,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         return tempBlocks;
     }
 
-    public Map<UUID, net.minecraft.core.BlockPos> getSelectedBlockStarts() {
+    public Map<UUID, FabricLocation> getSelectedBlockStarts() {
         return selectedBlockStarts;
     }
 

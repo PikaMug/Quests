@@ -45,16 +45,16 @@ import java.util.UUID;
 public class FabricQuest implements Quest {
 
     protected FabricQuestsPlugin plugin;
-    private String id;
+    protected String id;
     private String name;
-    private String description;
-    private String finished;
-    private String regionStart;
-    private ItemStack guiDisplay;
+    protected String description;
+    protected String finished;
+    protected ItemStack guiDisplay = null;
     private LinkedList<Stage> orderedStages = new LinkedList<>();
-    private UUID npcStart;
-    private FabricLocation blockStart;
-    private Action initialAction;
+    protected UUID npcStart;
+    protected FabricLocation blockStart;
+    protected String regionStart = null;
+    protected Action initialAction;
     private Requirements requirements = new FabricRequirements();
     private Planner planner = new FabricPlanner();
     private Rewards rewards = new FabricRewards();
@@ -141,6 +141,10 @@ public class FabricQuest implements Quest {
     @Override
     public LinkedList<Stage> getStages() {
         return orderedStages;
+    }
+
+    public void setOrderedStages(final LinkedList<Stage> orderedStages) {
+        this.orderedStages = orderedStages;
     }
 
     @Override
@@ -349,7 +353,7 @@ public class FabricQuest implements Quest {
     }
 
     @Override
-    public boolean testRequirements(Quester quester) {
+    public boolean testRequirements(final Quester quester) {
         if (quester == null || requirements == null) return false;
 
         // Check quest points
@@ -382,12 +386,17 @@ public class FabricQuest implements Quest {
         }
 
         // Check blocked quests
-        if (requirements.getBlockQuestIds() != null) {
+        if (requirements.getBlockQuestIds() != null && !requirements.getBlockQuestIds().isEmpty()) {
             for (final String blockedId : requirements.getBlockQuestIds()) {
                 for (final Quest completed : quester.getCompletedQuests()) {
                     if (completed.getId() != null && completed.getId().equalsIgnoreCase(blockedId)) {
                         return false;
                     }
+                }
+            }
+            for (final Quest current : quester.getCurrentQuests().keySet()) {
+                if (!requirements.getBlockQuestIds().contains(current.getId())) {
+                    return false;
                 }
             }
         }
@@ -401,17 +410,12 @@ public class FabricQuest implements Quest {
             }
         }
 
-        // Check item requirements (player must have enough of each item)
+        // Check item requirements (player must have enough of all items combined)
         if (requirements.getItems() != null && !requirements.getItems().isEmpty()) {
             final net.minecraft.server.MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
             final net.minecraft.server.level.ServerPlayer player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
-            for (int i = 0; i < requirements.getItems().size(); i++) {
-                final Object itemObj = requirements.getItems().get(i);
-                if (!(itemObj instanceof net.minecraft.world.item.ItemStack)) return false;
-                net.minecraft.world.item.ItemStack item = (net.minecraft.world.item.ItemStack) itemObj;
-                if (player == null) return false;
-                final int have = me.pikamug.quests.util.FabricInventoryUtil.countItem(player, item);
-                if (have < item.getCount()) return false;
+            if (player == null || !me.pikamug.quests.util.FabricInventoryUtil.hasItems(player, requirements.getItems())) {
+                return false;
             }
         }
 
@@ -421,7 +425,7 @@ public class FabricQuest implements Quest {
             for (final java.util.Map.Entry<String, java.util.Map<String, Object>> entry : requirements.getCustomRequirements().entrySet()) {
                 boolean found = false;
                 for (final me.pikamug.quests.module.CustomRequirement custom : customRequirements) {
-                    if (custom.getModuleName().equalsIgnoreCase(entry.getKey())) {
+                    if (custom.getName().equalsIgnoreCase(entry.getKey())) {
                         found = true;
                         if (!custom.testRequirement(quester.getUUID(), entry.getValue())) {
                             return false;
@@ -430,9 +434,8 @@ public class FabricQuest implements Quest {
                     }
                 }
                 if (!found) {
-                    FabricQuestsPlugin.LOGGER.warn("Custom requirement module '{}' not loaded for quest '{}'",
+                    FabricQuestsPlugin.LOGGER.warn("Custom requirement '{}' not loaded for quest '{}'",
                             entry.getKey(), name);
-                    return false;
                 }
             }
         }
@@ -441,18 +444,22 @@ public class FabricQuest implements Quest {
     }
 
     @Override
-    public void completeQuest(Quester quester) {
+    public void completeQuest(final Quester quester) {
         completeQuest(quester, true);
     }
 
     @Override
-    public void completeQuest(Quester quester, boolean allowMultiplayer) {
+    public void completeQuest(final Quester quester, final boolean allowMultiplayer) {
         if (quester == null) return;
-        quester.getCurrentQuests().remove(this);
-        quester.getCompletedQuests().add(this);
-        final int count = quester.getAmountsCompleted().getOrDefault(this, 0);
-        quester.getAmountsCompleted().put(this, count + 1);
-        quester.getCompletedTimes().put(this, System.currentTimeMillis());
+        quester.hardQuit(this);
+        final Collection<Quest> completedQuests = quester.getCompletedQuests();
+        completedQuests.add(this);
+        quester.setCompletedQuests(completedQuests);
+        if (planner.getCooldown() > -1) {
+            quester.getCompletedTimes().put(this, System.currentTimeMillis());
+            quester.getAmountsCompleted().put(this,
+                    quester.getAmountsCompleted().getOrDefault(this, 0) + 1);
+        }
         // Grant rewards
         if (rewards != null) {
             quester.setQuestPoints(quester.getQuestPoints() + rewards.getQuestPoints());
@@ -495,7 +502,7 @@ public class FabricQuest implements Quest {
             for (final java.util.Map.Entry<String, java.util.Map<String, Object>> entry : rewards.getCustomRewards().entrySet()) {
                 boolean found = false;
                 for (final me.pikamug.quests.module.CustomReward custom : customRewards) {
-                        if (custom.getModuleName().equalsIgnoreCase(entry.getKey())) {
+                        if (custom.getName().equalsIgnoreCase(entry.getKey())) {
                             found = true;
                             try {
                                 custom.giveReward(quester.getUUID(), entry.getValue());
@@ -526,16 +533,18 @@ public class FabricQuest implements Quest {
         final ServerPlayer player = server == null ? null : server.getPlayerList().getPlayer(quester.getUUID());
         if (player != null) {
             if (plugin.getConfigSettings().canShowQuestTitles()) {
-                player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§e" + name)));
+                player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(
+                        ChatFormatting.YELLOW + name)));
                 player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(
-                        "ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§6" + FabricLang.get(player, "quest") + " " + FabricLang.get(player, "complete"))));
+                        ChatFormatting.GOLD + FabricLang.get(player, "quest") + " "
+                                + FabricLang.get(player, "complete"))));
                 player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
             }
             quester.sendMessage(FabricLang.get(player, "questCompleteTitle").replace("<quest>", name));
         }
-        quester.sendMessage("ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§a" + FabricLang.get(player, "questRewardsTitle"));
+        quester.sendMessage(ChatFormatting.GREEN + FabricLang.get(player, "questRewardsTitle"));
         if (rewards == null) {
-            quester.sendMessage("ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§7- " + FabricLang.get(player, "none"));
+            quester.sendMessage(ChatFormatting.GRAY + "- " + FabricLang.get(player, "none"));
             return;
         }
         final boolean issuedReward = rewards.getQuestPoints() > 0 || rewards.getExp() > 0
@@ -544,20 +553,22 @@ public class FabricQuest implements Quest {
                 || (rewards.getPermissions() != null && !rewards.getPermissions().isEmpty())
                 || (rewards.getCustomRewards() != null && !rewards.getCustomRewards().isEmpty());
         if (!issuedReward) {
-            quester.sendMessage("ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§7- " + FabricLang.get(player, "none"));
+            quester.sendMessage(ChatFormatting.GRAY + "- " + FabricLang.get(player, "none"));
             return;
         }
         if (rewards.getDetailsOverride() != null && !rewards.getDetailsOverride().isEmpty()) {
             for (final String s : rewards.getDetailsOverride()) {
-                quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + s);
+                quester.sendMessage("- " + ChatFormatting.DARK_GREEN + s);
             }
             return;
         }
         if (rewards.getExp() > 0) {
-            quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + rewards.getExp() + " " + FabricLang.get(player, "experience"));
+            quester.sendMessage("- " + ChatFormatting.DARK_GREEN + rewards.getExp() + " "
+                    + FabricLang.get(player, "experience"));
         }
         if (rewards.getQuestPoints() > 0) {
-            quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + rewards.getQuestPoints() + " " + FabricLang.get(player, "questPoints"));
+            quester.sendMessage("- " + ChatFormatting.DARK_GREEN + rewards.getQuestPoints() + " "
+                    + FabricLang.get(player, "questPoints"));
         }
         if (rewards.getItems() != null) {
             for (final Object itemObj : rewards.getItems()) {
@@ -565,6 +576,7 @@ public class FabricQuest implements Quest {
                     net.minecraft.world.item.ItemStack item = (net.minecraft.world.item.ItemStack) itemObj;
                     String name = me.pikamug.quests.util.FabricItemUtil.getName(item);
                     if (name == null || name.trim().isEmpty() || name.equals("Air")) {
+                        quester.sendMessage("error");
                     }
                     quester.sendMessage("- " + name + " x " + item.getCount());
                 }
@@ -576,7 +588,8 @@ public class FabricQuest implements Quest {
                 final String override = rewards.getCommandsOverrideDisplay() != null
                         && rewards.getCommandsOverrideDisplay().size() > index
                         ? rewards.getCommandsOverrideDisplay().get(index) : null;
-                quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + (override != null && !override.trim().isEmpty() ? override : s));
+                quester.sendMessage("- " + ChatFormatting.DARK_GREEN
+                        + (override != null && !override.trim().isEmpty() ? override : s));
                 index++;
             }
         }
@@ -584,9 +597,10 @@ public class FabricQuest implements Quest {
             int index = 0;
             for (final String s : rewards.getPermissions()) {
                 if (rewards.getPermissionWorlds() != null && rewards.getPermissionWorlds().size() > index) {
-                    quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + s + " (" + rewards.getPermissionWorlds().get(index) + ")");
+                    quester.sendMessage("- " + ChatFormatting.DARK_GREEN + s + " ("
+                            + rewards.getPermissionWorlds().get(index) + ")");
                 } else {
-                    quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§2" + s);
+                    quester.sendMessage("- " + ChatFormatting.DARK_GREEN + s);
                 }
                 index++;
             }
@@ -596,14 +610,14 @@ public class FabricQuest implements Quest {
             final java.util.Collection<me.pikamug.quests.module.CustomReward> customRewards = FabricQuestsPlugin.getInstance().getCustomRewards();
             for (final Map.Entry<String, Map<String, Object>> entry : customRewardMap.entrySet()) {
                 for (final me.pikamug.quests.module.CustomReward custom : customRewards) {
-                    if (custom.getModuleName().equalsIgnoreCase(entry.getKey())) {
+                    if (custom.getName().equalsIgnoreCase(entry.getKey())) {
                         String display = custom.getDisplay();
                         if (display != null) {
                             for (final Map.Entry<String, Object> dataEntry : entry.getValue().entrySet()) {
                                 display = display.replace("%" + dataEntry.getKey() + "%",
                                         dataEntry.getValue().toString());
                             }
-                            quester.sendMessage("- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§6" + display);
+                            quester.sendMessage("- " + ChatFormatting.GOLD + display);
                         }
                         break;
                     }
@@ -613,12 +627,12 @@ public class FabricQuest implements Quest {
     }
 
     @Override
-    public void failQuest(Quester quester) {
+    public void failQuest(final Quester quester) {
         failQuest(quester, false);
     }
 
     @Override
-    public void failQuest(Quester quester, boolean ignoreFailAction) {
+    public void failQuest(final Quester quester, final boolean ignoreFailAction) {
         if (quester == null) return;
         if (!ignoreFailAction) {
             final int stageNum = quester.getCurrentQuests().getOrDefault(this, 0);
@@ -630,13 +644,14 @@ public class FabricQuest implements Quest {
         final FabricQuestsPlugin failPlugin = FabricQuestsPlugin.getInstance();
         final ServerPlayer failPlayer = failPlugin == null || failPlugin.getServer() == null ? null
                 : failPlugin.getServer().getPlayerList().getPlayer(quester.getUUID());
-        final String[] messages = {"ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§c" + FabricLang.get(failPlayer, "questFailed").replace("<quest>", name != null ? name : id)};
+        final String[] messages = {ChatFormatting.RED + FabricLang.get(failPlayer, "questFailed")
+                .replace("<quest>", name != null ? name : id)};
         quester.quitQuest(this, messages);
         FabricQuestsPlugin.LOGGER.info("Quest '{}' failed by {}", name, quester.getUUID());
     }
 
     @Override
-    public boolean isInRegionStart(Quester quester) {
+    public boolean isInRegionStart(final Quester quester) {
         if (quester == null || regionStart == null) {
             return false;
         }
@@ -648,6 +663,6 @@ public class FabricQuest implements Quest {
         if (player == null) {
             return false;
         }
-        return plugin.getDependencies().getRegionsAt(player).contains(regionStart);
+        return plugin.getDependencies().isInRegion(player, regionStart);
     }
 }

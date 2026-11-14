@@ -26,11 +26,8 @@ public class FabricRewards implements Rewards {
     private List<String> permissions = new LinkedList<>();
     private List<String> permissionWorlds = new LinkedList<>();
     private List<ItemStack> items = new LinkedList<>();
-    private List<String> mcmmoSkills = new LinkedList<>();
-    private List<Integer> mcmmoAmounts = new LinkedList<>();
     private List<String> heroesClasses = new LinkedList<>();
     private List<Double> heroesAmounts = new LinkedList<>();
-    private int partiesExperience = 0;
     private List<String> phatLoots = new LinkedList<>();
     private Map<String, Map<String, Object>> customRewards = new HashMap<>();
     private List<String> detailsOverride = new LinkedList<>();
@@ -83,17 +80,19 @@ public class FabricRewards implements Rewards {
     public void setItems(final List<ItemStack> items) {
         this.items = items;
     }
+    @Override
     public List<String> getMcmmoSkills() {
-        return mcmmoSkills;
+        return List.of();
     }
+    @Override
     public void setMcmmoSkills(final List<String> mcmmoSkills) {
-        this.mcmmoSkills = mcmmoSkills;
     }
+    @Override
     public List<Integer> getMcmmoAmounts() {
-        return mcmmoAmounts;
+        return List.of();
     }
+    @Override
     public void setMcmmoAmounts(final List<Integer> mcmmoAmounts) {
-        this.mcmmoAmounts = mcmmoAmounts;
     }
     public List<String> getHeroesClasses() {
         return heroesClasses;
@@ -107,11 +106,12 @@ public class FabricRewards implements Rewards {
     public void setHeroesAmounts(final List<Double> heroesAmounts) {
         this.heroesAmounts = heroesAmounts;
     }
+    @Override
     public int getPartiesExperience() {
-        return partiesExperience;
+        return 0;
     }
+    @Override
     public void setPartiesExperience(final int partiesExperience) {
-        this.partiesExperience = partiesExperience;
     }
     public List<String> getPhatLoots() {
         return phatLoots;
@@ -140,11 +140,8 @@ public class FabricRewards implements Rewards {
         if (!commands.isEmpty()) { return true; }
         if (!permissions.isEmpty()) { return true; }
         if (!items.isEmpty()) { return true; }
-        if (!mcmmoSkills.isEmpty()) { return true; }
-        if (!mcmmoAmounts.isEmpty()) { return true; }
         if (!heroesClasses.isEmpty()) { return true; }
         if (!heroesAmounts.isEmpty()) { return true; }
-        if (partiesExperience != 0) { return true; }
         if (!phatLoots.isEmpty()) { return true; }
         return !customRewards.isEmpty();
     }

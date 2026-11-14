@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class FabricQuestadminGivePointsCommand extends FabricQuestsSubCommand {
 
@@ -68,14 +69,14 @@ public class FabricQuestadminGivePointsCommand extends FabricQuestsSubCommand {
         }
         final FabricQuester quester = resolveTarget(plugin, source, args[1]);
         if (quester == null) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")));
             return 0;
         }
         final int amount;
         try {
             amount = Integer.parseInt(args[2]);
         } catch (final NumberFormatException e) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")));
             return 0;
         }
         quester.setQuestPoints(quester.getQuestPoints() + amount);
@@ -83,13 +84,13 @@ public class FabricQuestadminGivePointsCommand extends FabricQuestsSubCommand {
                 .replace("<points>", lang(source, "questPoints"))
                 .replace("<player>", quester.getLastKnownName())
                 .replace("<number>", String.valueOf(amount));
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1), false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1));
         final ServerPlayer onlineTarget = source.getServer().getPlayerList().getPlayer(quester.getUUID());
         if (onlineTarget != null) {
             final String msg2 = lang(onlineTarget, "questPointsGiven")
                     .replace("<points>", lang(onlineTarget, "questPoints"))
-                    .replace("<player>", source.isPlayer() ? source.getPlayer().getName().getString() : "Console")
-                    .replace("<number>", String.valueOf(amount));
+                    .replace("<player>", source.isPlayer() ? Objects.requireNonNull(source.getPlayer())
+                            .getName().getString() : "Console").replace("<number>", String.valueOf(amount));
             onlineTarget.sendSystemMessage(Component.literal(ChatFormatting.GREEN + msg2));
         }
         quester.saveData();

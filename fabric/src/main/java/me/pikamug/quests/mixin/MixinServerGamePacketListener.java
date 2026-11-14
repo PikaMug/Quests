@@ -15,6 +15,7 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricMiscUtil;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -102,7 +103,8 @@ public abstract class MixinServerGamePacketListener {
                     final Identifier id = BuiltInRegistries.BLOCK.getKey(
                             player.level().getBlockState(pos).getBlock());
                     if (id != null && (id.getPath().equals("lectern") || id.getPath().endsWith("bookshelf"))) {
-                        player.sendSystemMessage(Component.literal("§c" + FabricLang.get(player, "journalDenied")
+                        player.sendSystemMessage(Component.literal(ChatFormatting.RED
+                                + FabricLang.get(player, "journalDenied")
                                 .replace("<journal>", FabricLang.get(player, "journalTitle"))));
                         ci.cancel();
                         return;
@@ -120,7 +122,8 @@ public abstract class MixinServerGamePacketListener {
             if (entity != null) {
                 if (entity instanceof ItemFrame && FabricItemUtil.isJournal(player.getMainHandItem())) {
                     ItemFrame itemFrame = (ItemFrame) entity;
-                    player.sendSystemMessage(Component.literal("§c" + FabricLang.get(player, "journalDenied")
+                    player.sendSystemMessage(Component.literal(ChatFormatting.RED
+                            + FabricLang.get(player, "journalDenied")
                             .replace("<journal>", FabricLang.get(player, "journalTitle"))));
                     ci.cancel();
                     return;

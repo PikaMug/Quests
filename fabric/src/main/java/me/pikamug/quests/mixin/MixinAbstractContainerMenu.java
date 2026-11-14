@@ -10,12 +10,14 @@
 
 package me.pikamug.quests.mixin;
 
+import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.gui.FabricQuestMenu;
 import me.pikamug.quests.util.FabricItemUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.BrewingStandMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
@@ -52,6 +54,13 @@ public abstract class MixinAbstractContainerMenu {
                 ci.cancel();
                 return;
             }
+        }
+
+        if (menu instanceof BrewingStandMenu
+                && !FabricMixinEvents.invokeBrewingActionAllowed(serverPlayer,
+                        (BrewingStandMenu) menu, slot, button, input)) {
+            ci.cancel();
+            return;
         }
 
         final ItemStack carried = menu.getCarried();

@@ -11,7 +11,6 @@
 package me.pikamug.quests.quests;
 
 import me.pikamug.quests.BukkitQuestsPlugin;
-import me.pikamug.quests.actions.BukkitAction;
 import me.pikamug.quests.convo.quests.main.BukkitQuestMainPrompt;
 import me.pikamug.quests.convo.quests.stages.BukkitQuestStageMenuPrompt;
 import me.pikamug.quests.interfaces.ReloadCallback;
@@ -60,7 +59,7 @@ public class BukkitQuestFactory implements QuestFactory {
     private ConcurrentHashMap<UUID, Block> selectedKillLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedReachLocations = new ConcurrentHashMap<>();
     private Set<UUID> selectingNpcs = ConcurrentHashMap.newKeySet();
-    private List<String> editingQuestNames = new LinkedList<>();
+    private List<String> namesOfQuestsBeingEdited = new LinkedList<>();
 
     public BukkitQuestFactory(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -101,11 +100,11 @@ public class BukkitQuestFactory implements QuestFactory {
     }
 
     public List<String> getNamesOfQuestsBeingEdited() {
-        return editingQuestNames;
+        return namesOfQuestsBeingEdited;
     }
 
     public void setNamesOfQuestsBeingEdited(final Collection<String> questNames) {
-        this.editingQuestNames = new LinkedList<>(questNames);
+        this.namesOfQuestsBeingEdited = new LinkedList<>(questNames);
     }
 
     public void returnToMenu(final UUID uuid) {
@@ -423,7 +422,6 @@ public class BukkitQuestFactory implements QuestFactory {
                     final LinkedList<String> colors = new LinkedList<>();
                     for (final DyeColor d : bukkitStage.getSheepToShear()) {
                         colors.add(BukkitMiscUtil.getPrettyDyeColorName(d));
-
                     }
                     final LinkedList<Integer> amounts = new LinkedList<>(bukkitStage.getSheepNumToShear());
                     SessionData.set(uuid, pref + Key.S_SHEAR_COLORS, colors);
@@ -440,10 +438,10 @@ public class BukkitQuestFactory implements QuestFactory {
                         list.add(bukkitStage.getCustomObjectives().get(i).getName());
                         countList.add(bukkitStage.getCustomObjectiveCounts().get(i));
                     }
-                    final LinkedList<Entry<String, Object>> dataMapList = new LinkedList<>(bukkitStage.getCustomObjectiveData());
                     SessionData.set(uuid, pref + Key.S_CUSTOM_OBJECTIVES, list);
                     SessionData.set(uuid, pref + Key.S_CUSTOM_OBJECTIVES_COUNT, countList);
-                    SessionData.set(uuid, pref + Key.S_CUSTOM_OBJECTIVES_DATA, dataMapList);
+                    SessionData.set(uuid, pref + Key.S_CUSTOM_OBJECTIVES_DATA,
+                            new LinkedList<>(bukkitStage.getCustomObjectiveData()));
                 }
                 if (bukkitStage.getStartAction() != null) {
                     SessionData.set(uuid, pref + Key.S_START_EVENT, bukkitStage.getStartAction().getName());
@@ -502,7 +500,7 @@ public class BukkitQuestFactory implements QuestFactory {
                     SessionData.set(uuid, pref + Key.S_OVERRIDE_DISPLAY, bukkitStage.getObjectiveOverrides());
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
@@ -515,6 +513,9 @@ public class BukkitQuestFactory implements QuestFactory {
         final FileConfiguration data = new YamlConfiguration();
         final File questsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "quests.yml");
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         try {
             data.load(questsFile);
         } catch (final IOException | InvalidConfigurationException e) {

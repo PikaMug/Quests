@@ -14,30 +14,32 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.convo.actions.FabricActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.FabricActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.FabricActionMainPrompt;
+import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final FabricQuestsPlugin plugin;
-
-    public static final ConcurrentHashMap<UUID, BlockPos> selectedEffectLocations = new ConcurrentHashMap<>();
-    public static final ConcurrentHashMap<UUID, BlockPos> selectedExplosionLocations = new ConcurrentHashMap<>();
 
     public FabricActionEffectPrompt(final @NotNull UUID uuid) {
         super(uuid);
@@ -154,7 +156,8 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                     new FabricActionEffectPrompt(uuid).start();
                     break;
                 }
-                selectedExplosionLocations.put(uuid, BlockPos.ZERO);
+                plugin.getActionFactory().getSelectedExplosionLocations()
+                        .put(uuid, new FabricLocation(sender.level(), BlockPos.ZERO));
                 new ActionEffectExplosionPrompt(uuid).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("consoleError")));
@@ -168,6 +171,24 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
             new FabricActionEffectPrompt(uuid).start();
             break;
         }
+    }
+
+    private static SoundEvent resolveEffect(final String input) {
+        final String name = input.trim().toLowerCase();
+        if (name.isEmpty()) {
+            return null;
+        }
+        final Identifier id = name.contains(":") ? Identifier.tryParse(name)
+                : Identifier.tryBuild("minecraft", name);
+        if (id == null) {
+            return null;
+        }
+        return BuiltInRegistries.SOUND_EVENT.getValue(id);
+    }
+
+    private static String effectId(final SoundEvent effect, final String fallback) {
+        final Identifier id = BuiltInRegistries.SOUND_EVENT.getKey(effect);
+        return id != null ? id.toString() : fallback;
     }
 
     public class ActionEffectSoundListPrompt extends FabricActionsEditorIntegerPrompt {
@@ -287,7 +308,8 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                             new ActionEffectSoundListPrompt(uuid).start();
                             break;
                         }
-                        selectedEffectLocations.put(uuid, BlockPos.ZERO);
+                        plugin.getActionFactory().getSelectedEffectLocations()
+                                .put(uuid, new FabricLocation(player.level(), BlockPos.ZERO));
                         new ActionEffectSoundLocationPrompt(uuid).start();
                     } else {
                         sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("consoleError")));
@@ -349,7 +371,16 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
         @Override
         public @NotNull String getPromptText() {
             final StringBuilder effects = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
-            effects.append(ChatFormatting.YELLOW).append(getQueryText());
+            final LinkedList<String> soundNames = new LinkedList<>();
+            BuiltInRegistries.SOUND_EVENT.keySet().forEach(id -> soundNames.add(id.toString()));
+            soundNames.sort(Comparator.naturalOrder());
+            for (int i = 0; i < soundNames.size(); i++) {
+                effects.append(ChatFormatting.AQUA).append(soundNames.get(i));
+                if (i < (soundNames.size() - 1)) {
+                    effects.append(ChatFormatting.GRAY).append(", ");
+                }
+            }
+            effects.append("\n").append(ChatFormatting.YELLOW).append(getQueryText());
             return effects.toString();
         }
 
@@ -364,6 +395,13 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                 return;
             }
             if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
+                final SoundEvent effect = resolveEffect(input);
+                if (effect == null) {
+                    sender.sendSystemMessage(Component.literal(ChatFormatting.RED
+                            + FabricLang.get("eventEditorInvalidEffect").replace("<input>", input)));
+                    new ActionEffectSoundPrompt(uuid).start();
+                    return;
+                }
                 final LinkedList<String> effects;
                 if (SessionData.get(uuid, Key.A_EFFECTS) != null) {
                     effects = (LinkedList<String>) SessionData.get(uuid, Key.A_EFFECTS);
@@ -371,17 +409,13 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                     effects = new LinkedList<>();
                 }
                 if (effects != null) {
-                    effects.add(input.toUpperCase());
+                    effects.add(effectId(effect, input));
                 }
                 SessionData.set(uuid, Key.A_EFFECTS, effects);
-                if (sender instanceof ServerPlayer) {
-                    selectedEffectLocations.remove(uuid);
-                }
+                plugin.getActionFactory().getSelectedEffectLocations().remove(uuid);
                 new ActionEffectSoundListPrompt(uuid).start();
             } else {
-                if (sender instanceof ServerPlayer) {
-                    selectedEffectLocations.remove(uuid);
-                }
+                plugin.getActionFactory().getSelectedEffectLocations().remove(uuid);
                 new ActionEffectSoundListPrompt(uuid).start();
             }
         }
@@ -419,9 +453,9 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                 return;
             }
             if (input.equalsIgnoreCase(FabricLang.get("cmdAdd"))) {
-                final BlockPos block = selectedEffectLocations.get(uuid);
-                if (block != null) {
-                    final String locStr = block.getX() + " " + block.getY() + " " + block.getZ();
+                final FabricLocation loc = plugin.getActionFactory().getSelectedEffectLocations().get(uuid);
+                if (loc != null && loc.getLevel() != null) {
+                    final String locStr = FabricConfigUtil.getLocationInfo(loc);
                     final LinkedList<String> locations;
                     if (SessionData.get(uuid, Key.A_EFFECTS_LOCATIONS) != null) {
                         locations = (LinkedList<String>) SessionData.get(uuid, Key.A_EFFECTS_LOCATIONS);
@@ -432,14 +466,14 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                         locations.add(locStr);
                     }
                     SessionData.set(uuid, Key.A_EFFECTS_LOCATIONS, locations);
-                    selectedEffectLocations.remove(uuid);
+                    plugin.getActionFactory().getSelectedEffectLocations().remove(uuid);
                     new ActionEffectSoundListPrompt(uuid).start();
                 } else {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("eventEditorSelectBlockFirst")));
                     new ActionEffectSoundLocationPrompt(uuid).start();
                 }
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                selectedEffectLocations.remove(uuid);
+                plugin.getActionFactory().getSelectedEffectLocations().remove(uuid);
                 new ActionEffectSoundListPrompt(uuid).start();
             } else {
                 new ActionEffectSoundLocationPrompt(uuid).start();
@@ -479,9 +513,9 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                 return;
             }
             if (input.equalsIgnoreCase(FabricLang.get("cmdAdd"))) {
-                final BlockPos block = selectedExplosionLocations.get(uuid);
-                if (block != null) {
-                    final String locStr = block.getX() + " " + block.getY() + " " + block.getZ();
+                final FabricLocation loc = plugin.getActionFactory().getSelectedExplosionLocations().get(uuid);
+                if (loc != null && loc.getLevel() != null) {
+                    final String locStr = FabricConfigUtil.getLocationInfo(loc);
                     final LinkedList<String> locations;
                     if (SessionData.get(uuid, Key.A_EXPLOSIONS) != null) {
                         locations = (LinkedList<String>) SessionData.get(uuid, Key.A_EXPLOSIONS);
@@ -492,7 +526,7 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                         locations.add(locStr);
                     }
                     SessionData.set(uuid, Key.A_EXPLOSIONS, locations);
-                    selectedExplosionLocations.remove(uuid);
+                    plugin.getActionFactory().getSelectedExplosionLocations().remove(uuid);
                     new FabricActionMainPrompt(uuid).start();
                 } else {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("eventEditorSelectBlockFirst")));
@@ -500,10 +534,10 @@ public class FabricActionEffectPrompt extends FabricActionsEditorIntegerPrompt {
                 }
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.A_EXPLOSIONS, null);
-                selectedExplosionLocations.remove(uuid);
+                plugin.getActionFactory().getSelectedExplosionLocations().remove(uuid);
                 new FabricActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                selectedExplosionLocations.remove(uuid);
+                plugin.getActionFactory().getSelectedExplosionLocations().remove(uuid);
                 new FabricActionMainPrompt(uuid).start();
             } else {
                 new ActionEffectExplosionPrompt(uuid).start();

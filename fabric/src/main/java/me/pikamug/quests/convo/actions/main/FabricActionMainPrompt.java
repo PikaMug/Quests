@@ -18,11 +18,14 @@ import me.pikamug.quests.convo.actions.tasks.FabricActionEffectPrompt;
 import me.pikamug.quests.convo.actions.tasks.FabricActionPlayerPrompt;
 import me.pikamug.quests.convo.actions.tasks.FabricActionTimerPrompt;
 import me.pikamug.quests.convo.actions.tasks.FabricActionWeatherPrompt;
+import me.pikamug.quests.convo.generic.FabricItemStackPrompt;
 import me.pikamug.quests.entity.FabricQuestMob;
 import me.pikamug.quests.entity.QuestMob;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
+import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
@@ -32,19 +35,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final FabricQuestsPlugin plugin;
-
-    public static final ConcurrentHashMap<UUID, BlockPos> selectedMobLocations = new ConcurrentHashMap<>();
 
     public FabricActionMainPrompt(final @NotNull UUID uuid) {
         super(uuid);
@@ -52,7 +54,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
         this.plugin = FabricQuestsPlugin.getInstance();
     }
 
-    private final int size = 10;
+    private final int size = 9;
 
     @Override
     public int getSize() {
@@ -73,13 +75,11 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
         case 4:
         case 5:
         case 6:
-        case 8:
-            return ChatFormatting.BLUE;
         case 7:
-            return ChatFormatting.GRAY;
-        case 9:
+            return ChatFormatting.BLUE;
+        case 8:
             return ChatFormatting.GREEN;
-        case 10:
+        case 9:
             return ChatFormatting.RED;
         default:
             return null;
@@ -102,12 +102,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
         case 6:
             return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobSpawns");
         case 7:
-            return ChatFormatting.GRAY + FabricLang.get("stageEditorDenizenScript");
-        case 8:
             return ChatFormatting.YELLOW + FabricLang.get("eventEditorFailQuest");
-        case 9:
+        case 8:
             return ChatFormatting.GREEN + FabricLang.get("save");
-        case 10:
+        case 9:
             return ChatFormatting.RED + FabricLang.get("exit");
         default:
             return null;
@@ -123,8 +121,8 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
         case 3:
         case 4:
         case 5:
+        case 8:
         case 9:
-        case 10:
             return "";
         case 6:
             if (SessionData.get(uuid, Key.A_MOBS) == null) {
@@ -136,18 +134,16 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                     for (final QuestMob mob : mobs) {
                         final FabricQuestMob qm = (FabricQuestMob) mob;
                         text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA)
-                                .append(qm.getEntityType() != null ? FabricMiscUtil.getEntityName(qm.getEntityType()) : "Unknown")
+                                .append(qm.getType() != null ? FabricMiscUtil.getPrettyMobName(qm.getType()) : "Unknown")
                                 .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "").append(ChatFormatting.GRAY)
                                 .append(" x ").append(ChatFormatting.DARK_AQUA).append(qm.getSpawnAmounts())
                                 .append("\n").append(ChatFormatting.GRAY).append("        \u2515 ").append(ChatFormatting.GREEN)
-                                .append(qm.getLocation() != null ? qm.getLocation().getX() + " " + qm.getLocation().getY() + " " + qm.getLocation().getZ() : "Unknown");
+                                .append(qm.getSpawnLocation() != null ? qm.getSpawnLocation().getX() + " " + qm.getSpawnLocation().getY() + " " + qm.getSpawnLocation().getZ() : "Unknown");
                     }
                 }
                 return text.toString();
             }
         case 7:
-            return ChatFormatting.GRAY + "(" + FabricLang.get("notInstalled") + ")";
-        case 8:
             if (SessionData.get(uuid, Key.A_FAIL_QUEST) == null) {
                 return ChatFormatting.GRAY + "(" + ChatFormatting.RED + FabricLang.get("false") + ChatFormatting.GRAY + ")";
             } else {
@@ -194,9 +190,6 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
             new ActionMobListPrompt(uuid).start();
             break;
         case 7:
-            new FabricActionMainPrompt(uuid).start();
-            break;
-        case 8:
             final Boolean b = (Boolean) SessionData.get(uuid, Key.A_FAIL_QUEST);
             if (Boolean.TRUE.equals(b)) {
                 SessionData.set(uuid, Key.A_FAIL_QUEST, false);
@@ -205,14 +198,14 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
             }
             new FabricActionMainPrompt(uuid).start();
             break;
-        case 9:
+        case 8:
             if (SessionData.get(uuid, Key.A_OLD_ACTION) != null) {
                 new ActionSavePrompt(uuid, (String) SessionData.get(uuid, Key.A_OLD_ACTION)).start();
             } else {
                 new ActionSavePrompt(uuid, null).start();
             }
             break;
-        case 10:
+        case 9:
             new ActionExitPrompt(uuid).start();
             break;
         default:
@@ -259,7 +252,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                         return;
                     }
                 }
-                final List<String> actionNames = plugin.getActionFactory().getEditingActionNames();
+                final List<String> actionNames = plugin.getActionFactory().getNamesOfActionsBeingEdited();
                 if (actionNames.contains(input)) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("questEditorBeingEdited")));
                     new ActionNamePrompt(uuid).start();
@@ -273,7 +266,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                 actionNames.remove((String) SessionData.get(uuid, Key.A_NAME));
                 SessionData.set(uuid, Key.A_NAME, input);
                 actionNames.add(input);
-                plugin.getActionFactory().setEditingActionNames(actionNames);
+                plugin.getActionFactory().setNamesOfActionsBeingEdited(actionNames);
             }
             new FabricActionMainPrompt(uuid).start();
         }
@@ -337,11 +330,11 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                         for (final QuestMob mob : mobs) {
                             final FabricQuestMob qm = (FabricQuestMob) mob;
                             text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA)
-                                    .append(qm.getEntityType() != null ? FabricMiscUtil.getEntityName(qm.getEntityType()) : "Unknown")
+                                    .append(qm.getType() != null ? FabricMiscUtil.getPrettyMobName(qm.getType()) : "Unknown")
                                     .append((qm.getName() != null) ? " (" + qm.getName() + ")" : "")
                                     .append(" x ").append(qm.getSpawnAmounts()).append("\n").append(ChatFormatting.GRAY)
                                     .append("        \u2515 ").append(ChatFormatting.GREEN)
-                                    .append(qm.getLocation() != null ? qm.getLocation().getX() + " " + qm.getLocation().getY() + " " + qm.getLocation().getZ() : "Unknown");
+                                    .append(qm.getSpawnLocation() != null ? qm.getSpawnLocation().getX() + " " + qm.getSpawnLocation().getY() + " " + qm.getSpawnLocation().getZ() : "Unknown");
                         }
                     }
                     return text.toString();
@@ -458,18 +451,29 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                 return ChatFormatting.GRAY + "(" + (questMob.getName() == null ? FabricLang.get("noneSet") : ChatFormatting.AQUA
                         + questMob.getName()) + ChatFormatting.GRAY + ")";
             case 2:
-                return ChatFormatting.GRAY + "(" + (questMob.getEntityType() == null ? FabricLang.get("noneSet") : ChatFormatting.AQUA
-                        + FabricMiscUtil.getEntityName(questMob.getEntityType())) + ChatFormatting.GRAY + ")";
+                return ChatFormatting.GRAY + "(" + (questMob.getType() == null ? FabricLang.get("noneSet") : ChatFormatting.AQUA
+                        + FabricMiscUtil.getPrettyMobName(questMob.getType())) + ChatFormatting.GRAY + ")";
             case 3:
                 return ChatFormatting.GRAY + "(" + (questMob.getSpawnAmounts() == null ? ChatFormatting.GRAY
                         + FabricLang.get("noneSet") : ChatFormatting.AQUA + "" + questMob.getSpawnAmounts()) + ChatFormatting.GRAY
                         + ")";
             case 4:
-                return ChatFormatting.GRAY + "(" + (questMob.getLocation() == null ? ChatFormatting.GRAY
-                        + FabricLang.get("noneSet") : ChatFormatting.AQUA + "" + questMob.getLocation().getX() + " "
-                        + questMob.getLocation().getY() + " " + questMob.getLocation().getZ()) + ChatFormatting.GRAY + ")";
+                return ChatFormatting.GRAY + "(" + (questMob.getSpawnLocation() == null ? ChatFormatting.GRAY
+                        + FabricLang.get("noneSet") : ChatFormatting.AQUA + "" + questMob.getSpawnLocation().getX() + " "
+                        + questMob.getSpawnLocation().getY() + " " + questMob.getSpawnLocation().getZ()) + ChatFormatting.GRAY + ")";
             case 5:
-                return ChatFormatting.GRAY + "(" + ChatFormatting.GRAY + FabricLang.get("noneSet") + ChatFormatting.GRAY + ")";
+                final StringBuilder equipment = new StringBuilder();
+                final ItemStack[] inventory = questMob.getInventory();
+                for (int i = 0; i < inventory.length; i++) {
+                    if (inventory[i] != null && !inventory[i].isEmpty()) {
+                        equipment.append("\n").append(ChatFormatting.GRAY).append("     - ")
+                                .append(ChatFormatting.AQUA).append(FabricItemUtil.getDisplayString(inventory[i]));
+                    }
+                }
+                if (equipment.length() == 0) {
+                    return ChatFormatting.GRAY + "(" + FabricLang.get("noneSet") + ")";
+                }
+                return equipment.toString();
             case 6:
             case 7:
                 return "";
@@ -519,7 +523,8 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                         new ActionMobLocationPrompt(uuid, questMob).start();
                         break;
                     }
-                    selectedMobLocations.put(uuid, BlockPos.ZERO);
+                    plugin.getActionFactory().getSelectedMobLocations()
+                            .put(uuid, new FabricLocation(player.level(), BlockPos.ZERO));
                     new ActionMobLocationPrompt(uuid, questMob).start();
                 } else {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("consoleError")));
@@ -527,18 +532,17 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                 }
                 break;
             case 5:
-                sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("consoleError")));
-                new FabricActionMainPrompt(uuid).start();
+                new ActionMobEquipmentPrompt(uuid, questMob).start();
                 break;
             case 6:
                 new ActionMobListPrompt(uuid).start();
                 break;
             case 7:
-                if (questMob.getEntityType() == null) {
+                if (questMob.getType() == null) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED
                             + FabricLang.get("eventEditorMustSetMobTypesFirst")));
                     new ActionMobPrompt(uuid, questMob).start();
-                } else if (questMob.getLocation() == null) {
+                } else if (questMob.getSpawnLocation() == null) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED
                             + FabricLang.get("eventEditorMustSetMobLocationFirst")));
                     new ActionMobPrompt(uuid, questMob).start();
@@ -559,6 +563,246 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                 new ActionMobPrompt(uuid, questMob).start();
                 break;
             }
+        }
+    }
+
+    public class ActionMobEquipmentPrompt extends FabricActionsEditorIntegerPrompt {
+
+        private FabricQuestMob questMob;
+        private Integer itemIndex = -1;
+
+        public ActionMobEquipmentPrompt(final @NotNull UUID uuid, final FabricQuestMob questMob) {
+            super(uuid);
+            this.questMob = questMob;
+        }
+
+        private final int size = 12;
+
+        @Override
+        public int getSize() {
+            return size;
+        }
+
+        @Override
+        public String getTitle() {
+            return FabricLang.get("eventEditorAddEquipmentTitle");
+        }
+
+        @Override
+        public ChatFormatting getNumberColor(final int number) {
+            switch (number) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+                return ChatFormatting.BLUE;
+            case 11:
+                return ChatFormatting.RED;
+            case 12:
+                return ChatFormatting.GREEN;
+            default:
+                return null;
+            }
+        }
+
+        @Override
+        public String getSelectionText(final int number) {
+            switch (number) {
+            case 1:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobItemInHand");
+            case 2:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobItemInHandDrop");
+            case 3:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobBoots");
+            case 4:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobBootsDrop");
+            case 5:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobLeggings");
+            case 6:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobLeggingsDrop");
+            case 7:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobChestPlate");
+            case 8:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobChestPlateDrop");
+            case 9:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobHelmet");
+            case 10:
+                return ChatFormatting.YELLOW + FabricLang.get("eventEditorSetMobHelmetDrop");
+            case 11:
+                return ChatFormatting.RED + FabricLang.get("cancel");
+            case 12:
+                return ChatFormatting.GREEN + FabricLang.get("done");
+            default:
+                return null;
+            }
+        }
+
+        @Override
+        public String getAdditionalText(final int number) {
+            switch (number) {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 9:
+                final int itemSlot = (number - 1) / 2;
+                final ItemStack stack = questMob.getInventory()[itemSlot];
+                return ChatFormatting.GRAY + "(" + (stack == null || stack.isEmpty() ? ChatFormatting.GRAY
+                        + FabricLang.get("noneSet") : ChatFormatting.AQUA + FabricItemUtil.getDisplayString(stack))
+                        + ChatFormatting.GRAY + ")";
+            case 2:
+            case 4:
+            case 6:
+            case 8:
+            case 10:
+                final int dropSlot = (number - 2) / 2;
+                final Float chance = questMob.getDropChances()[dropSlot];
+                return ChatFormatting.GRAY + "(" + (chance == null ? ChatFormatting.GRAY + FabricLang.get("noneSet")
+                        : ChatFormatting.AQUA + "" + chance) + ChatFormatting.GRAY + ")";
+            case 11:
+            case 12:
+                return "";
+            default:
+                return null;
+            }
+        }
+
+        @Override
+        public @NotNull String getPromptText() {
+            if (questMob == null) {
+                questMob = new FabricQuestMob();
+            }
+            if (SessionData.get(uuid, "tempStack") != null) {
+                if (itemIndex >= 0) {
+                    questMob.getInventory()[itemIndex] = (ItemStack) SessionData.get(uuid, "tempStack");
+                    if (questMob.getDropChances()[itemIndex] == null) {
+                        questMob.getDropChances()[itemIndex] = 1.0f;
+                    }
+                    itemIndex = -1;
+                }
+                FabricItemStackPrompt.clearSessionData(uuid);
+            }
+
+            final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + getTitle());
+            for (int i = 1; i <= size; i++) {
+                text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
+                        .append(ChatFormatting.RESET).append(" - ").append(getSelectionText(i))
+                        .append(ChatFormatting.GRAY).append(" ").append(getAdditionalText(i));
+            }
+            return sendClickableSelection(text.toString(), plugin.getQuester(uuid));
+        }
+
+        @Override
+        public void acceptInput(final Number input) {
+            switch (input.intValue()) {
+            case 1:
+                itemIndex = 0;
+                new FabricItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                break;
+            case 2:
+                new ActionMobDropPrompt(uuid, 0, questMob).start();
+                break;
+            case 3:
+                itemIndex = 1;
+                new FabricItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                break;
+            case 4:
+                new ActionMobDropPrompt(uuid, 1, questMob).start();
+                break;
+            case 5:
+                itemIndex = 2;
+                new FabricItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                break;
+            case 6:
+                new ActionMobDropPrompt(uuid, 2, questMob).start();
+                break;
+            case 7:
+                itemIndex = 3;
+                new FabricItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                break;
+            case 8:
+                new ActionMobDropPrompt(uuid, 3, questMob).start();
+                break;
+            case 9:
+                itemIndex = 4;
+                new FabricItemStackPrompt(uuid, ActionMobEquipmentPrompt.this).start();
+                break;
+            case 10:
+                new ActionMobDropPrompt(uuid, 4, questMob).start();
+                break;
+            case 11:
+                new ActionMobListPrompt(uuid).start();
+                break;
+            default:
+                new ActionMobPrompt(uuid, questMob).start();
+                break;
+            }
+        }
+    }
+
+    public class ActionMobDropPrompt extends FabricActionsEditorStringPrompt {
+
+        private final FabricQuestMob questMob;
+        private final Integer invIndex;
+
+        public ActionMobDropPrompt(final @NotNull UUID uuid, final int invIndex, final FabricQuestMob questMob) {
+            super(uuid);
+            this.questMob = questMob;
+            this.invIndex = invIndex;
+        }
+
+        @Override
+        public String getTitle() {
+            return null;
+        }
+
+        @Override
+        public String getQueryText() {
+            return FabricLang.get("eventEditorSetDropChance").replace("<least>", "0.0")
+                    .replaceFirst("<greatest>", "1.0");
+        }
+
+        @Override
+        public @NotNull String getPromptText() {
+            return ChatFormatting.YELLOW + getQueryText();
+        }
+
+        @Override
+        public void acceptInput(final String input) {
+            if (input == null) {
+                return;
+            }
+            final ServerPlayer sender = FabricMiscUtil.getPlayer(uuid, plugin);
+            if (sender == null) {
+                return;
+            }
+            if (input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
+                new ActionMobPrompt(uuid, questMob).start();
+                return;
+            }
+            final float chance;
+            try {
+                chance = Float.parseFloat(input);
+            } catch (final NumberFormatException e) {
+                sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("invalidRange")
+                        .replace("<least>", "0.0").replace("<greatest>", "1.0")));
+                new ActionMobDropPrompt(uuid, invIndex, questMob).start();
+                return;
+            }
+            if (chance > 1 || chance < 0) {
+                sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("invalidRange")
+                        .replace("<least>", "0.0").replace("<greatest>", "1.0")));
+                new ActionMobDropPrompt(uuid, invIndex, questMob).start();
+                return;
+            }
+            questMob.getDropChances()[invIndex] = chance;
+            new ActionMobEquipmentPrompt(uuid, questMob).start();
         }
     }
 
@@ -631,7 +875,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                     .sorted(Comparator.comparing(et -> et.getDescription().getString()))
                     .forEach(mobList::add);
             for (int i = 0; i < mobList.size(); i++) {
-                mobs.append(ChatFormatting.AQUA).append(FabricMiscUtil.getEntityName(mobList.get(i)));
+                mobs.append(ChatFormatting.AQUA).append(FabricMiscUtil.getPrettyMobName(mobList.get(i)));
                 if (i < (mobList.size() - 1)) {
                     mobs.append(ChatFormatting.GRAY).append(", ");
                 }
@@ -652,7 +896,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
             if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
                 final EntityType<?> type = FabricMiscUtil.getEntityType(input);
                 if (type != null) {
-                    questMob.setEntityType(type);
+                    questMob.setType(type);
                 } else {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("stageEditorInvalidMob")
                             .replace("<input>", input)));
@@ -754,10 +998,11 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                 return;
             }
             if (input.equalsIgnoreCase(FabricLang.get("cmdAdd"))) {
-                final BlockPos block = selectedMobLocations.get(uuid);
-                if (block != null) {
-                    questMob.setLocation(block);
-                    selectedMobLocations.remove(uuid);
+                final FabricLocation loc = plugin.getActionFactory().getSelectedMobLocations().get(uuid);
+                if (loc != null && loc.getLevel() != null) {
+                    questMob.setLevel(loc.getLevel());
+                    questMob.setSpawnLocation(loc.getBlockPos());
+                    plugin.getActionFactory().getSelectedMobLocations().remove(uuid);
                 } else {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("eventEditorSelectBlockFirst")));
                     new ActionMobLocationPrompt(uuid, questMob).start();
@@ -765,7 +1010,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
                 }
                 new ActionMobPrompt(uuid, questMob).start();
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                selectedMobLocations.remove(uuid);
+                plugin.getActionFactory().getSelectedMobLocations().remove(uuid);
                 new ActionMobPrompt(uuid, questMob).start();
             } else {
                 new ActionMobLocationPrompt(uuid, questMob).start();
@@ -783,7 +1028,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
             if (modifiedName != null) {
                 modName = modifiedName;
                 for (final Quest q : plugin.getLoadedQuests()) {
-                    for (final Stage s : q.getOrderedStages()) {
+                    for (final Stage s : q.getStages()) {
                         if (s.getFinishAction() != null && s.getFinishAction().getName() != null) {
                             if (s.getFinishAction().getName().equalsIgnoreCase(modifiedName)) {
                                 modified.add(q.getName());

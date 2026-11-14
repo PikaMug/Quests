@@ -10,90 +10,97 @@
 
 package me.pikamug.quests.conditions;
 
-import me.pikamug.quests.FabricQuestsPlugin;
-import me.pikamug.quests.util.FabricItemUtil;
-import me.pikamug.quests.util.Key;
-import me.pikamug.quests.util.SessionData;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.convo.conditions.main.FabricConditionMainPrompt;
+import me.pikamug.quests.util.FabricItemUtil;
+import me.pikamug.quests.util.Key;
+import me.pikamug.quests.util.SessionData;
 import net.minecraft.world.item.ItemStack;
 
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 public class FabricConditionFactory implements ConditionFactory {
 
     private final FabricQuestsPlugin plugin;
-    private final List<String> namesOfConditionsBeingEdited = Collections.synchronizedList(new ArrayList<>());
+    private List<String> namesOfConditionsBeingEdited = new LinkedList<>();
 
-    public FabricConditionFactory(FabricQuestsPlugin plugin) {
+    public FabricConditionFactory(final FabricQuestsPlugin plugin) {
         this.plugin = plugin;
     }
 
-    @Override public List<String> getNamesOfConditionsBeingEdited() { return namesOfConditionsBeingEdited; }
-    @Override public void setNamesOfConditionsBeingEdited(Collection<String> v) { namesOfConditionsBeingEdited.clear(); namesOfConditionsBeingEdited.addAll(v); }
+    public List<String> getNamesOfConditionsBeingEdited() {
+        return namesOfConditionsBeingEdited;
+    }
 
-    @Override
+    public void setNamesOfConditionsBeingEdited(final Collection<String> conditionNames) {
+        namesOfConditionsBeingEdited = new LinkedList<>(conditionNames);
+    }
+
     public void returnToMenu(UUID uuid) {
-        SessionData.clear(uuid);
+        new FabricConditionMainPrompt(uuid).start();
     }
 
-    @Override
     public void loadData(UUID uuid, Condition condition) {
-        if (!(condition instanceof FabricCondition)) return;
-        FabricCondition fabCondition = (FabricCondition) condition;
-        if (fabCondition.getName() != null) {
-            SessionData.set(uuid, Key.C_NAME, fabCondition.getName());
+        if (!(condition instanceof FabricCondition)) {
+            return;
         }
-        SessionData.set(uuid, Key.C_FAIL_QUEST, fabCondition.isFailQuest());
-        if (fabCondition.getEntitiesWhileRiding() != null && !fabCondition.getEntitiesWhileRiding().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_RIDING_ENTITY, new LinkedList<>(fabCondition.getEntitiesWhileRiding()));
+        FabricCondition fabricCondition = (FabricCondition) condition;
+        if (fabricCondition.isFailQuest()) {
+            SessionData.set(uuid, Key.C_FAIL_QUEST, true);
+        } else {
+            SessionData.set(uuid, Key.C_FAIL_QUEST, false);
         }
-        if (fabCondition.getNpcsWhileRiding() != null && !fabCondition.getNpcsWhileRiding().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_RIDING_NPC, new LinkedList<>(fabCondition.getNpcsWhileRiding()));
+        if (fabricCondition.getEntitiesWhileRiding() != null && !fabricCondition.getEntitiesWhileRiding().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_RIDING_ENTITY, new LinkedList<>(fabricCondition.getEntitiesWhileRiding()));
         }
-        if (fabCondition.getPermissions() != null && !fabCondition.getPermissions().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_PERMISSION, new LinkedList<>(fabCondition.getPermissions()));
+        if (fabricCondition.getNpcsWhileRiding() != null && !fabricCondition.getNpcsWhileRiding().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_RIDING_NPC, new LinkedList<>(fabricCondition.getNpcsWhileRiding()));
         }
-        if (fabCondition.getWorldsWhileStayingWithin() != null && !fabCondition.getWorldsWhileStayingWithin().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_WORLD, new LinkedList<>(fabCondition.getWorldsWhileStayingWithin()));
+        if (fabricCondition.getPermissions() != null && !fabricCondition.getPermissions().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_PERMISSION, new LinkedList<>(fabricCondition.getPermissions()));
         }
-        if (fabCondition.getTickStartWhileStayingWithin() > 0) {
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_START, fabCondition.getTickStartWhileStayingWithin());
+        if (fabricCondition.getWorldsWhileStayingWithin() != null && !fabricCondition.getWorldsWhileStayingWithin().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_WORLD, new LinkedList<>(fabricCondition.getWorldsWhileStayingWithin()));
         }
-        if (fabCondition.getTickEndWhileStayingWithin() > 0) {
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_END, fabCondition.getTickEndWhileStayingWithin());
+        if (fabricCondition.getTickStartWhileStayingWithin() > -1) {
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_START, fabricCondition.getTickStartWhileStayingWithin());
         }
-        if (fabCondition.getBiomesWhileStayingWithin() != null && !fabCondition.getBiomesWhileStayingWithin().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_BIOME, new LinkedList<>(fabCondition.getBiomesWhileStayingWithin()));
+        if (fabricCondition.getTickEndWhileStayingWithin() > -1) {
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_TICKS_END, fabricCondition.getTickEndWhileStayingWithin());
         }
-        if (fabCondition.getRegionsWhileStayingWithin() != null && !fabCondition.getRegionsWhileStayingWithin().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_WITHIN_REGION, new LinkedList<>(fabCondition.getRegionsWhileStayingWithin()));
+        if (fabricCondition.getBiomesWhileStayingWithin() != null && !fabricCondition.getBiomesWhileStayingWithin().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_BIOME, new LinkedList<>(fabricCondition.getBiomesWhileStayingWithin()));
         }
-        if (fabCondition.getPlaceholdersCheckIdentifier() != null && !fabCondition.getPlaceholdersCheckIdentifier().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_ID, new LinkedList<>(fabCondition.getPlaceholdersCheckIdentifier()));
+        if (fabricCondition.getRegionsWhileStayingWithin() != null && !fabricCondition.getRegionsWhileStayingWithin().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_WITHIN_REGION, new LinkedList<>(fabricCondition.getRegionsWhileStayingWithin()));
         }
-        if (fabCondition.getPlaceholdersCheckValue() != null && !fabCondition.getPlaceholdersCheckValue().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_VAL, new LinkedList<>(fabCondition.getPlaceholdersCheckValue()));
+        if (fabricCondition.getPlaceholdersCheckIdentifier() != null && !fabricCondition.getPlaceholdersCheckIdentifier().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_ID, new LinkedList<>(fabricCondition.getPlaceholdersCheckIdentifier()));
         }
-        if (fabCondition.getItemsWhileHoldingMainHand() != null && !fabCondition.getItemsWhileHoldingMainHand().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, new LinkedList<>(fabCondition.getItemsWhileHoldingMainHand()));
+        if (fabricCondition.getPlaceholdersCheckValue() != null && !fabricCondition.getPlaceholdersCheckValue().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_PLACEHOLDER_VAL, new LinkedList<>(fabricCondition.getPlaceholdersCheckValue()));
         }
-        if (fabCondition.getItemsWhileWearing() != null && !fabCondition.getItemsWhileWearing().isEmpty()) {
-            SessionData.set(uuid, Key.C_WHILE_WEARING, new LinkedList<>(fabCondition.getItemsWhileWearing()));
+        if (fabricCondition.getItemsWhileHoldingMainHand() != null && !fabricCondition.getItemsWhileHoldingMainHand().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_HOLDING_MAIN_HAND, new LinkedList<>(fabricCondition.getItemsWhileHoldingMainHand()));
+        }
+        if (fabricCondition.getItemsWhileWearing() != null && !fabricCondition.getItemsWhileWearing().isEmpty()) {
+            SessionData.set(uuid, Key.C_WHILE_WEARING, new LinkedList<>(fabricCondition.getItemsWhileWearing()));
         }
     }
 
-    @Override
-    public void clearData(UUID uuid) {
+    public void clearData(final UUID uuid) {
         SessionData.clear(uuid);
     }
 
-    @Override
-    public void deleteCondition(UUID uuid) {
+    public void deleteCondition(final UUID uuid) {
         final String conditionName = (String) SessionData.get(uuid, Key.ED_CONDITION_DELETE);
         if (conditionName == null || conditionName.isEmpty()) return;
         final Path conditionsFile = plugin.getPluginDataFolder().toPath().resolve("storage").resolve("conditions.json");
@@ -110,11 +117,10 @@ public class FabricConditionFactory implements ConditionFactory {
             plugin.getConditionFactory().getNamesOfConditionsBeingEdited().remove(conditionName);
             clearData(uuid);
         } catch (final Exception e) {
-            FabricQuestsPlugin.LOGGER.error("Failed to delete condition: {}", conditionName, e);
+            plugin.getPluginLogger().error("Failed to delete condition: {}", conditionName, e);
         }
     }
 
-    @Override
     public void saveCondition(UUID uuid) {
         final String conditionName = (String) SessionData.get(uuid, Key.C_NAME);
         if (conditionName == null || conditionName.isEmpty()) return;
@@ -140,17 +146,26 @@ public class FabricConditionFactory implements ConditionFactory {
             if (SessionData.get(uuid, Key.C_WHILE_RIDING_ENTITY) != null) {
                 section.add("ride-entity", gson.toJsonTree(SessionData.get(uuid, Key.C_WHILE_RIDING_ENTITY)));
             }
+            if (SessionData.get(uuid, Key.C_WHILE_RIDING_NPC) != null) {
+                section.add("ride-npc-uuid", gson.toJsonTree(SessionData.get(uuid, Key.C_WHILE_RIDING_NPC)));
+            }
             if (SessionData.get(uuid, Key.C_WHILE_PERMISSION) != null) {
                 section.add("permission", gson.toJsonTree(SessionData.get(uuid, Key.C_WHILE_PERMISSION)));
             }
+            writeItemsToJson(uuid, section, Key.C_WHILE_HOLDING_MAIN_HAND, "hold-main-hand");
+            writeItemsToJson(uuid, section, Key.C_WHILE_WEARING, "wear");
             if (SessionData.get(uuid, Key.C_WHILE_WITHIN_WORLD) != null) {
                 section.add("stay-within-world", gson.toJsonTree(SessionData.get(uuid, Key.C_WHILE_WITHIN_WORLD)));
             }
-            if (SessionData.get(uuid, Key.C_WHILE_WITHIN_TICKS_START) != null) {
+            final Object tickStart = SessionData.get(uuid, Key.C_WHILE_WITHIN_TICKS_START);
+            final Object tickEnd = SessionData.get(uuid, Key.C_WHILE_WITHIN_TICKS_END);
+            if (tickStart != null || tickEnd != null) {
                 final JsonObject ticks = new JsonObject();
-                ticks.addProperty("start", ((Number) SessionData.get(uuid, Key.C_WHILE_WITHIN_TICKS_START)).intValue());
-                if (SessionData.get(uuid, Key.C_WHILE_WITHIN_TICKS_END) != null) {
-                    ticks.addProperty("end", ((Number) SessionData.get(uuid, Key.C_WHILE_WITHIN_TICKS_END)).intValue());
+                if (tickStart != null) {
+                    ticks.addProperty("start", ((Number) tickStart).intValue());
+                }
+                if (tickEnd != null) {
+                    ticks.addProperty("end", ((Number) tickEnd).intValue());
                 }
                 section.add("stay-within-ticks", ticks);
             }
@@ -166,8 +181,6 @@ public class FabricConditionFactory implements ConditionFactory {
             if (SessionData.get(uuid, Key.C_WHILE_PLACEHOLDER_VAL) != null) {
                 section.add("check-placeholder-value", gson.toJsonTree(SessionData.get(uuid, Key.C_WHILE_PLACEHOLDER_VAL)));
             }
-            writeItems(uuid, section, Key.C_WHILE_HOLDING_MAIN_HAND, "hold-main-hand");
-            writeItems(uuid, section, Key.C_WHILE_WEARING, "wear");
             if (json == null) {
                 final JsonObject newJson = new JsonObject();
                 newJson.add(conditionName, section);
@@ -180,20 +193,18 @@ public class FabricConditionFactory implements ConditionFactory {
             plugin.reload();
             clearData(uuid);
         } catch (final Exception e) {
-            FabricQuestsPlugin.LOGGER.error("Failed to save condition: {}", conditionName, e);
+            plugin.getPluginLogger().error("Failed to save condition: {}", conditionName, e);
         }
     }
 
-    private void writeItems(UUID uuid, JsonObject section, String key, String nodeKey) {
-        final Object data = SessionData.get(uuid, key);
-        if (data instanceof LinkedList) {
+    @SuppressWarnings("unchecked")
+    private void writeItemsToJson(final UUID uuid, final JsonObject section, final String key, final String nodeKey) {
+        final LinkedList<ItemStack> data = (LinkedList<ItemStack>) SessionData.get(uuid, key);
+        if (data != null) {
             final com.google.gson.JsonArray itemsJson = new com.google.gson.JsonArray();
-            @SuppressWarnings("unchecked")
-            LinkedList<?> itemList = (LinkedList<?>) data;
-            for (final Object stack : itemList) {
-                if (stack instanceof ItemStack) {
-                    ItemStack itemStack = (ItemStack) stack;
-                    itemsJson.add(FabricItemUtil.serializeToJson(itemStack));
+            for (final ItemStack stack : data) {
+                if (stack != null) {
+                    itemsJson.add(FabricItemUtil.serializeToJson(stack));
                 }
             }
             section.add(nodeKey, itemsJson);

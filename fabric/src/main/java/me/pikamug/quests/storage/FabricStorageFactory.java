@@ -33,7 +33,7 @@ public class FabricStorageFactory {
     public QuesterStorage getInstance() {
         final StorageType type = StorageType.parse(getStorageMethod(), StorageType.YAML);
         plugin.getPluginLogger().info("Loading storage implementation: " + type.name());
-        final QuesterStorage storage = new QuesterStorage(plugin, prepareImplementation(type));
+        final QuesterStorage storage = new QuesterStorage(plugin, createNewImplementation(type));
         storage.init();
         return storage;
     }
@@ -46,7 +46,7 @@ public class FabricStorageFactory {
         return config().getStorageMethod();
     }
 
-    private QuesterStorageImpl prepareImplementation(final StorageType method) {
+    private QuesterStorageImpl createNewImplementation(final StorageType method) {
         switch (method) {
             case MYSQL:
                 return new FabricQuesterSqlStorage(

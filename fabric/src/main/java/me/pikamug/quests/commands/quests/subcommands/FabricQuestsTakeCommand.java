@@ -69,10 +69,10 @@ public class FabricQuestsTakeCommand extends FabricQuestsSubCommand {
             // Shows command usage
             return 0;
         }
-        if (assertNonPlayer(source)) {
+        final ServerPlayer player = source.getPlayer();
+        if (player == null) {
             return 0;
         }
-        final ServerPlayer player = source.getPlayer();
         if (!plugin.getConfigSettings().canAllowCommands()) {
             player.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + lang(player, "questTakeDisabled")));
             return 0;

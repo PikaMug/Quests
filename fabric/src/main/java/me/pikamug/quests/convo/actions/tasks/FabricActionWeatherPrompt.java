@@ -14,7 +14,9 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.convo.actions.FabricActionsEditorIntegerPrompt;
 import me.pikamug.quests.convo.actions.FabricActionsEditorStringPrompt;
 import me.pikamug.quests.convo.actions.main.FabricActionMainPrompt;
+import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
@@ -28,14 +30,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt {
 
     private final @NotNull UUID uuid;
     private final FabricQuestsPlugin plugin;
-
-    public static final ConcurrentHashMap<UUID, BlockPos> selectedLightningLocations = new ConcurrentHashMap<>();
 
     public FabricActionWeatherPrompt(final @NotNull UUID uuid) {
         super(uuid);
@@ -163,7 +162,8 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
             if (server != null && sender instanceof ServerPlayer) {
                 ServerPlayer player = (ServerPlayer) sender;
                 final ServerLevel overworld = server.overworld();
-                selectedLightningLocations.put(uuid, BlockPos.ZERO);
+                plugin.getActionFactory().getSelectedLightningLocations()
+                        .put(uuid, new FabricLocation(player.level(), BlockPos.ZERO));
                 new ActionLightningPrompt(uuid).start();
             } else {
                 sender.sendSystemMessage(Component.literal(ChatFormatting.YELLOW + FabricLang.get("consoleError")));
@@ -691,9 +691,9 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
                 return;
             }
             if (input.equalsIgnoreCase(FabricLang.get("cmdAdd"))) {
-                final BlockPos block = selectedLightningLocations.get(uuid);
-                if (block != null) {
-                    final String locStr = block.getX() + " " + block.getY() + " " + block.getZ();
+                final FabricLocation loc = plugin.getActionFactory().getSelectedLightningLocations().get(uuid);
+                if (loc != null && loc.getLevel() != null) {
+                    final String locStr = FabricConfigUtil.getLocationInfo(loc);
                     final LinkedList<String> locations;
                     if (SessionData.get(uuid, Key.A_LIGHTNING) != null) {
                         locations = (LinkedList<String>) SessionData.get(uuid, Key.A_LIGHTNING);
@@ -704,7 +704,7 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
                         locations.add(locStr);
                     }
                     SessionData.set(uuid, Key.A_LIGHTNING, locations);
-                    selectedLightningLocations.remove(uuid);
+                    plugin.getActionFactory().getSelectedLightningLocations().remove(uuid);
                 } else {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("eventEditorSelectBlockFirst")));
                     new ActionLightningPrompt(uuid).start();
@@ -713,10 +713,10 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
                 new FabricActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdClear"))) {
                 SessionData.set(uuid, Key.A_LIGHTNING, null);
-                selectedLightningLocations.remove(uuid);
+                plugin.getActionFactory().getSelectedLightningLocations().remove(uuid);
                 new FabricActionMainPrompt(uuid).start();
             } else if (input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
-                selectedLightningLocations.remove(uuid);
+                plugin.getActionFactory().getSelectedLightningLocations().remove(uuid);
                 new FabricActionMainPrompt(uuid).start();
             } else {
                 new ActionLightningPrompt(uuid).start();

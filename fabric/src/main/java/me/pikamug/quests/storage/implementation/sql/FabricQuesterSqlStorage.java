@@ -62,19 +62,18 @@ public class FabricQuesterSqlStorage implements QuesterStorageImpl {
     private static final String PLAYER_QUEST_PROGRESS_SELECT_BY_UUID = "SELECT * FROM '{prefix}player_questdata' WHERE uuid=?";
     private static final String PLAYER_QUEST_PROGRESS_DELETE_FOR_UUID_AND_QUEST = "DELETE FROM '{prefix}player_questdata' WHERE uuid=? AND quest_id=?";
     private static final String PLAYER_QUEST_PROGRESS_INSERT = "INSERT INTO '{prefix}player_questdata'"
-            + " (uuid, quest_id, blocks_broken, blocks_damaged, blocks_placed, blocks_used, blocks_cut,"
+            + " (uuid, quest_id, blocks_broken, blocks_damaged, blocks_placed, blocks_used,"
             + " items_crafted, items_smelted, items_enchanted, items_brewed, items_consumed,"
             + " items_delivered, npcs_interacted, npcs_killed,"
             + " mobs_killed, mobs_tamed, fish_caught, cows_milked, sheep_sheared,"
             + " players_killed, locations_reached, passwords_said, custom_counts,"
             + " delay_start_time, delay_time_left)"
-            + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            + " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             + " ON DUPLICATE KEY UPDATE uuid=uuid, quest_id=quest_id,"
             + " blocks_broken=VALUES(blocks_broken),"
             + " blocks_damaged=VALUES(blocks_damaged),"
             + " blocks_placed=VALUES(blocks_placed),"
             + " blocks_used=VALUES(blocks_used),"
-            + " blocks_cut=VALUES(blocks_cut),"
             + " items_crafted=VALUES(items_crafted),"
             + " items_smelted=VALUES(items_smelted),"
             + " items_enchanted=VALUES(items_enchanted),"
@@ -169,7 +168,7 @@ public class FabricQuesterSqlStorage implements QuesterStorageImpl {
                     + "`blocks_damaged` VARCHAR(100) NULL,"
                     + "`blocks_placed` VARCHAR(100) NULL,"
                     + "`blocks_used` VARCHAR(100) NULL,"
-                    + "`blocks_cut` VARCHAR(100) NULL,"
+
                     + "`items_crafted` VARCHAR(100) NULL,"
                     + "`items_smelted` VARCHAR(100) NULL,"
                     + "`items_enchanted` VARCHAR(100) NULL,"
@@ -363,26 +362,26 @@ public class FabricQuesterSqlStorage implements QuesterStorageImpl {
                         ps.setString(4, serializeProgress(data.getBlocksDamaged()));
                         ps.setString(5, serializeProgress(data.getBlocksPlaced()));
                         ps.setString(6, serializeProgress(data.getBlocksUsed()));
-                        ps.setString(7, serializeProgress(data.getBlocksCut()));
-                        ps.setString(8, serializeProgress(data.getItemsCrafted()));
-                        ps.setString(9, serializeProgress(data.getItemsSmelted()));
-                        ps.setString(10, serializeProgress(data.getItemsEnchanted()));
-                        ps.setString(11, serializeProgress(data.getItemsBrewed()));
-                        ps.setString(12, serializeProgress(data.getItemsConsumed()));
-                        ps.setString(13, serializeProgress(data.getItemsDelivered()));
-                        ps.setString(14, serializeProgress(data.getNpcsInteracted()));
-                        ps.setString(15, serializeProgress(data.getNpcsNumKilled()));
-                        ps.setString(16, serializeProgress(data.getMobNumKilled()));
-                        ps.setString(17, serializeProgress(data.getMobsTamed()));
-                        ps.setInt(18, data.getFishCaught());
-                        ps.setInt(19, data.getCowsMilked());
-                        ps.setString(20, serializeProgress(data.getSheepSheared()));
-                        ps.setInt(21, data.getPlayersKilled());
-                        ps.setString(22, serializeProgress(data.getLocationsReached()));
-                        ps.setString(23, serializeProgress(data.getPasswordsSaid()));
-                        ps.setString(24, serializeProgress(data.getCustomObjectiveCounts()));
-                        ps.setLong(25, data.getDelayStartTime());
-                        ps.setLong(26, data.getDelayTimeLeft());
+
+                        ps.setString(7, serializeProgress(data.getItemsCrafted()));
+                        ps.setString(8, serializeProgress(data.getItemsSmelted()));
+                        ps.setString(9, serializeProgress(data.getItemsEnchanted()));
+                        ps.setString(10, serializeProgress(data.getItemsBrewed()));
+                        ps.setString(11, serializeProgress(data.getItemsConsumed()));
+                        ps.setString(12, serializeProgress(data.getItemsDelivered()));
+                        ps.setString(13, serializeProgress(data.getNpcsInteracted()));
+                        ps.setString(14, serializeProgress(data.getNpcsNumKilled()));
+                        ps.setString(15, serializeProgress(data.getMobNumKilled()));
+                        ps.setString(16, serializeProgress(data.getMobsTamed()));
+                        ps.setInt(17, data.getFishCaught());
+                        ps.setInt(18, data.getCowsMilked());
+                        ps.setString(19, serializeProgress(data.getSheepSheared()));
+                        ps.setInt(20, data.getPlayersKilled());
+                        ps.setString(21, serializeProgress(data.getLocationsReached()));
+                        ps.setString(22, serializeProgress(data.getPasswordsSaid()));
+                        ps.setString(23, serializeProgress(data.getCustomObjectiveCounts()));
+                        ps.setLong(24, data.getDelayStartTime());
+                        ps.setLong(25, data.getDelayTimeLeft());
                         ps.execute();
                     }
                 }
@@ -464,7 +463,7 @@ public class FabricQuesterSqlStorage implements QuesterStorageImpl {
                             data.getBlocksDamaged().addAll(deserializeIntProgress(rs.getString("blocks_damaged")));
                             data.getBlocksPlaced().addAll(deserializeIntProgress(rs.getString("blocks_placed")));
                             data.getBlocksUsed().addAll(deserializeIntProgress(rs.getString("blocks_used")));
-                            data.getBlocksCut().addAll(deserializeIntProgress(rs.getString("blocks_cut")));
+
                             data.getItemsCrafted().addAll(deserializeIntProgress(rs.getString("items_crafted")));
                             data.getItemsSmelted().addAll(deserializeIntProgress(rs.getString("items_smelted")));
                             data.getItemsEnchanted().addAll(deserializeIntProgress(rs.getString("items_enchanted")));

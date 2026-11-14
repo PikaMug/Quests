@@ -63,10 +63,10 @@ public class FabricQuestsJournalCommand extends FabricQuestsSubCommand {
 
     @Override
     public int execute(final CommandSourceStack source, final String[] args) {
-        if (assertNonPlayer(source)) {
+        final ServerPlayer player = source.getPlayer();
+        if (player == null) {
             return 0;
         }
-        final ServerPlayer player = source.getPlayer();
         final FabricQuester quester = plugin.getQuester(player.getUUID());
         final Inventory inv = player.getInventory();
         final int index = quester.getJournalIndex();

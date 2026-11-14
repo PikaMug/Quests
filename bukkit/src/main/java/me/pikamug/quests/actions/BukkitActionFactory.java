@@ -52,7 +52,7 @@ public class BukkitActionFactory implements ActionFactory {
     private ConcurrentHashMap<UUID, Block> selectedMobLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedLightningLocations = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedTeleportLocations = new ConcurrentHashMap<>();
-    private List<String> editingActionNames = new LinkedList<>();
+    private List<String> namesOfActionsBeingEdited = new LinkedList<>();
 
     public BukkitActionFactory(final BukkitQuestsPlugin plugin) {
         this.plugin = plugin;
@@ -99,11 +99,11 @@ public class BukkitActionFactory implements ActionFactory {
     }
 
     public List<String> getNamesOfActionsBeingEdited() {
-        return editingActionNames;
+        return namesOfActionsBeingEdited;
     }
 
     public void setNamesOfActionsBeingEdited(final Collection<String> actionNames) {
-        this.editingActionNames = new LinkedList<>(actionNames);
+        this.namesOfActionsBeingEdited = new LinkedList<>(actionNames);
     }
 
     public void returnToMenu(final UUID uuid) {
@@ -162,15 +162,15 @@ public class BukkitActionFactory implements ActionFactory {
         if (bukkitAction.getPotionEffects() != null && !bukkitAction.getPotionEffects().isEmpty()) {
             final LinkedList<String> types = new LinkedList<>();
             final LinkedList<Long> durations = new LinkedList<>();
-            final LinkedList<Integer> mags = new LinkedList<>();
+            final LinkedList<Integer> strengths = new LinkedList<>();
             for (final PotionEffect pe : bukkitAction.getPotionEffects()) {
                 types.add(pe.getType().getName());
                 durations.add((long) pe.getDuration());
-                mags.add(pe.getAmplifier());
+                strengths.add(pe.getAmplifier());
             }
             SessionData.set(uuid, Key.A_POTION_TYPES, types);
             SessionData.set(uuid, Key.A_POTION_DURATIONS, durations);
-            SessionData.set(uuid, Key.A_POTION_STRENGTH, mags);
+            SessionData.set(uuid, Key.A_POTION_STRENGTH, strengths);
         }
         if (bukkitAction.getHunger() > -1) {
             SessionData.set(uuid, Key.A_HUNGER, bukkitAction.getHunger());
@@ -251,6 +251,9 @@ public class BukkitActionFactory implements ActionFactory {
         final YamlConfiguration data = new YamlConfiguration();
         final File actionsFile = new File(plugin.getDataFolder(), "storage" + File.separatorChar + "actions.yml");
         final CommandSender sender = BukkitMiscUtil.getEntity(uuid);
+        if (sender == null) {
+            return;
+        }
         try {
             data.load(actionsFile);
         } catch (final IOException | InvalidConfigurationException e) {
@@ -271,7 +274,7 @@ public class BukkitActionFactory implements ActionFactory {
             plugin.setLoadedActions(temp);
         }
         final ConfigurationSection section = data.createSection(key + "." + SessionData.get(uuid, Key.A_NAME));
-        editingActionNames.remove((String) SessionData.get(uuid, Key.A_NAME));
+        namesOfActionsBeingEdited.remove((String) SessionData.get(uuid, Key.A_NAME));
         if (SessionData.get(uuid, Key.A_MESSAGE) != null) {
             section.set("message", SessionData.get(uuid, Key.A_MESSAGE));
         }

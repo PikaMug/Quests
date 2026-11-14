@@ -24,6 +24,7 @@ import net.minecraft.server.level.ServerPlayer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class FabricQuestadminNextStageCommand extends FabricQuestsSubCommand {
 
@@ -93,8 +94,8 @@ public class FabricQuestadminNextStageCommand extends FabricQuestsSubCommand {
         final ServerPlayer onlineTarget = source.getServer().getPlayerList().getPlayer(quester.getUUID());
         if (onlineTarget != null) {
             final String msg2 = lang(onlineTarget, "questForcedNextStage")
-                    .replace("<player>", source.isPlayer() ? source.getPlayer().getName().getString() : "Console")
-                    .replace("<quest>", quest.getName());
+                    .replace("<player>", source.isPlayer() ? Objects.requireNonNull(source.getPlayer())
+                            .getName().getString() : "Console").replace("<quest>", quest.getName());
             onlineTarget.sendSystemMessage(Component.literal(ChatFormatting.GREEN + msg2));
         }
         quest.nextStage(quester, false);
