@@ -10,6 +10,11 @@
 
 package me.pikamug.quests.convo.quests.main;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.convo.generic.FabricItemStackPrompt;
 import me.pikamug.quests.convo.quests.FabricQuestsEditorIntegerPrompt;
@@ -28,6 +33,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
@@ -42,10 +49,6 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
     }
 
     private final int size = 14;
-
-    private static boolean questIdExists(final FabricQuestsPlugin plugin, final String questId) {
-        return plugin.getLoadedQuests().stream().anyMatch(q -> questId.equals(q.getId()));
-    }
 
     @Override
     public int getSize() {
@@ -822,6 +825,7 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                 return;
             }
             if (input.equalsIgnoreCase("1") || input.equalsIgnoreCase(FabricLang.get("yesWord"))) {
+                // Accept
                 if (plugin.hasLimitedAccess(uuid) && !plugin.getConfigSettings().canTrialSave()) {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("modeDeny")
                             .replace("<mode>", FabricLang.get("trialMode"))));
@@ -847,29 +851,56 @@ public class FabricQuestMainPrompt extends FabricQuestsEditorIntegerPrompt {
                 }
 
                 try {
-                    String questId;
+                    final Path storageDir = plugin.getPluginDataFolder().toPath().resolve("storage");
+                    if (!Files.exists(storageDir)) {
+                        Files.createDirectories(storageDir);
+                    }
+                    final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    final Path index = storageDir.resolve("quests.json");
+                    JsonObject root = new JsonObject();
+                    if (Files.exists(index)) {
+                        try (Reader reader = Files.newBufferedReader(index)) {
+                            final JsonElement parsed = JsonParser.parseReader(reader);
+                            if (parsed.isJsonObject()) {
+                                root = parsed.getAsJsonObject();
+                            }
+                        }
+                    }
+                    JsonObject newSection = null;
+                    String questId = null;
                     if (SessionData.get(uuid, Key.Q_ID) == null) {
+                        // Creating
                         final Locale locale = Locale.US;
                         final int padding = 6;
                         String format = "%0" + padding + "d";
                         int num = 1;
                         String customNum = String.format(locale, format, num);
-                        while (questIdExists(plugin, customNum)) {
+                        while (root.has(customNum)) {
                             num++;
                             customNum = String.format(locale, format, num);
                         }
                         questId = customNum;
+                        newSection = new JsonObject();
                     } else {
-                        questId = (String) SessionData.get(uuid, Key.Q_ID);
+                        // Editing
+                        final String qid = (String) SessionData.get(uuid, Key.Q_ID);
+                        if (qid != null) {
+                            questId = qid;
+                            newSection = new JsonObject();
+                        }
                     }
-
-                    if (FabricQuestEditorSaver.save(uuid, questId, plugin)) {
+                    if (newSection != null) {
+                        plugin.getQuestFactory().saveQuest(uuid, newSection);
+                        root.add(questId, newSection);
+                        try (Writer writer = Files.newBufferedWriter(index)) {
+                            gson.toJson(root, writer);
+                        }
                         sender.sendSystemMessage(Component.literal(ChatFormatting.GREEN
                                 + FabricLang.get("questEditorSaved").replace("<command>", "/questadmin "
                                 + FabricLang.get("COMMAND_QUESTADMIN_RELOAD"))));
                     }
                 } catch (final IOException e) {
-                    FabricQuestsPlugin.LOGGER.error("Failed to save quest", e);
+                    e.printStackTrace();
                 }
             } else if (input.equalsIgnoreCase("2") || input.equalsIgnoreCase(FabricLang.get("noWord"))) {
                 new FabricQuestMainPrompt(uuid).start();

@@ -69,21 +69,21 @@ public class FabricQuestadminRemoveCommand extends FabricQuestsSubCommand {
         }
         final FabricQuester quester = resolveTarget(plugin, source, args[1]);
         if (quester == null) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")));
             return 0;
         }
         final String questName = concatArgArray(args, 2, args.length - 1, ' ');
         final Quest quest = findQuest(plugin, questName);
         if (quest == null) {
             reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "questNotFound")
-                    .replace("<input>", questName != null ? questName : "")), false);
+                    .replace("<input>", questName != null ? questName : "")));
             return 0;
         }
         quester.hardRemove(quest);
         final String msg = lang(source, "questRemoved")
                 .replace("<player>", quester.getLastKnownName())
                 .replace("<quest>", quest.getName());
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg), false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg));
         quester.saveData();
         return Command.SINGLE_SUCCESS;
     }

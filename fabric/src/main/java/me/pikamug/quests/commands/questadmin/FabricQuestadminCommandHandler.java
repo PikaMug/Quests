@@ -99,7 +99,7 @@ public class FabricQuestadminCommandHandler {
         if (sub == null) {
             return printQuestAdminUnknownCommand(args[0], source);
         } else if (!hasAdminNode(source, sub.getName())) {
-            reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "noPermission")), false);
+            reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "noPermission")));
             return 0;
         } else if (args.length < sub.getMaxArguments()) {
             return getAdminCommandUsage(source, sub.getName());
@@ -112,12 +112,12 @@ public class FabricQuestadminCommandHandler {
 
     public int printAdminHelp(final CommandSourceStack source) {
         if (!hasAdminRoot(source)) {
-            reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "noPermission")), false);
+            reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "noPermission")));
             return 0;
         }
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questAdminHelpTitle")), false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questAdminHelpTitle")));
         reply(source,() -> Component.literal(ChatFormatting.YELLOW + "/questadmin" + ChatFormatting.RED + " "
-                + lang(source, "COMMAND_QUESTADMIN_HELP")), false);
+                + lang(source, "COMMAND_QUESTADMIN_HELP")));
         final boolean translate = plugin.getConfigSettings().canTranslateSubCommands();
         printAdminHelpLine(source, translate, "stats", "COMMAND_QUESTADMIN_STATS");
         printAdminHelpLine(source, translate, "give", "COMMAND_QUESTADMIN_GIVE");
@@ -139,11 +139,11 @@ public class FabricQuestadminCommandHandler {
         if (!hasAdminNode(source, sub)) return;
         final String name = translate ? lang(source, key) : sub;
         reply(source,() -> Component.literal(ChatFormatting.YELLOW + "/questadmin " + ChatFormatting.RED
-                + lang(source, key + "_HELP").replace("<command>", name)), false);
+                + lang(source, key + "_HELP").replace("<command>", name)));
     }
 
     private int printQuestAdminUnknownCommand(final String sub, final CommandSourceStack source) {
-        reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "questsUnknownAdminCommand")), false);
+        reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "questsUnknownAdminCommand")));
         return Command.SINGLE_SUCCESS;
     }
 
@@ -151,7 +151,7 @@ public class FabricQuestadminCommandHandler {
         reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "usage") + ": "
                 + ChatFormatting.YELLOW + "/questadmin " + lang(source,
                 FabricLang.getKeyFromPrefix("COMMAND_QUESTADMIN_", cmd) + "_HELP")
-                .replace("<command>", cmd.toLowerCase())), false);
+                .replace("<command>", cmd.toLowerCase())));
         return 0;
     }
 

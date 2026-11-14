@@ -70,21 +70,21 @@ public class FabricQuestadminPointsCommand extends FabricQuestsSubCommand {
         }
         final FabricQuester quester = resolveTarget(plugin, source, args[1]);
         if (quester == null) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")));
             return 0;
         }
         if (args.length == 2) {
             // View points (kept from fabric's original admin "points" behavior)
             reply(source,() -> Component.literal(ChatFormatting.YELLOW + quester.getLastKnownName() + " - "
                     + ChatFormatting.DARK_PURPLE + quester.getQuestPoints() + ChatFormatting.YELLOW + " "
-                    + lang(source, "questPoints")), false);
+                    + lang(source, "questPoints")));
             return Command.SINGLE_SUCCESS;
         }
         final int amount;
         try {
             amount = Integer.parseInt(args[2]);
         } catch (final NumberFormatException e) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")));
             return 0;
         }
         quester.setQuestPoints(amount);
@@ -92,7 +92,7 @@ public class FabricQuestadminPointsCommand extends FabricQuestsSubCommand {
                 .replace("<points>", lang(source, "questPoints"))
                 .replace("<player>", quester.getLastKnownName())
                 .replace("<number>", String.valueOf(amount));
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1), false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1));
         final ServerPlayer onlineTarget = source.getServer().getPlayerList().getPlayer(quester.getUUID());
         if (onlineTarget != null) {
             final String msg2 = lang(onlineTarget, "questPointsSet")

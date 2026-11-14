@@ -68,12 +68,12 @@ public class FabricQuestadminResetCommand extends FabricQuestsSubCommand {
         }
         final FabricQuester quester = resolveTarget(plugin, source, args[1]);
         if (quester == null) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")));
             return 0;
         }
         quester.hardClear();
         final String msg = lang(source, "questReset").replace("<player>", quester.getLastKnownName());
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg), false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg));
         quester.saveData();
         return Command.SINGLE_SUCCESS;
     }

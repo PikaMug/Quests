@@ -69,14 +69,14 @@ public class FabricQuestadminTakePointsCommand extends FabricQuestsSubCommand {
         }
         final FabricQuester quester = resolveTarget(plugin, source, args[1]);
         if (quester == null) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")));
             return 0;
         }
         final int amount;
         try {
             amount = Integer.parseInt(args[2]);
         } catch (final NumberFormatException e) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")));
             return 0;
         }
         quester.setQuestPoints(Math.max(0, quester.getQuestPoints() - amount));
@@ -84,7 +84,7 @@ public class FabricQuestadminTakePointsCommand extends FabricQuestsSubCommand {
                 .replace("<points>", lang(source, "questPoints"))
                 .replace("<player>", quester.getLastKnownName())
                 .replace("<number>", String.valueOf(amount));
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1), false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1));
         final ServerPlayer onlineTarget = source.getServer().getPlayerList().getPlayer(quester.getUUID());
         if (onlineTarget != null) {
             final String msg2 = lang(onlineTarget, "questPointsTaken")

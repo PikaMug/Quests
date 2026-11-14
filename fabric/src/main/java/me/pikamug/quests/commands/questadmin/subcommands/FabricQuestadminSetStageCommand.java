@@ -71,44 +71,44 @@ public class FabricQuestadminSetStageCommand extends FabricQuestsSubCommand {
         }
         final String rest = concatArgArray(args, 2, args.length - 1, ' ');
         if (rest == null) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")));
             return 0;
         }
         final String[] parts = rest.split(" ");
         if (parts.length < 2) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")));
             return 0;
         }
         int stage;
         try {
             stage = Integer.parseInt(parts[parts.length - 1]);
         } catch (final NumberFormatException e) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "inputNum")));
             return 0;
         }
         final String questName = String.join(" ", java.util.Arrays.copyOf(parts, parts.length - 1));
         final FabricQuester quester = resolveTarget(plugin, source, args[1]);
         if (quester == null) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")));
             return 0;
         }
         final String targetName = quester.getLastKnownName() != null ? quester.getLastKnownName() : args[1];
         if (quester.getCurrentQuests().isEmpty()) {
             reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "noCurrentQuest")
-                    .replace("<player>", targetName)), false);
+                    .replace("<player>", targetName)));
             return 0;
         }
         final Quest quest = findQuest(plugin, questName);
         if (quest == null) {
             reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "questNotFound")
-                    .replace("<input>", questName)), false);
+                    .replace("<input>", questName)));
             return 0;
         }
         if (!quester.getCurrentQuests().containsKey(quest)) {
             final String msg1 = lang(source, "questForceTake")
                     .replace("<player>", targetName)
                     .replace("<quest>", quest.getName());
-            reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1), false);
+            reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1));
             final ServerPlayer onlineTarget = source.getServer().getPlayerList().getPlayer(quester.getUUID());
             if (onlineTarget != null) {
                 final String msg2 = lang(onlineTarget, "questForcedTake")
@@ -122,7 +122,7 @@ public class FabricQuestadminSetStageCommand extends FabricQuestsSubCommand {
         if (index < 0 || index >= quest.getStages().size()) {
             reply(source,() -> Component.literal(ChatFormatting.RED + lang(source, "invalidRange")
                     .replace("<least>", "1")
-                    .replace("<greatest>", String.valueOf(quest.getStages().size()))), false);
+                    .replace("<greatest>", String.valueOf(quest.getStages().size()))));
             return 0;
         }
         quest.setStage(quester, index);

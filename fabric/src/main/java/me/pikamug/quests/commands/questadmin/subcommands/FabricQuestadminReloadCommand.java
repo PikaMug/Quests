@@ -58,11 +58,11 @@ public class FabricQuestadminReloadCommand extends FabricQuestsSubCommand {
 
     @Override
     public int execute(final CommandSourceStack source, final String[] args) {
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questsReloading")), false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questsReloading")));
         plugin.reload();
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questsReloaded")), false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "questsReloaded")));
         reply(source,() -> Component.literal(ChatFormatting.GOLD + lang(source, "numQuestsLoaded")
-                .replace("<number>", String.valueOf(plugin.getLoadedQuests().size()))), false);
+                .replace("<number>", String.valueOf(plugin.getLoadedQuests().size()))));
         return Command.SINGLE_SUCCESS;
     }
 }

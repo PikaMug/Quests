@@ -71,14 +71,14 @@ public class FabricQuestadminGiveCommand extends FabricQuestsSubCommand {
         }
         final FabricQuester quester = resolveTarget(plugin, source, args[1]);
         if (quester == null) {
-            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")), false);
+            reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "playerNotFound")));
             return 0;
         }
         final String questName = concatArgArray(args, 2, args.length - 1, ' ');
         final Quest quest = findQuest(plugin, questName);
         if (quest == null) {
             reply(source,() -> Component.literal(ChatFormatting.YELLOW + lang(source, "questNotFound")
-                    .replace("<input>", questName != null ? questName : "")), false);
+                    .replace("<input>", questName != null ? questName : "")));
             return 0;
         }
         for (final Quest q : quester.getCurrentQuests().keySet()) {
@@ -86,7 +86,7 @@ public class FabricQuestadminGiveCommand extends FabricQuestsSubCommand {
                 final String msg = lang(source, "questsPlayerHasQuestAlready")
                         .replace("<player>", quester.getLastKnownName())
                         .replace("<quest>", quest.getName());
-                reply(source,() -> Component.literal(ChatFormatting.YELLOW + msg), false);
+                reply(source,() -> Component.literal(ChatFormatting.YELLOW + msg));
                 return 0;
             }
         }
@@ -94,7 +94,7 @@ public class FabricQuestadminGiveCommand extends FabricQuestsSubCommand {
         final String msg1 = lang(source, "questForceTake")
                 .replace("<player>", quester.getLastKnownName())
                 .replace("<quest>", quest.getName());
-        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1), false);
+        reply(source,() -> Component.literal(ChatFormatting.GOLD + msg1));
         final ServerPlayer onlineTarget = source.getServer().getPlayerList().getPlayer(quester.getUUID());
         if (onlineTarget != null) {
             final String msg2 = lang(onlineTarget, "questForcedTake")
