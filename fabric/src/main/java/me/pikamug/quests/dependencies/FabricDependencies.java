@@ -11,18 +11,26 @@
 package me.pikamug.quests.dependencies;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.dependencies.npc.FabricNpcDependency;
+import me.pikamug.quests.dependencies.npc.easynpc.FabricEasyNpcDependency;
+import me.pikamug.quests.dependencies.npc.taterzens.FabricTaterzensDependency;
 import me.pikamug.quests.events.FabricEventAccessor;
+import me.pikamug.quests.util.FabricLocation;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class FabricDependencies implements Dependencies {
 
     private final FabricQuestsPlugin plugin;
+    private final Set<FabricNpcDependency> npcDependencies = new LinkedHashSet<>();
     private boolean hasEasyNpc = false;
     private boolean hasTaterzens = false;
     private boolean hasOpenParties = false;
@@ -89,6 +97,22 @@ public class FabricDependencies implements Dependencies {
                 FabricQuestsPlugin.LOGGER.warn("Failed to initialize Open Parties and Claims support", t);
             }
         }
+        if (hasEasyNpc) {
+            try {
+                addNpcDependency(new FabricEasyNpcDependency(plugin));
+            } catch (final Throwable t) {
+                hasEasyNpc = false;
+                FabricQuestsPlugin.LOGGER.warn("Failed to initialize BOs-Easy-NPC support", t);
+            }
+        }
+        if (hasTaterzens) {
+            try {
+                addNpcDependency(new FabricTaterzensDependency(plugin));
+            } catch (final Throwable t) {
+                hasTaterzens = false;
+                FabricQuestsPlugin.LOGGER.warn("Failed to initialize Taterzens support", t);
+            }
+        }
         if (FabricLoader.getInstance().isModLoaded("fabric-api")
                 || FabricLoader.getInstance().isModLoaded("fabric-api-base")) {
             try {
@@ -108,7 +132,31 @@ public class FabricDependencies implements Dependencies {
     }
 
     public boolean isNpc(UUID uuid) {
+        for (final FabricNpcDependency npcDependency : npcDependencies) {
+            if (npcDependency.isNpc(uuid)) {
+                return true;
+            }
+        }
         return plugin.getQuestNpcUuids().contains(uuid);
+    }
+
+    public Set<FabricNpcDependency> getNpcDependencies() {
+        return npcDependencies;
+    }
+
+    private void addNpcDependency(final FabricNpcDependency npcDependency) {
+        npcDependencies.add(npcDependency);
+        FabricQuestsPlugin.LOGGER.info("Successfully linked Quests with {}", npcDependency.getLabel());
+    }
+
+    public @Nullable FabricLocation getNpcLocation(final UUID uuid) {
+        for (final FabricNpcDependency npcDependency : npcDependencies) {
+            final FabricLocation location = npcDependency.getLocation(uuid);
+            if (location != null) {
+                return location;
+            }
+        }
+        return null;
     }
 
     public boolean hasEasyNpc() {
@@ -120,7 +168,7 @@ public class FabricDependencies implements Dependencies {
     }
 
     public boolean hasAnyNpcDependencies() {
-        return hasEasyNpc || hasTaterzens;
+        return !npcDependencies.isEmpty();
     }
 
     /**
@@ -326,6 +374,12 @@ public class FabricDependencies implements Dependencies {
     }
 
     public String getNpcName(UUID uuid) {
+        for (final FabricNpcDependency npcDependency : npcDependencies) {
+            final String npcName = npcDependency.getName(uuid);
+            if (npcName != null) {
+                return npcName;
+            }
+        }
         final net.minecraft.server.level.ServerPlayer player =
                 plugin.getServer() != null ? plugin.getServer().getPlayerList().getPlayer(uuid) : null;
         return player != null ? player.getName().getString() : uuid.toString().substring(0, 8);

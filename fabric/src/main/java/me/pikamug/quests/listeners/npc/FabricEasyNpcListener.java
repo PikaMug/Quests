@@ -12,6 +12,7 @@ package me.pikamug.quests.listeners.npc;
 
 import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.dependencies.npc.FabricEntityNpcDependency;
 import net.minecraft.world.entity.Entity;
 
 /**
@@ -20,8 +21,11 @@ import net.minecraft.world.entity.Entity;
  */
 public class FabricEasyNpcListener extends FabricNpcListener {
 
-    public FabricEasyNpcListener(FabricQuestsPlugin plugin) {
+    private final FabricEntityNpcDependency dependency;
+
+    public FabricEasyNpcListener(FabricQuestsPlugin plugin, FabricEntityNpcDependency dependency) {
         super(plugin);
+        this.dependency = dependency;
         register();
     }
 
@@ -38,12 +42,6 @@ public class FabricEasyNpcListener extends FabricNpcListener {
 
     @Override
     public boolean isNpc(Entity entity) {
-        if (entity == null) return false;
-        // Check via reflection to avoid hard compile-time dependency
-        try {
-            return Class.forName("de.markusbordihn.easynpc.entity.easy.EasyNPCEntity").isInstance(entity);
-        } catch (final ClassNotFoundException e) {
-            return false;
-        }
+        return dependency.isNpc(entity);
     }
 }

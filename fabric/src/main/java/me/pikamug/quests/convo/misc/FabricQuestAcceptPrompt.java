@@ -12,6 +12,7 @@ package me.pikamug.quests.convo.misc;
 
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.config.FabricConfigSettings;
+import me.pikamug.quests.events.misc.FabricMiscPostQuestAcceptEvent;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricLang;
@@ -81,6 +82,10 @@ public @NotNull String getPromptText() {
         if (plugin == null) {
             return ChatFormatting.YELLOW + FabricLang.get("itemCreateCriticalError");
         }
+
+        final FabricMiscPostQuestAcceptEvent event = new FabricMiscPostQuestAcceptEvent(uuid, this);
+        FabricMiscPostQuestAcceptEvent.EVENT.invoker().onEvent(event);
+
         final FabricConfigSettings configSettings = (FabricConfigSettings) plugin.getConfigSettings();
         if (!configSettings.canClickablePrompts()) {
             return ChatFormatting.YELLOW + getQueryText() + "  " + ChatFormatting.GREEN

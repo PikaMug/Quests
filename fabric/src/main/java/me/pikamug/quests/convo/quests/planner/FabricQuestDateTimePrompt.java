@@ -28,6 +28,8 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenStringPromptEvent;
 
 public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
@@ -196,6 +198,10 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricQuestsEditorPostOpenNumericPromptEvent event
+                = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final StringBuilder text = new StringBuilder(ChatFormatting.AQUA + getTitle() + "\n");
         if (SessionData.get(uuid, "tempYear") != null && SessionData.get(uuid, "tempMonth") != null
                 && SessionData.get(uuid, "tempDay") != null && SessionData.get(uuid, "tempHour") != null
@@ -326,6 +332,10 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -374,6 +384,10 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -422,6 +436,10 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -470,6 +488,10 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -518,6 +540,10 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -566,6 +592,10 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -614,6 +644,10 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -672,6 +706,10 @@ public class FabricQuestDateTimePrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             for (final String z : zones) {
                 text.append(ChatFormatting.GREEN).append(z).append(", ");

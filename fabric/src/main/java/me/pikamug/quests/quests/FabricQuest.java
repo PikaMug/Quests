@@ -13,6 +13,13 @@ package me.pikamug.quests.quests;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.FabricAction;
+import me.pikamug.quests.events.quest.FabricQuestUpdateCompassEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPostChangeStageEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPostCompleteQuestEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPostFailQuestEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPreChangeStageEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPreCompleteQuestEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPreFailQuestEvent;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.Quester;
 import me.pikamug.quests.quests.components.FabricOptions;
@@ -30,15 +37,18 @@ import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricOfflinePlayer;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -127,6 +137,55 @@ public class FabricQuest implements Quest {
 
     public void setGUIDisplay(final ItemStack guiDisplay) {
         this.guiDisplay = guiDisplay;
+    }
+
+    public ItemStack prepareDisplay(final FabricQuester quester) {
+        final ItemStack display = getGUIDisplay().copy();
+        final ServerPlayer player = quester.getPlayer();
+        final String displayName;
+        if (quester.getCompletedQuests().contains(this)) {
+            displayName = ChatFormatting.DARK_PURPLE + FabricConfigUtil.parseString(getName()
+                    + " " + ChatFormatting.GREEN + FabricLang.get(player, "redoCompleted"), this);
+        } else {
+            displayName = ChatFormatting.DARK_PURPLE + FabricConfigUtil.parseString(getName(), this);
+        }
+        display.set(DataComponents.CUSTOM_NAME, Component.literal(displayName));
+        if (display.get(DataComponents.LORE) == null) {
+            final String description = getDescription();
+            if (description != null && !description.isEmpty()) {
+                final String parsed = FabricConfigUtil.parseString(description, this);
+                final ChatFormatting color = parsed.indexOf('\u00A7') == -1
+                        ? ChatFormatting.DARK_GREEN : null;
+                display.set(DataComponents.LORE, new ItemLore(createDisplayLore(parsed, 40, color)));
+            }
+        }
+        return display;
+    }
+
+    private static List<Component> createDisplayLore(final String input, final int lineLength,
+                                                     final ChatFormatting lineColor) {
+        final LinkedList<Component> lines = new LinkedList<>();
+        final String[] pieces = input.split(" ");
+        StringBuilder line = new StringBuilder();
+        int currentLength = 0;
+        for (final String piece : pieces) {
+            if (currentLength + piece.length() > lineLength + 1) {
+                final String text = line.toString().trim();
+                if (!text.isEmpty()) {
+                    lines.add(Component.literal((lineColor != null ? lineColor.toString() : "") + text));
+                }
+                line = new StringBuilder(piece).append(' ');
+                currentLength = piece.length() + 1;
+            } else {
+                line.append(piece).append(' ');
+                currentLength += piece.length() + 1;
+            }
+        }
+        final String text = line.toString().trim();
+        if (!text.isEmpty()) {
+            lines.add(Component.literal((lineColor != null ? lineColor.toString() : "") + text));
+        }
+        return lines;
     }
 
     @Override
@@ -302,14 +361,14 @@ public class FabricQuest implements Quest {
         if (currentStage == null || nextStage == null) {
             return;
         }
-        /*if (player.isOnline()) {
-            final BukkitQuesterPreChangeStageEvent preEvent
-                    = new BukkitQuesterPreChangeStageEvent((BukkitQuester) quester, this, currentStage, nextStage);
-            plugin.getServer().getPluginManager().callEvent(preEvent);
+        if (player.isOnline()) {
+            final FabricQuesterPreChangeStageEvent preEvent
+                    = new FabricQuesterPreChangeStageEvent(q, this, currentStage, nextStage);
+            FabricQuesterPreChangeStageEvent.EVENT.invoker().onEvent(preEvent);
             if (preEvent.isCancelled()) {
                 return;
             }
-        }*/
+        }
         quester.hardQuit(this);
         quester.hardStagePut(this, stage);
         quester.addEmptiesFor(this, stage);
@@ -338,16 +397,33 @@ public class FabricQuest implements Quest {
         }
         quester.updateJournal();
         quester.saveData();
-        /*if (player.isOnline()) {
-            final BukkitQuesterPostChangeStageEvent postEvent
-                    = new BukkitQuesterPostChangeStageEvent((BukkitQuester) quester, this, currentStage, nextStage);
-            plugin.getServer().getPluginManager().callEvent(postEvent);
-        }*/
+        if (player.isOnline()) {
+            final FabricQuesterPostChangeStageEvent postEvent
+                    = new FabricQuesterPostChangeStageEvent(q, this, currentStage, nextStage);
+            FabricQuesterPostChangeStageEvent.EVENT.invoker().onEvent(postEvent);
+        }
     }
 
     @Override
     public boolean updateCompass(Quester quester, Stage stage) {
         if (quester == null || stage == null) return false;
+        if (quester instanceof FabricQuester) {
+            final FabricQuester q = (FabricQuester) quester;
+            if (q.getOfflinePlayer().isOnline()
+                    && plugin.getDependencies().hasPermission(q.getUUID(), "quests.compass")
+                    && stage.getLocationsToReach() != null && !stage.getLocationsToReach().isEmpty()) {
+                final FabricLocation target = FabricConfigUtil.getLocation(
+                        stage.getLocationsToReach().getFirst().toString());
+                if (target != null) {
+                    final FabricQuestUpdateCompassEvent event
+                            = new FabricQuestUpdateCompassEvent(this, quester, target);
+                    FabricQuestUpdateCompassEvent.EVENT.invoker().onEvent(event);
+                    if (event.isCancelled()) {
+                        return false;
+                    }
+                }
+            }
+        }
         quester.setCompassTarget(this);
         return true;
     }
@@ -451,6 +527,15 @@ public class FabricQuest implements Quest {
     @Override
     public void completeQuest(final Quester quester, final boolean allowMultiplayer) {
         if (quester == null) return;
+        final FabricQuester completingQuester = (FabricQuester) quester;
+        if (completingQuester.getOfflinePlayer().isOnline()) {
+            final FabricQuesterPreCompleteQuestEvent preEvent
+                    = new FabricQuesterPreCompleteQuestEvent(completingQuester, this);
+            FabricQuesterPreCompleteQuestEvent.EVENT.invoker().onEvent(preEvent);
+            if (preEvent.isCancelled()) {
+                return;
+            }
+        }
         quester.hardQuit(this);
         final Collection<Quest> completedQuests = quester.getCompletedQuests();
         completedQuests.add(this);
@@ -523,6 +608,11 @@ public class FabricQuest implements Quest {
         quester.stopStageTimer(this);
         sendCompletionFeedback(quester);
         quester.saveData();
+        if (completingQuester.getOfflinePlayer().isOnline()) {
+            final FabricQuesterPostCompleteQuestEvent postEvent
+                    = new FabricQuesterPostCompleteQuestEvent(completingQuester, this);
+            FabricQuesterPostCompleteQuestEvent.EVENT.invoker().onEvent(postEvent);
+        }
         FabricQuestsPlugin.LOGGER.info("Quest '{}' completed by {}", name, quester.getUUID());
     }
 
@@ -634,6 +724,12 @@ public class FabricQuest implements Quest {
     @Override
     public void failQuest(final Quester quester, final boolean ignoreFailAction) {
         if (quester == null) return;
+        final FabricQuester failingQuester = (FabricQuester) quester;
+        final FabricQuesterPreFailQuestEvent preEvent = new FabricQuesterPreFailQuestEvent(failingQuester, this);
+        FabricQuesterPreFailQuestEvent.EVENT.invoker().onEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return;
+        }
         if (!ignoreFailAction) {
             final int stageNum = quester.getCurrentQuests().getOrDefault(this, 0);
             final Stage stage = orderedStages.isEmpty() ? null : orderedStages.get(Math.min(stageNum, orderedStages.size() - 1));
@@ -647,6 +743,8 @@ public class FabricQuest implements Quest {
         final String[] messages = {ChatFormatting.RED + FabricLang.get(failPlayer, "questFailed")
                 .replace("<quest>", name != null ? name : id)};
         quester.quitQuest(this, messages);
+        final FabricQuesterPostFailQuestEvent postEvent = new FabricQuesterPostFailQuestEvent(failingQuester, this);
+        FabricQuesterPostFailQuestEvent.EVENT.invoker().onEvent(postEvent);
         FabricQuestsPlugin.LOGGER.info("Quest '{}' failed by {}", name, quester.getUUID());
     }
 

@@ -108,7 +108,9 @@ public class FabricChatListener {
         final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
         if (progress == null || index >= progress.getPasswordsSaid().size()) return;
         if (!progress.getPasswordsSaid().get(index)) {
+            quester.firePreUpdateObjective(quest, ObjectiveType.PASSWORD, index);
             progress.getPasswordsSaid().set(index, true);
+            quester.firePostUpdateObjective(quest, ObjectiveType.PASSWORD, index);
             quester.finishObjective(quest, ObjectiveType.PASSWORD, index);
         }
         quester.checkQuest(quest);

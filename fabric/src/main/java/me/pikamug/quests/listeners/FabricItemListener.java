@@ -231,9 +231,11 @@ public class FabricItemListener {
             final Object goal = goals.get(i);
             if (!(goal instanceof ItemStack) || !FabricItemUtil.matches(item, (ItemStack) goal)) continue;
             final int goalAmount = Math.max(1, ((ItemStack) goal).getCount());
+            quester.firePreUpdateObjective(quest, type, i);
             final int before = progress.get(i);
             final int after = Math.min(item.getCount() + before, goalAmount);
             progress.set(i, after);
+            quester.firePostUpdateObjective(quest, type, i);
             if (before < goalAmount && after >= goalAmount) {
                 quester.finishObjective(quest, type, i);
             }

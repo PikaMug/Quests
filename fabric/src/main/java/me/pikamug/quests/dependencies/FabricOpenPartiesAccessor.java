@@ -32,7 +32,7 @@ import java.util.UUID;
  */
 public class FabricOpenPartiesAccessor {
 
-    public List<UUID> getPartyMemberUuids(MinecraftServer server, UUID memberId) {
+    public List<UUID> getPartyMemberUuids(final MinecraftServer server, final UUID memberId) {
         final List<UUID> uuids = new LinkedList<>();
         final IServerPartyAPI party = getParty(server, memberId);
         if (party == null) return uuids;
@@ -44,7 +44,7 @@ public class FabricOpenPartiesAccessor {
         return uuids;
     }
 
-    public List<ServerPlayer> getOnlinePartyMembers(MinecraftServer server, UUID memberId) {
+    public List<ServerPlayer> getOnlinePartyMembers(final MinecraftServer server, final UUID memberId) {
         final List<ServerPlayer> members = new LinkedList<>();
         final IServerPartyAPI party = getParty(server, memberId);
         if (party == null) return members;
@@ -56,7 +56,7 @@ public class FabricOpenPartiesAccessor {
         return members;
     }
 
-    public List<String> getClaimNamesAt(MinecraftServer server, ServerPlayer player) {
+    public List<String> getClaimNamesAt(final MinecraftServer server, final ServerPlayer player) {
         final List<String> names = new LinkedList<>();
         if (server == null || player == null) return names;
         final OpenPACServerAPI api = OpenPACServerAPI.get(server);
@@ -86,7 +86,7 @@ public class FabricOpenPartiesAccessor {
         return names;
     }
 
-    public List<String> getKnownClaimNames(MinecraftServer server) {
+    public List<String> getKnownClaimNames(final MinecraftServer server) {
         final List<String> names = new LinkedList<>();
         if (server == null) return names;
         final OpenPACServerAPI api = OpenPACServerAPI.get(server);
@@ -121,7 +121,7 @@ public class FabricOpenPartiesAccessor {
         return names;
     }
 
-    private void addName(List<String> names, String name) {
+    private void addName(final List<String> names, final String name) {
         if (name == null || name.isEmpty()) return;
         if (!names.contains(name)) {
             names.add(name);
@@ -132,7 +132,7 @@ public class FabricOpenPartiesAccessor {
         }
     }
 
-    private IServerPartyAPI getParty(MinecraftServer server, UUID memberId) {
+    private IServerPartyAPI getParty(final MinecraftServer server, final UUID memberId) {
         final OpenPACServerAPI api = OpenPACServerAPI.get(server);
         if (api == null) return null;
         final IPartyManagerAPI partyManager = api.getPartyManager();

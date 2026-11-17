@@ -19,6 +19,7 @@ import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenNumericPromptEvent;
 
 public class FabricQuestStageMenuPrompt extends FabricQuestsEditorIntegerPrompt {
 
@@ -79,6 +80,10 @@ public class FabricQuestStageMenuPrompt extends FabricQuestsEditorIntegerPrompt 
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricQuestsEditorPostOpenNumericPromptEvent event
+                = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final StringBuilder text = new StringBuilder(ChatFormatting.LIGHT_PURPLE + "- " + getTitle() + " -");
         for (int i = 1; i <= (getStages() + size); i++) {
             text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)

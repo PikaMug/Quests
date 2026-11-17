@@ -15,7 +15,15 @@ import me.pikamug.quests.Quests;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.convo.misc.FabricQuestAbandonPrompt;
 import me.pikamug.quests.convo.misc.FabricQuestAcceptPrompt;
+import me.pikamug.quests.dependencies.npc.FabricNpcDependency;
 import me.pikamug.quests.enums.ObjectiveType;
+import me.pikamug.quests.events.quest.FabricQuestQuitEvent;
+import me.pikamug.quests.events.quest.FabricQuestTakeEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPostStartQuestEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPostUpdateObjectiveEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPreOpenGUIEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPreStartQuestEvent;
+import me.pikamug.quests.events.quester.FabricQuesterPreUpdateObjectiveEvent;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.module.CustomRequirement;
 import me.pikamug.quests.module.FabricCustomObjective;
@@ -33,6 +41,7 @@ import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricInventoryUtil;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLang;
+import me.pikamug.quests.util.FabricLocation;
 import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.FabricOfflinePlayer;
 import net.minecraft.ChatFormatting;
@@ -44,6 +53,11 @@ import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -505,11 +519,9 @@ public class FabricQuester implements Quester {
         if (quest == null) {
             return false;
         }
-        if (plugin.getConfigSettings().getMaxQuests() > 0
-                && currentQuests.size() >= plugin.getConfigSettings().getMaxQuests()
-                && !quest.getOptions().canOverrideMaxQuests()) {
-            if (giveReason) sendMessage(FabricLang.get(getPlayer(), "questMaxAllowed")
-                    .replace("<number>", String.valueOf(plugin.getConfigSettings().getMaxQuests())));
+        final FabricQuestTakeEvent event = new FabricQuestTakeEvent(quest, this);
+        FabricQuestTakeEvent.EVENT.invoker().onEvent(event);
+        if (event.isCancelled()) {
             return false;
         }
         if (canAcceptOffer(quest, giveReason)) {
@@ -547,52 +559,75 @@ public class FabricQuester implements Quester {
         if (quest == null) {
             return false;
         }
-        FabricQuest fabricQuest = (FabricQuest) quest;
+        final FabricQuest fabricQuest = (FabricQuest) quest;
         if (!plugin.getConfigSettings().canAllowCommandsForNpcQuests() && fabricQuest.getNpcStart() != null) {
             final UUID uuid = fabricQuest.getNpcStart();
-            final ServerPlayer player = getPlayer();
-            final ServerPlayer npc = plugin.getServer() == null ? null
-                    : plugin.getServer().getPlayerList().getPlayer(uuid);
-            if (player != null && npc != null && player.level().dimension()
-                    .equals(npc.level().dimension())) {
-                if (player.blockPosition().distSqr(npc.blockPosition()) > 36) {
+            for (final FabricNpcDependency npcDependency : plugin.getDependencies().getNpcDependencies()) {
+                final FabricLocation npcLocation = npcDependency.getLocation(uuid);
+                if (npcLocation == null) continue;
+
+                if (npcLocation.getWorld() != null
+                        && npcLocation.getWorld().dimension().identifier().equals(getPlayer().level().dimension().identifier())
+                        && npcLocation.distance(new FabricLocation(getPlayer().level(), getPlayer().blockPosition())) > 6.0) {
                     if (giveReason) {
-                        final String msg = FabricLang.get(getPlayer(), "mustSpeakTo").replace("<npc>",
-                                plugin.getDependencies().getNpcName(uuid));
+                        final String msg = FabricLang.get(getPlayer(), "mustSpeakTo").replace("<npc>", plugin.getDependencies().getNpcName(uuid));
                         sendMessage(ChatFormatting.YELLOW + msg);
                     }
                     return false;
                 }
             }
         }
-        if (currentQuests.containsKey(quest)) {
-            if (giveReason) sendMessage(FabricLang.get(getPlayer(), "questAlreadyOn"));
+        if (quest.getOptions().canGiveGloballyAtLogin() && !quest.getOptions().canOverrideMaxQuests()
+                && getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()) {
+            if (giveReason) {
+                final String msg = FabricLang.get(getPlayer(), "questMaxAllowed").replace("<number>",
+                        String.valueOf(plugin.getConfigSettings().getMaxQuests()));
+                sendMessage(ChatFormatting.RED + msg);
+            }
             return false;
-        }
-        if (completedQuests.contains(quest) && !quest.getPlanner().hasRepeat()) {
-            if (giveReason) sendMessage(FabricLang.get(getPlayer(), "questAlreadyCompleted"));
+        } else if (!quest.getOptions().canGiveGloballyAtLogin() && plugin.getConfigSettings().getMaxQuests() > 0
+                && getCurrentQuests().size() >= plugin.getConfigSettings().getMaxQuests()) {
+            if (giveReason) {
+                final String msg = FabricLang.get(getPlayer(), "questMaxAllowed").replace("<number>",
+                        String.valueOf(plugin.getConfigSettings().getMaxQuests()));
+                sendMessage(ChatFormatting.YELLOW + msg);
+            }
             return false;
-        }
-        if (getRemainingCooldown(quest) > 0 && completedQuests.contains(quest)
-                && !quest.getPlanner().getOverride()) {
+        } else if (getCurrentQuests().containsKey(fabricQuest)) {
+            if (giveReason) {
+                final String msg = FabricLang.get(getPlayer(), "questAlreadyOn");
+                sendMessage(ChatFormatting.YELLOW + msg);
+            }
+            return false;
+        } else if (fabricQuest.getPlanner().getCooldown() < 0 && getCompletedQuests().contains(fabricQuest)) {
+            if (giveReason) {
+                final String msg = FabricLang.get(getPlayer(), "questAlreadyCompleted")
+                        .replace("<quest>", fabricQuest.getName());
+                sendMessage(ChatFormatting.YELLOW + msg);
+            }
+            return false;
+        } else if (fabricQuest.getBlockStart() != null) {
+            if (giveReason) {
+                final String msg = FabricLang.get(getPlayer(), "noCommandStart").replace("<quest>",
+                        fabricQuest.getName());
+                sendMessage(ChatFormatting.YELLOW + msg);
+            }
+            return false;
+        } else if (getRemainingCooldown(fabricQuest) > 0 && getCompletedQuests().contains(fabricQuest)
+                && !fabricQuest.getPlanner().getOverride()) {
             if (giveReason) {
                 final String msg = FabricLang.get(getPlayer(), "questTooEarly").replace("<quest>",
-                        quest.getName()).replace("<time>", FabricMiscUtil
-                        .getTime(getRemainingCooldown(quest)));
-                sendMessage(msg);
+                        fabricQuest.getName()).replace("<time>", FabricMiscUtil
+                        .getTime(getRemainingCooldown(fabricQuest)));
+                sendMessage(ChatFormatting.YELLOW + msg);
             }
             return false;
-        }
-        if (quest.getRegionStart() != null && !quest.isInRegionStart(this)) {
-            if (giveReason) {
-                sendMessage(FabricLang.get(getPlayer(), "questInvalidLocation").replace("<quest>", quest.getName()));
-            }
-            return false;
-        }
-        if (quest instanceof FabricQuest) {
-            if (fabricQuest.getBlockStart() != null) {
+        } else if (fabricQuest.getRegionStart() != null) {
+            if (!fabricQuest.isInRegionStart(this)) {
                 if (giveReason) {
-                    sendMessage(FabricLang.get(getPlayer(), "noCommandStart").replace("<quest>", quest.getName()));
+                    final String msg = FabricLang.get(getPlayer(), "questInvalidLocation").replace("<quest>",
+                            fabricQuest.getName());
+                    sendMessage(ChatFormatting.YELLOW + msg);
                 }
                 return false;
             }
@@ -600,8 +635,16 @@ public class FabricQuester implements Quester {
         return true;
     }
 
-    @Override
-    public boolean isOnTime(Quest quest, boolean giveReason) {
+    /**
+     * Check if Quester is not too early or late for a planned quest<p>
+     *
+     * For player cooldown, use {@link #canAcceptOffer(Quest, boolean)} instead
+     *
+     * @param quest The quest to check
+     * @param giveReason Whether to inform Quester of unpunctuality
+     * @return true if on time
+     */
+    public boolean isOnTime(final Quest quest, final boolean giveReason) {
         if (quest == null) return true;
         final Planner pln = quest.getPlanner();
         final long currentTime = System.currentTimeMillis();
@@ -609,38 +652,38 @@ public class FabricQuester implements Quester {
         final long end = pln.getEndInMillis(); // End time in milliseconds since UTC epoch
         final long duration = end - start; // How long the quest can be active for
         final long repeat = pln.getRepeat(); // Length to wait in-between start times
-        if (pln.hasStart()) {
+        if (start != -1) {
             if (currentTime < start) {
                 if (giveReason) {
                     String early = FabricLang.get(getPlayer(), "plnTooEarly");
                     early = early.replace("<quest>", quest.getName());
                     early = early.replace("<time>", FabricMiscUtil.getTime(start - currentTime));
-                    sendMessage(early);
+                    sendMessage(ChatFormatting.YELLOW + early);
                 }
                 return false;
             }
         }
-        if (pln.hasEnd() && !pln.hasRepeat()) {
+        if (end != -1 && repeat == -1) {
             if (currentTime > end) {
                 if (giveReason) {
                     String late = FabricLang.get(getPlayer(), "plnTooLate");
                     late = late.replace("<quest>", quest.getName());
                     late = late.replace("<time>", FabricMiscUtil.getTime(currentTime - end));
-                    sendMessage(late);
+                    sendMessage(ChatFormatting.RED + late);
                 }
                 return false;
             }
         }
-        if (pln.hasRepeat() && pln.hasStart() && pln.hasEnd()) {
+        if (repeat != -1 && start != -1 && end != -1) {
             // Repeatable quest
             if (currentTime <= end) {
                 // Initial period where quest may be active
-                if (getCompletedTimes().containsKey(quest) && pln.hasCooldown()
+                if (getCompletedTimes().containsKey(quest) && quest.getPlanner().getCooldown() > -1
                         && getRemainingCooldown(quest) > 0) {
                     if (giveReason) {
                         final String early = FabricLang.get(getPlayer(), "plnTooEarly").replace("<quest>", quest.getName())
                                 .replace("<time>", FabricMiscUtil.getTime(end - currentTime));
-                        sendMessage(early);
+                        sendMessage(ChatFormatting.YELLOW + early);
                         return false;
                     }
                 }
@@ -689,7 +732,7 @@ public class FabricQuester implements Quester {
                     if (giveReason) {
                         final String early = FabricLang.get(getPlayer(), "plnTooEarly").replace("<quest>", quest.getName())
                                 .replace("<time>", FabricMiscUtil.getTime(completedEnd - currentTime));
-                        sendMessage(early);
+                        sendMessage(ChatFormatting.YELLOW + early);
                     }
                     return false;
                 }
@@ -698,9 +741,21 @@ public class FabricQuester implements Quester {
         return true;
     }
 
-    @Override
-    public void takeQuest(Quest quest, boolean ignoreRequirements) {
-        if (quest == null) return;
+    /**
+     * Start a quest for this Quester
+     *
+     * @param quest The quest to start
+     * @param ignoreRequirements Whether to ignore Requirements
+     */
+    public void takeQuest(final Quest quest, final boolean ignoreRequirements) {
+        if (quest == null) {
+            return;
+        }
+        final FabricQuesterPreStartQuestEvent preEvent = new FabricQuesterPreStartQuestEvent(this, quest);
+        FabricQuesterPreStartQuestEvent.EVENT.invoker().onEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return;
+        }
         if (getPlayer() != null) {
             if (!isOnTime(quest, true)) {
                 return;
@@ -782,16 +837,40 @@ public class FabricQuester implements Quester {
         setCompassTarget(quest);
         quest.updateCompass(this, stage);
         updateJournal();
+        if (getPlayer() != null) {
+            final FabricQuesterPostStartQuestEvent postEvent = new FabricQuesterPostStartQuestEvent(this, quest);
+            FabricQuesterPostStartQuestEvent.EVENT.invoker().onEvent(postEvent);
+        }
     }
 
-    @Override
-    public boolean abandonQuest(Quest quest, String message) {
+    /**
+     * End a quest for this Quester, but ask permission first if possible<p>
+     *
+     * @param quest The quest to check and then offer
+     * @param message Message to send Quester upon quit, can be left null or empty
+     * @return true if successful
+     */
+    public boolean abandonQuest(final Quest quest, final String message) {
         return abandonQuest(quest, message != null ? new String[]{message} : new String[0]);
     }
 
-    @Override
-    public boolean abandonQuest(Quest quest, String[] messages) {
-        if (quest == null || !currentQuests.containsKey(quest)) {
+    /**
+     * End a quest for this Quester, but ask permission first if possible<p>
+     *
+     * @param quest The quest to check and then offer
+     * @param messages Messages to send Quester upon quit, can be left null or empty
+     * @return true if successful
+     */
+    public boolean abandonQuest(final Quest quest, final String[] messages) {
+        if (quest == null) {
+            return false;
+        }
+        final FabricQuestQuitEvent quitEvent = new FabricQuestQuitEvent(quest, this);
+        FabricQuestQuitEvent.EVENT.invoker().onEvent(quitEvent);
+        if (quitEvent.isCancelled()) {
+            return false;
+        }
+        if (!currentQuests.containsKey(quest)) {
             return false;
         }
         if (!quest.getOptions().canAllowQuitting()) {
@@ -1396,6 +1475,46 @@ public class FabricQuester implements Quester {
             case MILK_COW: return fs.getCowsToMilk() != null ? fs.getCowsToMilk() : 0;
             default: return 1;
         }
+    }
+
+    private Object itemGoalObject(final LinkedList<?> items, final int index) {
+        if (items == null || items.size() <= index || !(items.get(index) instanceof ItemStack)) return 1;
+        return items.get(index);
+    }
+
+    private Object objectiveGoalObject(final Stage stage, final ObjectiveType type, final int index) {
+        final FabricStage fs = (FabricStage) stage;
+        switch (type) {
+            case CRAFT_ITEM: return itemGoalObject(fs.getItemsToCraft(), index);
+            case SMELT_ITEM: return itemGoalObject(fs.getItemsToSmelt(), index);
+            case ENCHANT_ITEM: return itemGoalObject(fs.getItemsToEnchant(), index);
+            case BREW_ITEM: return itemGoalObject(fs.getItemsToBrew(), index);
+            case CONSUME_ITEM: return itemGoalObject(fs.getItemsToConsume(), index);
+            case DELIVER_ITEM: return itemGoalObject(fs.getItemsToDeliver(), index);
+            default: return objectiveGoal(stage, type, index);
+        }
+    }
+
+    public void firePreUpdateObjective(final Quest quest, final ObjectiveType type, final int index) {
+        if (quest == null || type == null) return;
+        final Stage stage = getCurrentStage(quest);
+        final QuestProgress progress = getQuestProgress(quest);
+        if (stage == null || progress == null) return;
+        final FabricObjective objective = new FabricObjective(type, null,
+                objectiveProgress(progress, type, index), objectiveGoalObject(stage, type, index));
+        FabricQuesterPreUpdateObjectiveEvent.EVENT.invoker().onEvent(
+                new FabricQuesterPreUpdateObjectiveEvent(this, quest, objective));
+    }
+
+    public void firePostUpdateObjective(final Quest quest, final ObjectiveType type, final int index) {
+        if (quest == null || type == null) return;
+        final Stage stage = getCurrentStage(quest);
+        final QuestProgress progress = getQuestProgress(quest);
+        if (stage == null || progress == null) return;
+        final FabricObjective objective = new FabricObjective(type, null,
+                objectiveProgress(progress, type, index), objectiveGoalObject(stage, type, index));
+        FabricQuesterPostUpdateObjectiveEvent.EVENT.invoker().onEvent(
+                new FabricQuesterPostUpdateObjectiveEvent(this, quest, objective));
     }
 
     private int objectiveProgress(final QuestProgress progress, final ObjectiveType type, final int index) {
@@ -2080,16 +2199,75 @@ public class FabricQuester implements Quester {
 
     @Override
     public void showGUIDisplay(UUID npc, LinkedList<Quest> quests) {
-        if (quests == null || quests.isEmpty()) {
+        if (npc == null || quests == null) {
+            return;
+        }
+        final LinkedList<FabricQuest> guiQuests = new LinkedList<>();
+        for (final Quest quest : quests) {
+            guiQuests.add((FabricQuest) quest);
+        }
+        final FabricQuesterPreOpenGUIEvent preEvent = new FabricQuesterPreOpenGUIEvent(this, npc, guiQuests);
+        FabricQuesterPreOpenGUIEvent.EVENT.invoker().onEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return;
+        }
+        if (quests.isEmpty()) {
             sendMessage(FabricLang.get(getPlayer(), "noCurrentQuest"));
             return;
         }
-        sendMessage(ChatFormatting.GOLD + "--- Available Quests ---");
+        final ServerPlayer player = getPlayer();
+        if (player == null) {
+            return;
+        }
+        final int rows = Math.min(6, quests.size() / 9 + 1);
+        final QuestMenuContainer container = new QuestMenuContainer(rows * 9);
+        int slot = 0;
         for (final Quest quest : quests) {
-            final String info = ChatFormatting.GRAY + "- " + ChatFormatting.WHITE + quest.getName()
-                    + " " + ChatFormatting.DARK_GRAY + "("
-                    + (quest.getDescription() != null ? quest.getDescription() : "No description") + ")";
-            sendMessage(info);
+            final FabricQuest fabricQuest = (FabricQuest) quest;
+            if (fabricQuest.getGUIDisplay() == null) {
+                continue;
+            }
+            if (slot >= container.getContainerSize()) {
+                break;
+            }
+            container.setItem(slot++, fabricQuest.prepareDisplay(this));
+        }
+        final String title = FabricLang.get(player, "quests") + " | "
+                + plugin.getDependencies().getNpcName(npc);
+        player.openMenu(new SimpleMenuProvider((id, inventory, ignored) ->
+                createQuestMenu(rows, id, inventory, container), Component.literal(title)));
+    }
+
+    private static ChestMenu createQuestMenu(final int rows, final int id,
+                                             final net.minecraft.world.entity.player.Inventory inventory,
+                                             final Container container) {
+        final MenuType<ChestMenu> type;
+        switch (rows) {
+            case 1:
+                type = MenuType.GENERIC_9x1;
+                break;
+            case 2:
+                type = MenuType.GENERIC_9x2;
+                break;
+            case 3:
+                type = MenuType.GENERIC_9x3;
+                break;
+            case 4:
+                type = MenuType.GENERIC_9x4;
+                break;
+            case 5:
+                type = MenuType.GENERIC_9x5;
+                break;
+            default:
+                type = MenuType.GENERIC_9x6;
+                break;
+        }
+        return new ChestMenu(type, id, inventory, container, rows);
+    }
+
+    public static final class QuestMenuContainer extends SimpleContainer {
+        public QuestMenuContainer(final int size) {
+            super(size);
         }
     }
 

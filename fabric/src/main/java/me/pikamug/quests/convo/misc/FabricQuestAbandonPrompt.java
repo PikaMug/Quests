@@ -12,6 +12,7 @@ package me.pikamug.quests.convo.misc;
 
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.config.FabricConfigSettings;
+import me.pikamug.quests.events.misc.FabricMiscPostQuestAbandonEvent;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricLang;
 import net.minecraft.ChatFormatting;
@@ -82,6 +83,9 @@ public class FabricQuestAbandonPrompt extends FabricMiscStringPrompt {
         if (plugin == null) {
             return ChatFormatting.YELLOW + FabricLang.get("itemCreateCriticalError");
         }
+
+        final FabricMiscPostQuestAbandonEvent event = new FabricMiscPostQuestAbandonEvent(uuid, this);
+        FabricMiscPostQuestAbandonEvent.EVENT.invoker().onEvent(event);
 
         final FabricConfigSettings configSettings = (FabricConfigSettings) plugin.getConfigSettings();
         if (!configSettings.canClickablePrompts()) {

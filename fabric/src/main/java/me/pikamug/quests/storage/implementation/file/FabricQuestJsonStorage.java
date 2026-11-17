@@ -161,9 +161,12 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             } catch (final Exception ignored) {}
         }
         if (json.has("gui-display")) {
-            // Gui display is stored as a string for now
-            if (json.get("gui-display").isJsonPrimitive()) {
-                quest.getRewards().setDetailsOverride(List.of(json.get("gui-display").getAsString()));
+            final JsonElement displayElement = json.get("gui-display");
+            final ItemStack display = displayElement.isJsonObject()
+                    ? FabricItemUtil.deserializeFromJson(displayElement)
+                    : FabricItemUtil.readItemStack(displayElement.getAsString());
+            if (!display.isEmpty()) {
+                quest.setGUIDisplay(display);
             }
         }
         // Parse requirements

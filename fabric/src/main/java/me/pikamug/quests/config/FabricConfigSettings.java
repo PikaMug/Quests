@@ -21,9 +21,6 @@ import java.nio.file.Files;
 public class FabricConfigSettings implements ConfigSettings {
 
     private final FabricQuestsPlugin plugin;
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private JsonObject config;
-
     private int acceptTimeout = 20;
     private boolean allowCommands = true;
     private boolean allowCommandsForNpcQuests = false;
@@ -54,20 +51,192 @@ public class FabricConfigSettings implements ConfigSettings {
     private boolean translateNames = true;
     private boolean translateSubCommands = false;
     private boolean updateCheck = true;
-    private String storageMethod = "yaml";
-    private String storageAddress;
-    private String storageDatabase;
-    private String storageUsername;
-    private String storagePassword;
-    private String storageTablePrefix = "";
-    private int storageMaxPoolSize = 10;
-    private int storageMinIdle = 10;
-    private int storageMaxLifetime = 1800000;
-    private int storageKeepAliveTime = 0;
-    private int storageConnectionTimeout = 5000;
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private JsonObject config;
 
     public FabricConfigSettings(final FabricQuestsPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    public int getAcceptTimeout() {
+        return acceptTimeout;
+    }
+    public void setAcceptTimeout(final int acceptTimeout) {
+        this.acceptTimeout = acceptTimeout;
+    }
+    public boolean canAllowCommands() {
+        return allowCommands;
+    }
+    public void setAllowCommands(final boolean allowCommands) {
+        this.allowCommands = allowCommands;
+    }
+    public boolean canAllowCommandsForNpcQuests() {
+        return allowCommandsForNpcQuests;
+    }
+    public void setAllowCommandsForNpcQuests(final boolean allowCommandsForNpcQuests) {
+        this.allowCommandsForNpcQuests = allowCommandsForNpcQuests;
+    }
+    public boolean canAllowPranks() {
+        return allowPranks;
+    }
+    public void setAllowPranks(final boolean allowPranks) {
+        this.allowPranks = allowPranks;
+    }
+    public boolean canClickablePrompts() {
+        return clickablePrompts;
+    }
+    public void setClickablePrompts(boolean clickablePrompts) {
+        this.clickablePrompts = clickablePrompts;
+    }
+    public int getConditionInterval() {
+        return conditionInterval;
+    }
+    public void setConditionInterval(final int conditionInterval) {
+        this.conditionInterval = conditionInterval;
+    }
+    public boolean canConfirmAbandon() {
+        return confirmAbandon;
+    }
+    public void setConfirmAbandon(final boolean confirmAbandon) {
+        this.confirmAbandon = confirmAbandon;
+    }
+    public boolean canConfirmAccept() {
+        return confirmAccept;
+    }
+    public void setConfirmAccept(final boolean confirmAccept) {
+        this.confirmAccept = confirmAccept;
+    }
+    public int getConsoleLogging() {
+        return consoleLogging;
+    }
+    public void setConsoleLogging(final int consoleLogging) {
+        this.consoleLogging = consoleLogging;
+    }
+    public boolean canDisableCommandFeedback() {
+        return disableCommandFeedback;
+    }
+    public void setDisableCommandFeedback(final boolean disableCommandFeedback) {
+        this.disableCommandFeedback = disableCommandFeedback;
+    }
+    public boolean canGenFilesOnJoin() {
+        return genFilesOnJoin;
+    }
+    public void setGenFilesOnJoin(final boolean genFilesOnJoin) {
+        this.genFilesOnJoin = genFilesOnJoin;
+    }
+    public boolean canGiveJournalItem() {
+        return giveJournalItem;
+    }
+    public void setGiveJournalItem(final boolean giveJournalItem) {
+        this.giveJournalItem = giveJournalItem;
+    }
+    public boolean canIgnoreLockedQuests() {
+        return ignoreLockedQuests;
+    }
+    public void setIgnoreLockedQuests(final boolean ignoreLockedQuests) {
+        this.ignoreLockedQuests = ignoreLockedQuests;
+    }
+    public int getKillDelay() {
+        return killDelay;
+    }
+    public void setKillDelay(final int killDelay) {
+        this.killDelay = killDelay;
+    }
+    public String getLanguage() {
+        return language;
+    }
+    public void setLanguage(final String language) {
+        this.language = language;
+    }
+    public boolean canLanguageOverrideClient() {
+        return languageOverrideClient;
+    }
+    public void setLanguageOverrideClient(final boolean languageOverrideClient) {
+        this.languageOverrideClient = languageOverrideClient;
+    }
+    public int getMaxQuests() {
+        return maxQuests;
+    }
+    public void setMaxQuests(final int maxQuests) {
+        this.maxQuests = maxQuests;
+    }
+    public boolean canNpcEffects() {
+        return npcEffects;
+    }
+    public void setNpcEffects(final boolean npcEffects) {
+        this.npcEffects = npcEffects;
+    }
+    public String getEffect() {
+        return effect;
+    }
+    public void setEffect(final String effect) {
+        this.effect = effect;
+    }
+    public String getRedoEffect() {
+        return redoEffect;
+    }
+    public void setRedoEffect(final String redoEffect) {
+        this.redoEffect = redoEffect;
+    }
+    public boolean canPreventExploit() {
+        return preventExploit;
+    }
+    public void setPreventExploit(final boolean preventExploit) {
+        this.preventExploit = preventExploit;
+    }
+    public boolean canShowCompletedObjs() {
+        return showCompletedObjs;
+    }
+    public void setShowCompletedObjs(final boolean showCompletedObjs) {
+        this.showCompletedObjs = showCompletedObjs;
+    }
+    public boolean canShowQuestReqs() {
+        return showQuestReqs;
+    }
+    public void setShowQuestReqs(final boolean showQuestReqs) {
+        this.showQuestReqs = showQuestReqs;
+    }
+    public boolean canShowQuestTitles() {
+        return showQuestTitles;
+    }
+    public void setShowQuestTitles(final boolean showQuestTitles) {
+        this.showQuestTitles = showQuestTitles;
+    }
+    public int getStrictPlayerMovement() {
+        return strictPlayerMovement;
+    }
+    public void setStrictPlayerMovement(final int strictPlayerMovement) {
+        this.strictPlayerMovement = strictPlayerMovement;
+    }
+    public boolean canTrialSave() {
+        return trialSave;
+    }
+    public void setTrialSave(final boolean trialSave) {
+        this.trialSave = trialSave;
+    }
+    public int getTopLimit() {
+        return topLimit;
+    }
+    public void setTopLimit(final int topLimit) {
+        this.topLimit = topLimit;
+    }
+    public boolean canTranslateNames() {
+        return translateNames;
+    }
+    public void setTranslateNames(final boolean translateItems) {
+        this.translateNames = translateItems;
+    }
+    public boolean canTranslateSubCommands() {
+        return translateSubCommands;
+    }
+    public void setTranslateSubCommands(final boolean translateSubCommands) {
+        this.translateSubCommands = translateSubCommands;
+    }
+    public boolean canUpdateCheck() {
+        return updateCheck;
+    }
+    public void setUpdateCheck(final boolean updateCheck) {
+        this.updateCheck = updateCheck;
     }
 
     @Override
@@ -82,60 +251,6 @@ public class FabricConfigSettings implements ConfigSettings {
             plugin.getPluginLogger().error("Failed to load config.json", e);
             config = new JsonObject();
         }
-        loadValues();
-    }
-
-    private void createDefaultConfig(final File configFile) {
-        final JsonObject defaults = new JsonObject();
-        defaults.addProperty("acceptTimeout", acceptTimeout);
-        defaults.addProperty("allowCommands", allowCommands);
-        defaults.addProperty("allowCommandsForNpcQuests", allowCommandsForNpcQuests);
-        defaults.addProperty("allowPranks", allowPranks);
-        defaults.addProperty("clickablePrompts", clickablePrompts);
-        defaults.addProperty("conditionInterval", conditionInterval);
-        defaults.addProperty("confirmAbandon", confirmAbandon);
-        defaults.addProperty("confirmAccept", confirmAccept);
-        defaults.addProperty("consoleLogging", consoleLogging);
-        defaults.addProperty("disableCommandFeedback", disableCommandFeedback);
-        defaults.addProperty("genFilesOnJoin", genFilesOnJoin);
-        defaults.addProperty("giveJournalItem", giveJournalItem);
-        defaults.addProperty("ignoreLockedQuests", ignoreLockedQuests);
-        defaults.addProperty("killDelay", killDelay);
-        defaults.addProperty("language", language);
-        defaults.addProperty("languageOverrideClient", languageOverrideClient);
-        defaults.addProperty("maxQuests", maxQuests);
-        defaults.addProperty("npcEffects", npcEffects);
-        defaults.addProperty("effect", effect);
-        defaults.addProperty("redoEffect", redoEffect);
-        defaults.addProperty("preventExploit", preventExploit);
-        defaults.addProperty("showCompletedObjs", showCompletedObjs);
-        defaults.addProperty("showQuestReqs", showQuestReqs);
-        defaults.addProperty("showQuestTitles", showQuestTitles);
-        defaults.addProperty("strictPlayerMovement", strictPlayerMovement);
-        defaults.addProperty("trialSave", trialSave);
-        defaults.addProperty("topLimit", topLimit);
-        defaults.addProperty("translateNames", translateNames);
-        defaults.addProperty("translateSubCommands", translateSubCommands);
-        defaults.addProperty("updateCheck", updateCheck);
-        defaults.addProperty("storageMethod", storageMethod);
-        defaults.addProperty("storageAddress", storageAddress);
-        defaults.addProperty("storageDatabase", storageDatabase);
-        defaults.addProperty("storageUsername", storageUsername);
-        defaults.addProperty("storagePassword", storagePassword);
-        defaults.addProperty("storageTablePrefix", storageTablePrefix);
-        defaults.addProperty("storageMaxPoolSize", storageMaxPoolSize);
-        defaults.addProperty("storageMinIdle", storageMinIdle);
-        defaults.addProperty("storageMaxLifetime", storageMaxLifetime);
-        defaults.addProperty("storageKeepAliveTime", storageKeepAliveTime);
-        defaults.addProperty("storageConnectionTimeout", storageConnectionTimeout);
-        try (Writer writer = Files.newBufferedWriter(configFile.toPath())) {
-            gson.toJson(defaults, writer);
-        } catch (final IOException e) {
-            plugin.getPluginLogger().error("Failed to create default config.json", e);
-        }
-    }
-
-    private void loadValues() {
         if (config == null) return;
         acceptTimeout = getInt("acceptTimeout", acceptTimeout);
         allowCommands = getBool("allowCommands", allowCommands);
@@ -171,17 +286,45 @@ public class FabricConfigSettings implements ConfigSettings {
         translateNames = getBool("translateNames", translateNames);
         translateSubCommands = getBool("translateSubCommands", translateSubCommands);
         updateCheck = getBool("updateCheck", updateCheck);
-        storageMethod = getString("storageMethod", storageMethod);
-        storageAddress = getString("storageAddress", storageAddress);
-        storageDatabase = getString("storageDatabase", storageDatabase);
-        storageUsername = getString("storageUsername", storageUsername);
-        storagePassword = getString("storagePassword", storagePassword);
-        storageTablePrefix = getString("storageTablePrefix", storageTablePrefix);
-        storageMaxPoolSize = getInt("storageMaxPoolSize", storageMaxPoolSize);
-        storageMinIdle = getInt("storageMinIdle", storageMinIdle);
-        storageMaxLifetime = getInt("storageMaxLifetime", storageMaxLifetime);
-        storageKeepAliveTime = getInt("storageKeepAliveTime", storageKeepAliveTime);
-        storageConnectionTimeout = getInt("storageConnectionTimeout", storageConnectionTimeout);
+    }
+
+    private void createDefaultConfig(final File configFile) {
+        final JsonObject defaults = new JsonObject();
+        defaults.addProperty("acceptTimeout", acceptTimeout);
+        defaults.addProperty("allowCommands", allowCommands);
+        defaults.addProperty("allowCommandsForNpcQuests", allowCommandsForNpcQuests);
+        defaults.addProperty("allowPranks", allowPranks);
+        defaults.addProperty("clickablePrompts", clickablePrompts);
+        defaults.addProperty("conditionInterval", conditionInterval);
+        defaults.addProperty("confirmAbandon", confirmAbandon);
+        defaults.addProperty("confirmAccept", confirmAccept);
+        defaults.addProperty("consoleLogging", consoleLogging);
+        defaults.addProperty("disableCommandFeedback", disableCommandFeedback);
+        defaults.addProperty("genFilesOnJoin", genFilesOnJoin);
+        defaults.addProperty("giveJournalItem", giveJournalItem);
+        defaults.addProperty("ignoreLockedQuests", ignoreLockedQuests);
+        defaults.addProperty("killDelay", killDelay);
+        defaults.addProperty("language", language);
+        defaults.addProperty("languageOverrideClient", languageOverrideClient);
+        defaults.addProperty("maxQuests", maxQuests);
+        defaults.addProperty("npcEffects", npcEffects);
+        defaults.addProperty("effect", effect);
+        defaults.addProperty("redoEffect", redoEffect);
+        defaults.addProperty("preventExploit", preventExploit);
+        defaults.addProperty("showCompletedObjs", showCompletedObjs);
+        defaults.addProperty("showQuestReqs", showQuestReqs);
+        defaults.addProperty("showQuestTitles", showQuestTitles);
+        defaults.addProperty("strictPlayerMovement", strictPlayerMovement);
+        defaults.addProperty("trialSave", trialSave);
+        defaults.addProperty("topLimit", topLimit);
+        defaults.addProperty("translateNames", translateNames);
+        defaults.addProperty("translateSubCommands", translateSubCommands);
+        defaults.addProperty("updateCheck", updateCheck);
+        try (final Writer writer = Files.newBufferedWriter(configFile.toPath())) {
+            gson.toJson(defaults, writer);
+        } catch (final IOException e) {
+            plugin.getPluginLogger().error("Failed to create default config.json", e);
+        }
     }
 
     private int getInt(String key, int def) {
@@ -195,87 +338,4 @@ public class FabricConfigSettings implements ConfigSettings {
     private String getString(String key, String def) {
         return config.has(key) && config.get(key).isJsonPrimitive() ? config.get(key).getAsString() : def;
     }
-
-    private void setAndSave(String key, Object value) {
-        config.add(key, gson.toJsonTree(value));
-        final File configFile = new File(plugin.getPluginDataFolder(), "config.json");
-        try (Writer writer = Files.newBufferedWriter(configFile.toPath())) {
-            gson.toJson(config, writer);
-        } catch (final IOException e) {
-            plugin.getPluginLogger().error("Failed to save config.json", e);
-        }
-    }
-
-    @Override public int getAcceptTimeout() { return acceptTimeout; }
-    @Override public void setAcceptTimeout(int v) { acceptTimeout = v; setAndSave("acceptTimeout", v); }
-    @Override public boolean canAllowCommands() { return allowCommands; }
-    @Override public void setAllowCommands(boolean v) { allowCommands = v; setAndSave("allowCommands", v); }
-    @Override public boolean canAllowCommandsForNpcQuests() { return allowCommandsForNpcQuests; }
-    @Override public void setAllowCommandsForNpcQuests(boolean v) { allowCommandsForNpcQuests = v; setAndSave("allowCommandsForNpcQuests", v); }
-    @Override public boolean canAllowPranks() { return allowPranks; }
-    @Override public void setAllowPranks(boolean v) { allowPranks = v; setAndSave("allowPranks", v); }
-    @Override public boolean canClickablePrompts() { return clickablePrompts; }
-    @Override public void setClickablePrompts(boolean v) { clickablePrompts = v; setAndSave("clickablePrompts", v); }
-    @Override public int getConditionInterval() { return conditionInterval; }
-    @Override public void setConditionInterval(int v) { conditionInterval = v; setAndSave("conditionInterval", v); }
-    @Override public boolean canConfirmAbandon() { return confirmAbandon; }
-    @Override public void setConfirmAbandon(boolean v) { confirmAbandon = v; setAndSave("confirmAbandon", v); }
-    @Override public boolean canConfirmAccept() { return confirmAccept; }
-    @Override public void setConfirmAccept(boolean v) { confirmAccept = v; setAndSave("confirmAccept", v); }
-    @Override public int getConsoleLogging() { return consoleLogging; }
-    @Override public void setConsoleLogging(int v) { consoleLogging = v; setAndSave("consoleLogging", v); }
-    @Override public boolean canDisableCommandFeedback() { return disableCommandFeedback; }
-    @Override public void setDisableCommandFeedback(boolean v) { disableCommandFeedback = v; setAndSave("disableCommandFeedback", v); }
-    @Override public boolean canGenFilesOnJoin() { return genFilesOnJoin; }
-    @Override public void setGenFilesOnJoin(boolean v) { genFilesOnJoin = v; setAndSave("genFilesOnJoin", v); }
-    @Override public boolean canGiveJournalItem() { return giveJournalItem; }
-    @Override public void setGiveJournalItem(boolean v) { giveJournalItem = v; setAndSave("giveJournalItem", v); }
-    @Override public boolean canIgnoreLockedQuests() { return ignoreLockedQuests; }
-    @Override public void setIgnoreLockedQuests(boolean v) { ignoreLockedQuests = v; setAndSave("ignoreLockedQuests", v); }
-    @Override public int getKillDelay() { return killDelay; }
-    @Override public void setKillDelay(int v) { killDelay = v; setAndSave("killDelay", v); }
-    @Override public String getLanguage() { return language; }
-    @Override public void setLanguage(String v) { language = v; setAndSave("language", v); }
-    @Override public boolean canLanguageOverrideClient() { return languageOverrideClient; }
-    @Override public void setLanguageOverrideClient(boolean v) { languageOverrideClient = v; setAndSave("languageOverrideClient", v); }
-    @Override public int getMaxQuests() { return maxQuests; }
-    @Override public void setMaxQuests(int v) { maxQuests = v; setAndSave("maxQuests", v); }
-    @Override public boolean canNpcEffects() { return npcEffects; }
-    @Override public void setNpcEffects(boolean v) { npcEffects = v; setAndSave("npcEffects", v); }
-    @Override public String getEffect() { return effect; }
-    @Override public void setEffect(String v) { effect = v; setAndSave("effect", v); }
-    @Override public String getRedoEffect() { return redoEffect; }
-    @Override public void setRedoEffect(String v) { redoEffect = v; setAndSave("redoEffect", v); }
-    @Override public boolean canPreventExploit() { return preventExploit; }
-    @Override public void setPreventExploit(boolean v) { preventExploit = v; setAndSave("preventExploit", v); }
-    @Override public boolean canShowCompletedObjs() { return showCompletedObjs; }
-    @Override public void setShowCompletedObjs(boolean v) { showCompletedObjs = v; setAndSave("showCompletedObjs", v); }
-    @Override public boolean canShowQuestReqs() { return showQuestReqs; }
-    @Override public void setShowQuestReqs(boolean v) { showQuestReqs = v; setAndSave("showQuestReqs", v); }
-    @Override public boolean canShowQuestTitles() { return showQuestTitles; }
-    @Override public void setShowQuestTitles(boolean v) { showQuestTitles = v; setAndSave("showQuestTitles", v); }
-    @Override public int getStrictPlayerMovement() { return strictPlayerMovement; }
-    @Override public void setStrictPlayerMovement(int v) { strictPlayerMovement = v; setAndSave("strictPlayerMovement", v); }
-    @Override public boolean canTrialSave() { return trialSave; }
-    @Override public void setTrialSave(boolean v) { trialSave = v; setAndSave("trialSave", v); }
-    @Override public int getTopLimit() { return topLimit; }
-    @Override public void setTopLimit(int v) { topLimit = v; setAndSave("topLimit", v); }
-    @Override public boolean canTranslateNames() { return translateNames; }
-    @Override public void setTranslateNames(boolean v) { translateNames = v; setAndSave("translateNames", v); }
-    @Override public boolean canTranslateSubCommands() { return translateSubCommands; }
-    @Override public void setTranslateSubCommands(boolean v) { translateSubCommands = v; setAndSave("translateSubCommands", v); }
-    @Override public boolean canUpdateCheck() { return updateCheck; }
-    @Override public void setUpdateCheck(boolean v) { updateCheck = v; setAndSave("updateCheck", v); }
-
-    public String getStorageMethod() { return storageMethod; }
-    public String getStorageAddress() { return storageAddress; }
-    public String getStorageDatabase() { return storageDatabase; }
-    public String getStorageUsername() { return storageUsername; }
-    public String getStoragePassword() { return storagePassword; }
-    public String getStorageTablePrefix() { return storageTablePrefix; }
-    public int getStorageMaxPoolSize() { return storageMaxPoolSize; }
-    public int getStorageMinIdle() { return storageMinIdle; }
-    public int getStorageMaxLifetime() { return storageMaxLifetime; }
-    public int getStorageKeepAliveTime() { return storageKeepAliveTime; }
-    public int getStorageConnectionTimeout() { return storageConnectionTimeout; }
 }

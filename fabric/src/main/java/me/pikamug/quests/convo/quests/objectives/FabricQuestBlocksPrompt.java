@@ -27,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenNumericPromptEvent;
 
 public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
@@ -169,6 +171,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricQuestsEditorPostOpenNumericPromptEvent event
+                = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         SessionData.set(uuid, pref, Boolean.TRUE);
 
         final StringBuilder text = new StringBuilder(ChatFormatting.AQUA + "- " + getTitle() + " -");
@@ -331,6 +337,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -426,6 +436,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -497,6 +511,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -551,6 +569,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -695,6 +717,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -790,6 +816,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -861,6 +891,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -915,6 +949,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -1059,6 +1097,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -1154,6 +1196,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -1225,6 +1271,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -1279,6 +1329,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -1421,6 +1475,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -1516,6 +1574,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -1587,6 +1649,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -1641,6 +1707,10 @@ public class FabricQuestBlocksPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 

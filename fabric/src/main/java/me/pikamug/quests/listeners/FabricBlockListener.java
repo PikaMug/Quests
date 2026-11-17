@@ -60,13 +60,8 @@ public class FabricBlockListener {
     }
 
     private void register() {
-        // Block damaged (START_DESTROY_BLOCK). The mixin only fires for ServerPlayer.
         FabricMixinEvents.registerAttackBlock(this::onBlockDamage);
-
-        // Block used (right-click). The mixin only fires for ServerPlayer.
         FabricMixinEvents.registerUseBlock(this::onBlockUse);
-
-        // Blocks actually broken / placed. Both mixins only fire for ServerPlayer.
         FabricMixinEvents.registerBlockBroken(this::onBlockBroken);
         FabricMixinEvents.registerBlockPlaced(this::onBlockPlaced);
     }
@@ -105,8 +100,10 @@ public class FabricBlockListener {
                 final LinkedList<Integer> amounts = stage.getBlocksToDamageAmounts();
                 final int goal = (amounts != null && !amounts.isEmpty() && amounts.size() > i)
                         ? amounts.get(i) : 1;
+                quester.firePreUpdateObjective(quest, ObjectiveType.DAMAGE_BLOCK, i);
                 final int before = progress.getBlocksDamaged().get(i);
                 progress.getBlocksDamaged().set(i, before + 1);
+                quester.firePostUpdateObjective(quest, ObjectiveType.DAMAGE_BLOCK, i);
                 if (before < goal && progress.getBlocksDamaged().get(i) >= goal) {
                     quester.finishObjective(quest, ObjectiveType.DAMAGE_BLOCK, i);
                 }
@@ -170,8 +167,10 @@ public class FabricBlockListener {
                 final LinkedList<Integer> amounts = stage.getBlocksToBreakAmounts();
                 final int goal = (amounts != null && !amounts.isEmpty() && amounts.size() > i)
                         ? amounts.get(i) : 1;
+                quester.firePreUpdateObjective(quest, ObjectiveType.BREAK_BLOCK, i);
                 final int before = progress.getBlocksBroken().get(i);
                 progress.getBlocksBroken().set(i, before + 1);
+                quester.firePostUpdateObjective(quest, ObjectiveType.BREAK_BLOCK, i);
                 if (before < goal && progress.getBlocksBroken().get(i) >= goal) {
                     quester.finishObjective(quest, ObjectiveType.BREAK_BLOCK, i);
                 }
@@ -245,8 +244,10 @@ public class FabricBlockListener {
                 final LinkedList<Integer> amounts = stage.getBlocksToPlaceAmounts();
                 final int goal = (amounts != null && !amounts.isEmpty() && amounts.size() > i)
                         ? amounts.get(i) : 1;
+                quester.firePreUpdateObjective(quest, ObjectiveType.PLACE_BLOCK, i);
                 final int before = progress.getBlocksPlaced().get(i);
                 progress.getBlocksPlaced().set(i, before + 1);
+                quester.firePostUpdateObjective(quest, ObjectiveType.PLACE_BLOCK, i);
                 if (before < goal && progress.getBlocksPlaced().get(i) >= goal) {
                     quester.finishObjective(quest, ObjectiveType.PLACE_BLOCK, i);
                 }
@@ -382,8 +383,10 @@ public class FabricBlockListener {
                 final LinkedList<Integer> amounts = stage.getBlocksToUseAmounts();
                 final int goal = (amounts != null && !amounts.isEmpty() && amounts.size() > i)
                         ? amounts.get(i) : 1;
+                quester.firePreUpdateObjective(quest, ObjectiveType.USE_BLOCK, i);
                 final int before = progress.getBlocksUsed().get(i);
                 progress.getBlocksUsed().set(i, before + 1);
+                quester.firePostUpdateObjective(quest, ObjectiveType.USE_BLOCK, i);
                 if (before < goal && progress.getBlocksUsed().get(i) >= goal) {
                     quester.finishObjective(quest, ObjectiveType.USE_BLOCK, i);
                 }
@@ -453,13 +456,13 @@ public class FabricBlockListener {
 
     private short getBlockDurability(BlockState state) {
         for (final Property<?> property : state.getProperties()) {
-            if (property instanceof IntegerProperty age && property.getName().equals("age")) {
-                return (short) (int) state.getValue(age);
+            if (property instanceof IntegerProperty && property.getName().equals("age")) {
+                return (short) (int) state.getValue((IntegerProperty) property);
             }
         }
         for (final Property<?> property : state.getProperties()) {
-            if (property instanceof BooleanProperty powered && property.getName().equals("powered")) {
-                return (short) (state.getValue(powered) ? 1 : 0);
+            if (property instanceof BooleanProperty && property.getName().equals("powered")) {
+                return (short) (state.getValue((BooleanProperty) property) ? 1 : 0);
             }
         }
         return 0;

@@ -24,6 +24,8 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import me.pikamug.quests.events.editor.actions.FabricActionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.actions.FabricActionsEditorPostOpenNumericPromptEvent;
 
 public class FabricActionTimerPrompt extends FabricActionsEditorIntegerPrompt {
 
@@ -107,6 +109,10 @@ public class FabricActionTimerPrompt extends FabricActionsEditorIntegerPrompt {
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricActionsEditorPostOpenNumericPromptEvent event
+                = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         if (SessionData.get(uuid, Key.A_CANCEL_TIMER) == null) {
             SessionData.set(uuid, Key.A_CANCEL_TIMER, false);
         }
@@ -162,6 +168,10 @@ public class FabricActionTimerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 

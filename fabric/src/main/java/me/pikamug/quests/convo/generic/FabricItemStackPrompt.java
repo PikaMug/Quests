@@ -35,6 +35,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenNumericPromptEvent;
 
 /**
  * Stores ItemStack in "tempStack" session data<p>
@@ -222,6 +223,10 @@ public class FabricItemStackPrompt extends FabricQuestsEditorIntegerPrompt {
     @Override
     @SuppressWarnings("unchecked")
     public @NotNull String getPromptText() {
+        final FabricQuestsEditorPostOpenNumericPromptEvent event
+                = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + getTitle());
         if (SessionData.get(uuid, "tempName") != null) {
             final String stackData = getItemData(uuid);

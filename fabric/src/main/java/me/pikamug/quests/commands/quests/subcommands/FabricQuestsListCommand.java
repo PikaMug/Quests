@@ -13,6 +13,7 @@ package me.pikamug.quests.commands.quests.subcommands;
 import com.mojang.brigadier.Command;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.commands.FabricQuestsSubCommand;
+import me.pikamug.quests.events.command.FabricQuestsCommandPreListEvent;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricLang;
@@ -93,6 +94,11 @@ public class FabricQuestsListCommand extends FabricQuestsSubCommand {
             return 0;
         }
         final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final FabricQuestsCommandPreListEvent preEvent = new FabricQuestsCommandPreListEvent(quester, page);
+        FabricQuestsCommandPreListEvent.EVENT.invoker().onEvent(preEvent);
+        if (preEvent.isCancelled()) {
+            return Command.SINGLE_SUCCESS;
+        }
         quester.listQuests(quester, page);
         return Command.SINGLE_SUCCESS;
     }

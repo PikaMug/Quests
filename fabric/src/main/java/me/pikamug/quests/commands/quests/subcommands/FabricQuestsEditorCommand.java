@@ -14,6 +14,8 @@ import com.mojang.brigadier.Command;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.commands.FabricQuestsSubCommand;
 import me.pikamug.quests.convo.quests.menu.FabricQuestMenuPrompt;
+import me.pikamug.quests.events.command.FabricQuestsCommandPreEditorEvent;
+import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.SessionData;
 import net.minecraft.ChatFormatting;
@@ -68,6 +70,12 @@ public class FabricQuestsEditorCommand extends FabricQuestsSubCommand {
         }
         if (Conversations.getConversationOf(player.getUUID()).isPresent()) {
             player.sendSystemMessage(Component.literal(ChatFormatting.RED + lang(player, "duplicateEditor")));
+            return Command.SINGLE_SUCCESS;
+        }
+        final FabricQuester quester = plugin.getQuester(player.getUUID());
+        final FabricQuestsCommandPreEditorEvent event = new FabricQuestsCommandPreEditorEvent(quester);
+        FabricQuestsCommandPreEditorEvent.EVENT.invoker().onEvent(event);
+        if (event.isCancelled()) {
             return Command.SINGLE_SUCCESS;
         }
         SessionData.clear(player.getUUID());

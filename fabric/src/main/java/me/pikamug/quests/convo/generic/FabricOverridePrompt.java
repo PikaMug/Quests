@@ -20,6 +20,7 @@ import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenStringPromptEvent;
 
 public class FabricOverridePrompt extends FabricQuestsEditorStringPrompt {
 
@@ -54,6 +55,10 @@ public class FabricOverridePrompt extends FabricQuestsEditorStringPrompt {
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricQuestsEditorPostOpenStringPromptEvent event
+                = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+        FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+        
         return ChatFormatting.YELLOW + getQueryText();
     }
 

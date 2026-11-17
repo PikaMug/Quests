@@ -33,6 +33,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.conditions.FabricConditionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.conditions.FabricConditionsEditorPostOpenNumericPromptEvent;
 
 public class FabricConditionMainPrompt extends FabricConditionsEditorIntegerPrompt {
 
@@ -126,6 +128,10 @@ public class FabricConditionMainPrompt extends FabricConditionsEditorIntegerProm
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricConditionsEditorPostOpenNumericPromptEvent event
+                = new FabricConditionsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricConditionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + "- " + getTitle().replaceFirst(": ", ": "
                 + ChatFormatting.AQUA) + ChatFormatting.GOLD + " -");
         for (int i = 1; i <= size; i++) {
@@ -197,6 +203,10 @@ public class FabricConditionMainPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -336,6 +346,10 @@ public class FabricConditionMainPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenNumericPromptEvent event
+                    = new FabricConditionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.AQUA + getTitle());
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -412,6 +426,10 @@ public class FabricConditionMainPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -456,6 +474,10 @@ public class FabricConditionMainPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -537,6 +559,10 @@ public class FabricConditionMainPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.YELLOW + getQueryText());
             if (!modified.isEmpty()) {
                 text.append("\n").append(ChatFormatting.RED).append(" ").append(FabricLang.get("conditionEditorModifiedNote"));
@@ -625,6 +651,10 @@ public class FabricConditionMainPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.YELLOW + getQueryText());
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)

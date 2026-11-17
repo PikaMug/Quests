@@ -29,6 +29,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenNumericPromptEvent;
 
 public class FabricQuestNpcsPrompt extends FabricQuestsEditorIntegerPrompt {
 
@@ -165,6 +167,10 @@ public class FabricQuestNpcsPrompt extends FabricQuestsEditorIntegerPrompt {
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricQuestsEditorPostOpenNumericPromptEvent event
+                = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         SessionData.set(uuid, pref, Boolean.TRUE);
 
         final StringBuilder text = new StringBuilder(ChatFormatting.AQUA + "- " + getTitle() + " -");
@@ -338,6 +344,10 @@ public class FabricQuestNpcsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             // Check/add newly made item
             if (SessionData.get(uuid, "tempStack") != null) {
                 if (SessionData.get(uuid, pref + Key.S_DELIVERY_ITEMS) != null) {
@@ -443,6 +453,10 @@ public class FabricQuestNpcsPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final net.minecraft.server.level.ServerPlayer player = FabricMiscUtil.getPlayer(uuid, plugin);
             if (player instanceof net.minecraft.server.level.ServerPlayer) {
                 final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
@@ -527,6 +541,10 @@ public class FabricQuestNpcsPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText() + "\n" + ChatFormatting.GOLD
                     + FabricLang.get("stageEditorNPCNote");
         }
@@ -563,6 +581,10 @@ public class FabricQuestNpcsPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final net.minecraft.server.level.ServerPlayer player = FabricMiscUtil.getPlayer(uuid, plugin);
             if (player instanceof net.minecraft.server.level.ServerPlayer) {
                 final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
@@ -717,6 +739,10 @@ public class FabricQuestNpcsPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.AQUA + "- " + getTitle() + " -");
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -796,6 +822,10 @@ public class FabricQuestNpcsPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final net.minecraft.server.level.ServerPlayer player = FabricMiscUtil.getPlayer(uuid, plugin);
             if (player instanceof net.minecraft.server.level.ServerPlayer) {
                 final Collection<UUID> selectingNpcs = plugin.getQuestFactory().getSelectingNpcs();
@@ -879,6 +909,10 @@ public class FabricQuestNpcsPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 

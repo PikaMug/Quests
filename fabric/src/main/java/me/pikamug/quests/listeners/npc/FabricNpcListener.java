@@ -11,8 +11,10 @@
 package me.pikamug.quests.listeners.npc;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.convo.misc.FabricNpcOfferQuestPrompt;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
+import me.pikamug.quests.quests.FabricQuest;
 import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.quests.components.Stage;
 import net.minecraft.server.level.ServerPlayer;
@@ -109,7 +111,19 @@ public abstract class FabricNpcListener {
         if (available.size() == 1) {
             quester.offerQuest(available.getFirst(), true);
         } else {
-            me.pikamug.quests.gui.FabricQuestMenu.show(player, available);
+            boolean hasAtLeastOneGUI = false;
+            for (final Quest quest : available) {
+                if (((FabricQuest) quest).getGUIDisplay() != null) {
+                    hasAtLeastOneGUI = true;
+                    break;
+                }
+            }
+            if (hasAtLeastOneGUI) {
+                quester.showGUIDisplay(npcUuid, available);
+            } else {
+                new FabricNpcOfferQuestPrompt(player.getUUID(), plugin, available,
+                        plugin.getDependencies().getNpcName(npcUuid)).start();
+            }
         }
     }
 }

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenNumericPromptEvent;
 
 public class FabricQuestItemsPrompt extends FabricQuestsEditorIntegerPrompt {
 
@@ -183,6 +184,10 @@ public class FabricQuestItemsPrompt extends FabricQuestsEditorIntegerPrompt {
     @Override
     @SuppressWarnings("unchecked")
     public @NotNull String getPromptText() {
+        final FabricQuestsEditorPostOpenNumericPromptEvent event
+                = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         // Check/add newly made item
         if (SessionData.get(uuid, "tempStack") != null) {
             if (SessionData.get(uuid, pref + Key.S_CRAFT_ITEMS) != null) {
@@ -340,6 +345,10 @@ public class FabricQuestItemsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             // Check/add newly made item
             if (SessionData.get(uuid, "tempStack") != null) {
                 if (SessionData.get(uuid, pref + Key.S_CRAFT_ITEMS) != null) {
@@ -464,6 +473,10 @@ public class FabricQuestItemsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             // Check/add newly made item
             if (SessionData.get(uuid, "tempStack") != null) {
                 if (SessionData.get(uuid, pref + Key.S_SMELT_ITEMS) != null) {
@@ -588,6 +601,10 @@ public class FabricQuestItemsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             // Check/add newly made item
             if (SessionData.get(uuid, "tempStack") != null) {
                 if (SessionData.get(uuid, pref + Key.S_ENCHANT_ITEMS) != null) {
@@ -711,6 +728,10 @@ public class FabricQuestItemsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             // Check/add newly made item
             if (SessionData.get(uuid, "tempStack") != null) {
                 if (SessionData.get(uuid, pref + Key.S_BREW_ITEMS) != null) {
@@ -835,6 +856,10 @@ public class FabricQuestItemsPrompt extends FabricQuestsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenNumericPromptEvent event
+                    = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             // Check/add newly made item
             if (SessionData.get(uuid, "tempStack") != null) {
                 if (SessionData.get(uuid, pref + Key.S_CONSUME_ITEMS) != null) {

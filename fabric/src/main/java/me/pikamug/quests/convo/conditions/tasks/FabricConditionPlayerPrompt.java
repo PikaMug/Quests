@@ -29,6 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.conditions.FabricConditionsEditorPostOpenNumericPromptEvent;
+import me.pikamug.quests.events.editor.conditions.FabricConditionsEditorPostOpenStringPromptEvent;
 
 public class FabricConditionPlayerPrompt extends FabricConditionsEditorIntegerPrompt {
 
@@ -144,6 +146,10 @@ public class FabricConditionPlayerPrompt extends FabricConditionsEditorIntegerPr
     @Override
     @SuppressWarnings("unchecked")
     public @NotNull String getPromptText() {
+        final FabricConditionsEditorPostOpenNumericPromptEvent event
+                = new FabricConditionsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricConditionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         // Check/add newly made item
         if (SessionData.get(uuid, "tempStack") != null) {
             if (SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND) != null) {
@@ -212,6 +218,10 @@ public class FabricConditionPlayerPrompt extends FabricConditionsEditorIntegerPr
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -307,6 +317,10 @@ public class FabricConditionPlayerPrompt extends FabricConditionsEditorIntegerPr
         @Override
         @SuppressWarnings("unchecked")
         public String getPromptText() {
+            final FabricConditionsEditorPostOpenNumericPromptEvent event
+                    = new FabricConditionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             // Check/add newly made item
             if (SessionData.get(uuid, "tempStack") != null) {
                 if (SessionData.get(uuid, Key.C_WHILE_HOLDING_MAIN_HAND) != null) {
@@ -434,6 +448,10 @@ public class FabricConditionPlayerPrompt extends FabricConditionsEditorIntegerPr
         @Override
         @SuppressWarnings("unchecked")
         public String getPromptText() {
+            final FabricConditionsEditorPostOpenNumericPromptEvent event
+                    = new FabricConditionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             // Check/add newly made item
             if (SessionData.get(uuid, "tempStack") != null) {
                 if (SessionData.get(uuid, Key.C_WHILE_WEARING) != null) {

@@ -332,10 +332,10 @@ public class FabricActionFactory implements ActionFactory {
                     if (mob.getSpawnAmounts() != null) {
                         mobJson.addProperty("spawn-amounts", mob.getSpawnAmounts());
                     }
-                    if (mob.getLevel() != null && mob.getSpawnLocation() != null) {
-                        final Identifier worldId = mob.getLevel().dimension().identifier();
-                        mobJson.addProperty("spawn-location", worldId + " " + mob.getSpawnLocation().getX() + " "
-                                + mob.getSpawnLocation().getY() + " " + mob.getSpawnLocation().getZ());
+                    if (mob.getSpawnLocation() != null && mob.getSpawnLocation().getLevel() != null) {
+                        mobJson.addProperty("spawn-location", mob.getSpawnLocation().getWorldId() + " "
+                                + mob.getSpawnLocation().getX() + " " + mob.getSpawnLocation().getY() + " "
+                                + mob.getSpawnLocation().getZ());
                     }
                     final JsonArray inventoryJson = new JsonArray();
                     for (final ItemStack stack : mob.getInventory()) {

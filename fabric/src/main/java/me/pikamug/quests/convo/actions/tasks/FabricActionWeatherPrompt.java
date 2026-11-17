@@ -30,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.actions.FabricActionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.actions.FabricActionsEditorPostOpenNumericPromptEvent;
 
 public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt {
 
@@ -135,6 +137,10 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricActionsEditorPostOpenNumericPromptEvent event
+                = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + "- " + getTitle() + " -");
         for (int i = 1; i <= size; i++) {
             text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -258,6 +264,10 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenNumericPromptEvent event
+                    = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + getTitle());
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -322,6 +332,10 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder worlds = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final MinecraftServer server = plugin.getServer();
             if (server != null) {
@@ -391,6 +405,10 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -496,6 +514,10 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenNumericPromptEvent event
+                    = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + getTitle());
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -563,6 +585,10 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder worlds = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final MinecraftServer server = plugin.getServer();
             if (server != null) {
@@ -632,6 +658,10 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -677,6 +707,10 @@ public class FabricActionWeatherPrompt extends FabricActionsEditorIntegerPrompt 
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 

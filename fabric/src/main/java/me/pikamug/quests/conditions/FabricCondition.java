@@ -18,7 +18,6 @@ import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricMiscUtil;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -201,11 +200,13 @@ public class FabricCondition implements Condition {
      */
     @Override
     public boolean check(final Quester quester, final Quest quest) {
-        if (quester == null) return true;
-
-        final ServerPlayer player = getPlayer(quester);
-        if (player == null) return true;
-
+        if (quester == null) {
+            return false;
+        }
+        final ServerPlayer player = plugin.getServer().getPlayerList().getPlayer(quester.getUUID());
+        if (player == null) {
+            return false;
+        }
         boolean failed = false;
         if (!entitiesWhileRiding.isEmpty()) {
             boolean atLeastOne = false;
@@ -367,12 +368,6 @@ public class FabricCondition implements Condition {
             }
         }
         return !failed;
-    }
-
-    private ServerPlayer getPlayer(final Quester quester) {
-        final MinecraftServer server = plugin.getServer();
-        if (server == null) return null;
-        return server.getPlayerList().getPlayer(quester.getUUID());
     }
 
     /**

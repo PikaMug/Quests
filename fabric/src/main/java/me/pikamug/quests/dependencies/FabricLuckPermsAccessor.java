@@ -22,13 +22,13 @@ import java.util.UUID;
  */
 public class FabricLuckPermsAccessor {
 
-    public boolean hasPermission(UUID uuid, String permission) {
+    public boolean hasPermission(final UUID uuid, final String permission) {
         final User user = LuckPermsProvider.get().getUserManager().getUser(uuid);
         return user != null && user.getCachedData().getPermissionData()
                 .checkPermission(permission).asBoolean();
     }
 
-    public void grantPermission(UUID uuid, String permission) {
+    public void grantPermission(final UUID uuid, final String permission) {
         LuckPermsProvider.get().getUserManager().modifyUser(uuid, user ->
                 user.data().add(Node.builder(permission).build()));
     }

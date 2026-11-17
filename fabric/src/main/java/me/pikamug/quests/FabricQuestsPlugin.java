@@ -12,14 +12,15 @@ package me.pikamug.quests;
 
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.FabricActionFactory;
-import me.pikamug.quests.listeners.FabricCommandManager;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.conditions.FabricConditionFactory;
 import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.config.FabricConfigSettings;
 import me.pikamug.quests.dependencies.FabricDependencies;
+import me.pikamug.quests.events.plugin.FabricQuestsPluginPostReloadEvent;
 import me.pikamug.quests.listeners.FabricBlockListener;
 import me.pikamug.quests.listeners.FabricChatListener;
+import me.pikamug.quests.listeners.FabricCommandManager;
 import me.pikamug.quests.listeners.FabricEntityListener;
 import me.pikamug.quests.listeners.FabricItemListener;
 import me.pikamug.quests.listeners.FabricPlayerListener;
@@ -172,14 +173,8 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         new FabricPlayerListener(this);
         new FabricEntityListener(this);
         new FabricChatListener(this);
-        if (depends.hasEasyNpc()) {
-            new me.pikamug.quests.listeners.npc.FabricEasyNpcListener(this);
-        }
-        if (depends.hasTaterzens()) {
-            new me.pikamug.quests.listeners.npc.FabricTaterzensListener(this);
-        }
 
-        // 9 - Register tick events
+        // 8 - Register tick events
         FabricMixinEvents.registerServerTick(this::onTick);
 
         if (configSettings.getStrictPlayerMovement() > 0) {
@@ -187,7 +182,7 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
             moveThread.setInterval(ticks);
         }
 
-        // 8 - Delay loading of quests, actions and modules
+        // 9 - Delay loading of quests, actions and modules
         delayLoadQuestInfo();
 
         LOGGER.info("Quests plugin enabled.");
@@ -676,6 +671,8 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
         }
         loading = true;
         FabricScheduler.runAsync(() -> {
+            boolean success = true;
+            Exception exception = null;
             try {
                 if (configSettings.getConsoleLogging() > 3) {
                     LOGGER.info("Starting save of all questers (may take a while)");
@@ -699,9 +696,14 @@ public class FabricQuestsPlugin implements DedicatedServerModInitializer, Quests
                 customLoader.init();
                 questLoader.importQuests();
             } catch (final Exception e) {
+                success = false;
+                exception = e;
                 LOGGER.error("Error during reload", e);
             }
             loading = false;
+            final FabricQuestsPluginPostReloadEvent event
+                    = new FabricQuestsPluginPostReloadEvent(success, exception);
+            FabricQuestsPluginPostReloadEvent.EVENT.invoker().onEvent(event);
         });
     }
 }

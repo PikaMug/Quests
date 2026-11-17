@@ -28,6 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenNumericPromptEvent;
 
 public class FabricQuestMenuPrompt extends FabricQuestsEditorIntegerPrompt {
 
@@ -91,6 +93,10 @@ public class FabricQuestMenuPrompt extends FabricQuestsEditorIntegerPrompt {
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricQuestsEditorPostOpenNumericPromptEvent event
+                = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + getTitle());
         for (int i = 1; i <= size; i++) {
             text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -157,6 +163,10 @@ public class FabricQuestMenuPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.GOLD + getTitle() + "\n" + ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -223,6 +233,10 @@ public class FabricQuestMenuPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName)
                     .collect(Collectors.toList());
             return sendClickableMenu(getTitle(), names, getQueryText(), plugin.getQuester(uuid));
@@ -268,6 +282,10 @@ public class FabricQuestMenuPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final List<String> names = plugin.getLoadedQuests().stream().map(Quest::getName)
                     .collect(Collectors.toList());
             return sendClickableMenu(getTitle(), names, getQueryText(), plugin.getQuester(uuid));
@@ -364,6 +382,10 @@ public class FabricQuestMenuPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.RED + getQueryText() + " (" + ChatFormatting.YELLOW
                     + SessionData.get(uuid, Key.ED_QUEST_DELETE) + ChatFormatting.RED + ")\n");
             for (int i = 1; i <= size; i++) {

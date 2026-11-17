@@ -30,6 +30,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.quests.FabricQuestsEditorPostOpenNumericPromptEvent;
 
 public class FabricQuestPlannerPrompt extends FabricQuestsEditorIntegerPrompt {
 
@@ -156,6 +158,10 @@ public class FabricQuestPlannerPrompt extends FabricQuestsEditorIntegerPrompt {
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricQuestsEditorPostOpenNumericPromptEvent event
+                = new FabricQuestsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricQuestsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final String name = Objects.requireNonNull((String) SessionData.get(uuid, Key.Q_NAME));
         final StringBuilder text = new StringBuilder(ChatFormatting.DARK_AQUA + "- " + getTitle()
                 .replace(name, ChatFormatting.AQUA + (String) SessionData.get(uuid, Key.Q_NAME) + ChatFormatting.DARK_AQUA)
@@ -222,6 +228,10 @@ public class FabricQuestPlannerPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -277,6 +287,10 @@ public class FabricQuestPlannerPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -356,6 +370,10 @@ public class FabricQuestPlannerPrompt extends FabricQuestsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricQuestsEditorPostOpenStringPromptEvent event
+                    = new FabricQuestsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricQuestsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             String text = FabricLang.get("optBooleanPrompt");
             text = text.replace("<true>", FabricLang.get("true"));
             text = text.replace("<false>", FabricLang.get("false"));

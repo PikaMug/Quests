@@ -23,7 +23,7 @@ public final class FabricPlaceholderSupport {
     private FabricPlaceholderSupport() {
     }
 
-    public static String parse(ServerPlayer player, String identifier) {
+    public static String parse(final ServerPlayer player, final String identifier) {
         return Placeholders.SERVER_PLACEHOLDER_PARSER
                 .parseComponent(identifier, ServerPlaceholderContext.of(player).asParserContext()).getString();
     }

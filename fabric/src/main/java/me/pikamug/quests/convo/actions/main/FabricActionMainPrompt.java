@@ -41,6 +41,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.actions.FabricActionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.actions.FabricActionsEditorPostOpenNumericPromptEvent;
 
 
 public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
@@ -158,6 +160,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricActionsEditorPostOpenNumericPromptEvent event
+                = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + "- " + getTitle().replaceFirst(": ", ": "
                 + ChatFormatting.AQUA) + ChatFormatting.GOLD + " -");
         for (int i = 1; i <= size; i++) {
@@ -232,6 +238,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -349,6 +359,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenNumericPromptEvent event
+                    = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + getTitle());
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -484,6 +498,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenNumericPromptEvent event
+                    = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             if (questMob == null) {
                 questMob = new FabricQuestMob();
             }
@@ -675,6 +693,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenNumericPromptEvent event
+                    = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             if (questMob == null) {
                 questMob = new FabricQuestMob();
             }
@@ -770,6 +792,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -827,6 +853,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -868,6 +898,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder mobs = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final LinkedList<EntityType<?>> mobList = new LinkedList<>();
             net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.stream()
@@ -929,6 +963,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -985,6 +1023,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -1000,8 +1042,7 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
             if (input.equalsIgnoreCase(FabricLang.get("cmdAdd"))) {
                 final FabricLocation loc = plugin.getActionFactory().getSelectedMobLocations().get(uuid);
                 if (loc != null && loc.getLevel() != null) {
-                    questMob.setLevel(loc.getLevel());
-                    questMob.setSpawnLocation(loc.getBlockPos());
+                    questMob.setSpawnLocation(loc);
                     plugin.getActionFactory().getSelectedMobLocations().remove(uuid);
                 } else {
                     sender.sendSystemMessage(Component.literal(ChatFormatting.RED + FabricLang.get("eventEditorSelectBlockFirst")));
@@ -1082,6 +1123,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.YELLOW + getQueryText());
             if (!modified.isEmpty()) {
                 text.append("\n").append(ChatFormatting.RED).append(" ").append(FabricLang.get("eventEditorModifiedNote"));
@@ -1169,6 +1214,10 @@ public class FabricActionMainPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.YELLOW + getQueryText());
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)

@@ -88,7 +88,9 @@ public class FabricPlayerMoveThread implements Runnable {
                 if (dist <= radius + 1) { // +1 for edge tolerance
                     if (progress.getLocationsReached().size() <= i) continue;
                     if (!progress.getLocationsReached().get(i)) {
+                        quester.firePreUpdateObjective(quest, ObjectiveType.REACH_LOCATION, i);
                         progress.getLocationsReached().set(i, true);
+                        quester.firePostUpdateObjective(quest, ObjectiveType.REACH_LOCATION, i);
                         quester.finishObjective(quest, ObjectiveType.REACH_LOCATION, i);
                         changed = true;
                     }

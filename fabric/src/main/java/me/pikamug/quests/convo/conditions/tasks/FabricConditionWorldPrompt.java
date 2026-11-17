@@ -33,6 +33,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.conditions.FabricConditionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.conditions.FabricConditionsEditorPostOpenNumericPromptEvent;
 
 public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPrompt {
 
@@ -163,6 +165,10 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricConditionsEditorPostOpenNumericPromptEvent event
+                = new FabricConditionsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricConditionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final StringBuilder text = new StringBuilder(ChatFormatting.AQUA + "- " + getTitle() + " -");
         for (int i = 1; i <= size; i++) {
             text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -227,6 +233,10 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder worlds = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final java.util.List<ServerLevel> worldArr = new java.util.ArrayList<>();
             for (final ServerLevel level : plugin.getServer().getAllLevels()) {
@@ -350,6 +360,10 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenNumericPromptEvent event
+                    = new FabricConditionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + getTitle());
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -414,6 +428,10 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -464,6 +482,10 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -514,6 +536,10 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder biomes = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final Registry<Biome> biomeRegistry = plugin.getServer().registryAccess().lookupOrThrow(Registries.BIOME);
             final LinkedList<Biome> biomeArr = new LinkedList<>();
@@ -577,6 +603,10 @@ public class FabricConditionWorldPrompt extends FabricConditionsEditorIntegerPro
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder regions = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final List<String> names = plugin.getDependencies().getKnownRegionNames();
             if (names.isEmpty()) {

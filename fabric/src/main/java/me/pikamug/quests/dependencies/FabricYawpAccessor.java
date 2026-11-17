@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 public class FabricYawpAccessor {
 
-    public List<String> getRegionsAt(ServerPlayer player) {
+    public List<String> getRegionsAt(final ServerPlayer player) {
         final List<String> regions = new LinkedList<>();
         final Optional<ILevelRegionApi> api = RegionManager.get().getDimRegionApi(player.level().dimension());
         if (api.isPresent()) {
@@ -41,7 +41,7 @@ public class FabricYawpAccessor {
         return regions;
     }
 
-    public List<String> getRegionNames(ServerLevel level) {
+    public List<String> getRegionNames(final ServerLevel level) {
         final List<String> regions = new LinkedList<>();
         final Optional<ILevelRegionApi> api = RegionManager.get().getDimRegionApi(level.dimension());
         if (api.isPresent()) {

@@ -38,6 +38,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import me.pikamug.quests.events.editor.actions.FabricActionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.actions.FabricActionsEditorPostOpenNumericPromptEvent;
 
 public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
@@ -213,6 +215,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricActionsEditorPostOpenNumericPromptEvent event
+                = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         if (SessionData.get(uuid, Key.A_CLEAR_INVENTORY) == null) {
             SessionData.set(uuid, Key.A_CLEAR_INVENTORY, false);
         }
@@ -312,6 +318,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -401,6 +411,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
         @Override
         @SuppressWarnings("unchecked")
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenNumericPromptEvent event
+                    = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             if (SessionData.get(uuid, "tempStack") != null) {
                 if (SessionData.get(uuid, Key.A_ITEMS) != null) {
                     final List<ItemStack> items = (List<ItemStack>) SessionData.get(uuid, Key.A_ITEMS);
@@ -551,6 +565,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenNumericPromptEvent event
+                    = new FabricActionsEditorPostOpenNumericPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + getTitle());
             for (int i = 1; i <= size; i++) {
                 text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -653,6 +671,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder potions = new StringBuilder(ChatFormatting.LIGHT_PURPLE + getTitle() + "\n");
             final List<MobEffect> effArr = new LinkedList<>();
             net.minecraft.core.registries.BuiltInRegistries.MOB_EFFECT.stream()
@@ -717,6 +739,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -773,6 +799,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -828,6 +858,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -882,6 +916,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -936,6 +974,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -990,6 +1032,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -1045,6 +1091,10 @@ public class FabricActionPlayerPrompt extends FabricActionsEditorIntegerPrompt {
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricActionsEditorPostOpenStringPromptEvent event
+                    = new FabricActionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricActionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.YELLOW + getQueryText();
         }
 

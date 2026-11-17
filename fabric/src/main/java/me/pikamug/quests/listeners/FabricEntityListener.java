@@ -95,8 +95,10 @@ public class FabricEntityListener {
                         final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         final int goal = (stage.getNpcNumToKill() != null && stage.getNpcNumToKill().size() > i)
                                 ? stage.getNpcNumToKill().get(i) : 1;
+                        quester.firePreUpdateObjective(quest, ObjectiveType.KILL_NPC, i);
                         final int before = progress.getNpcsNumKilled().get(i);
                         progress.getNpcsNumKilled().set(i, before + 1);
+                        quester.firePostUpdateObjective(quest, ObjectiveType.KILL_NPC, i);
                         if (before < goal && progress.getNpcsNumKilled().get(i) >= goal) {
                             quester.finishObjective(quest, ObjectiveType.KILL_NPC, i);
                         }
@@ -111,8 +113,10 @@ public class FabricEntityListener {
             if (victim instanceof ServerPlayer && stage.getPlayersToKill() != null
                     && stage.getPlayersToKill() > 0) {
                 final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
+                quester.firePreUpdateObjective(quest, ObjectiveType.KILL_PLAYER, 0);
                 final int beforeKill = progress.getPlayersKilled();
                 progress.setPlayersKilled(beforeKill + 1);
+                quester.firePostUpdateObjective(quest, ObjectiveType.KILL_PLAYER, 0);
                 if (beforeKill < stage.getPlayersToKill()
                         && progress.getPlayersKilled() >= stage.getPlayersToKill()) {
                     quester.finishObjective(quest, ObjectiveType.KILL_PLAYER, 0);
@@ -130,8 +134,10 @@ public class FabricEntityListener {
                         final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         final int goal = (stage.getMobNumToKill() != null && stage.getMobNumToKill().size() > i)
                                 ? stage.getMobNumToKill().get(i) : 1;
+                        quester.firePreUpdateObjective(quest, ObjectiveType.KILL_MOB, i);
                         final int before = progress.getMobNumKilled().get(i);
                         progress.getMobNumKilled().set(i, before + 1);
+                        quester.firePostUpdateObjective(quest, ObjectiveType.KILL_MOB, i);
                         if (before < goal && progress.getMobNumKilled().get(i) >= goal) {
                             quester.finishObjective(quest, ObjectiveType.KILL_MOB, i);
                         }
@@ -157,8 +163,10 @@ public class FabricEntityListener {
                 if (qProgress.getMobNumKilled().size() <= i) continue;
                 final int qGoal = (qStage.getMobNumToKill() != null && qStage.getMobNumToKill().size() > i)
                         ? qStage.getMobNumToKill().get(i) : 1;
+                ((FabricQuester) q).firePreUpdateObjective(cq, ObjectiveType.KILL_MOB, i);
                 final int qBefore = qProgress.getMobNumKilled().get(i);
                 qProgress.getMobNumKilled().set(i, Math.min(qBefore + 1, qGoal));
+                ((FabricQuester) q).firePostUpdateObjective(cq, ObjectiveType.KILL_MOB, i);
                 if (qBefore < qGoal && qProgress.getMobNumKilled().get(i) >= qGoal) {
                     ((FabricQuester) q).finishObjective(cq, ObjectiveType.KILL_MOB, i);
                 }
@@ -180,8 +188,10 @@ public class FabricEntityListener {
                 if (qProgress.getNpcsNumKilled().size() <= i) continue;
                 final int qGoal = (qStage.getNpcNumToKill() != null && qStage.getNpcNumToKill().size() > i)
                         ? qStage.getNpcNumToKill().get(i) : 1;
+                ((FabricQuester) q).firePreUpdateObjective(cq, ObjectiveType.KILL_NPC, i);
                 final int qBefore = qProgress.getNpcsNumKilled().get(i);
                 qProgress.getNpcsNumKilled().set(i, Math.min(qBefore + 1, qGoal));
+                ((FabricQuester) q).firePostUpdateObjective(cq, ObjectiveType.KILL_NPC, i);
                 if (qBefore < qGoal && qProgress.getNpcsNumKilled().get(i) >= qGoal) {
                     ((FabricQuester) q).finishObjective(cq, ObjectiveType.KILL_NPC, i);
                 }
@@ -197,8 +207,10 @@ public class FabricEntityListener {
             final Stage qStage = q.getCurrentStage(cq);
             if (qStage == null || qStage.getPlayersToKill() == null || qStage.getPlayersToKill() <= 0) return null;
             final me.pikamug.quests.player.QuestProgress qProgress = q.getQuestProgressOrDefault(cq);
+            ((FabricQuester) q).firePreUpdateObjective(cq, ObjectiveType.KILL_PLAYER, 0);
             final int qBefore = qProgress.getPlayersKilled();
             qProgress.setPlayersKilled(Math.min(qBefore + 1, qStage.getPlayersToKill()));
+            ((FabricQuester) q).firePostUpdateObjective(cq, ObjectiveType.KILL_PLAYER, 0);
             if (qBefore < qStage.getPlayersToKill() && qProgress.getPlayersKilled() >= qStage.getPlayersToKill()) {
                 ((FabricQuester) q).finishObjective(cq, ObjectiveType.KILL_PLAYER, 0);
             }
@@ -307,8 +319,10 @@ public class FabricEntityListener {
         final Stage stage = quester.getCurrentStage(quest);
         if (stage == null || stage.getCowsToMilk() == null || stage.getCowsToMilk() <= 0) return;
         final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
+        quester.firePreUpdateObjective(quest, ObjectiveType.MILK_COW, 0);
         final int beforeMilk = progress.getCowsMilked();
         progress.setCowsMilked(beforeMilk + 1);
+        quester.firePostUpdateObjective(quest, ObjectiveType.MILK_COW, 0);
         if (beforeMilk < stage.getCowsToMilk() && progress.getCowsMilked() >= stage.getCowsToMilk()) {
             quester.finishObjective(quest, ObjectiveType.MILK_COW, 0);
         }
@@ -341,8 +355,10 @@ public class FabricEntityListener {
         final Stage stage = quester.getCurrentStage(quest);
         if (stage == null || stage.getFishToCatch() == null || stage.getFishToCatch() <= 0) return;
         final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
+        quester.firePreUpdateObjective(quest, ObjectiveType.CATCH_FISH, 0);
         final int beforeFish = progress.getFishCaught();
         progress.setFishCaught(beforeFish + 1);
+        quester.firePostUpdateObjective(quest, ObjectiveType.CATCH_FISH, 0);
         if (beforeFish < stage.getFishToCatch() && progress.getFishCaught() >= stage.getFishToCatch()) {
             quester.finishObjective(quest, ObjectiveType.CATCH_FISH, 0);
         }
@@ -401,8 +417,10 @@ public class FabricEntityListener {
                 final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 final int shearGoal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
                         ? stage.getSheepNumToShear().get(i) : 1;
+                quester.firePreUpdateObjective(quest, ObjectiveType.SHEAR_SHEEP, i);
                 final int before = progress.getSheepSheared().get(i);
                 progress.getSheepSheared().set(i, before + 1);
+                quester.firePostUpdateObjective(quest, ObjectiveType.SHEAR_SHEEP, i);
                 if (before < shearGoal && progress.getSheepSheared().get(i) >= shearGoal) {
                     quester.finishObjective(quest, ObjectiveType.SHEAR_SHEEP, i);
                 }
@@ -462,8 +480,10 @@ public class FabricEntityListener {
                 final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
                         ? stage.getMobNumToTame().get(i) : 1;
+                quester.firePreUpdateObjective(quest, ObjectiveType.TAME_MOB, i);
                 final int before = progress.getMobsTamed().get(i);
                 progress.getMobsTamed().set(i, before + 1);
+                quester.firePostUpdateObjective(quest, ObjectiveType.TAME_MOB, i);
                 if (before < goal && progress.getMobsTamed().get(i) >= goal) {
                     quester.finishObjective(quest, ObjectiveType.TAME_MOB, i);
                 }

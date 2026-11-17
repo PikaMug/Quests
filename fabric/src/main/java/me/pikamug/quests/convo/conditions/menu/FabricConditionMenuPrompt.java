@@ -31,6 +31,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import me.pikamug.quests.events.editor.conditions.FabricConditionsEditorPostOpenStringPromptEvent;
+import me.pikamug.quests.events.editor.conditions.FabricConditionsEditorPostOpenNumericPromptEvent;
 
 public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerPrompt {
 
@@ -94,6 +96,10 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
 
     @Override
     public @NotNull String getPromptText() {
+        final FabricConditionsEditorPostOpenNumericPromptEvent event
+                = new FabricConditionsEditorPostOpenNumericPromptEvent(uuid, this);
+        FabricConditionsEditorPostOpenNumericPromptEvent.EVENT.invoker().onEvent(event);
+        
         final StringBuilder text = new StringBuilder(ChatFormatting.GOLD + getTitle());
         for (int i = 1; i <= size; i++) {
             text.append("\n").append(getNumberColor(i)).append(ChatFormatting.BOLD).append(i)
@@ -173,6 +179,10 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             return ChatFormatting.GOLD + getTitle() + "\n" + ChatFormatting.YELLOW + getQueryText();
         }
 
@@ -240,6 +250,10 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName)
                     .collect(Collectors.toList());
             return sendClickableMenu(getTitle(), names, getQueryText(), (FabricQuester) plugin.getQuester(uuid));
@@ -290,6 +304,10 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final List<String> names = plugin.getLoadedConditions().stream().map(Condition::getName)
                     .collect(Collectors.toList());
             return sendClickableMenu(getTitle(), names, getQueryText(), (FabricQuester) plugin.getQuester(uuid));
@@ -389,6 +407,10 @@ public class FabricConditionMenuPrompt extends FabricConditionsEditorIntegerProm
 
         @Override
         public @NotNull String getPromptText() {
+            final FabricConditionsEditorPostOpenStringPromptEvent event
+                    = new FabricConditionsEditorPostOpenStringPromptEvent(uuid, this);
+            FabricConditionsEditorPostOpenStringPromptEvent.EVENT.invoker().onEvent(event);
+            
             final StringBuilder text = new StringBuilder(ChatFormatting.RED + getQueryText() + " (" + ChatFormatting.YELLOW
                     + SessionData.get(uuid, Key.ED_CONDITION_DELETE) + ChatFormatting.RED + ")\n");
             for (int i = 1; i <= size; i++) {

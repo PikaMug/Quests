@@ -197,6 +197,9 @@ public class BukkitCondition implements Condition {
     @Override
     public boolean check(final Quester quester, final Quest quest) {
         final Player player = ((BukkitQuester)quester).getPlayer();
+        if (player == null) {
+            return false;
+        }
         boolean failed = false;
         if (!entitiesWhileRiding.isEmpty()) {
             boolean atLeastOne = false;

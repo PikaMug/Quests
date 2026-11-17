@@ -15,7 +15,6 @@ import me.pikamug.quests.storage.implementation.ActionStorageImpl;
 import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLocation;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -179,8 +178,7 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
                         throw new ActionFormatException("'spawn-location' is not in proper \"WorldName x y z\" format",
                                 name);
                     }
-                    mob.setLevel(loc.getLevel());
-                    mob.setSpawnLocation(BlockPos.containing(loc.getX(), loc.getY(), loc.getZ()));
+                    mob.setSpawnLocation(loc);
                 }
                 if (mobJson.has("inventory") && mobJson.get("inventory").isJsonArray()) {
                     final JsonArray inventoryArr = mobJson.getAsJsonArray("inventory");
@@ -200,7 +198,7 @@ public class FabricActionJsonStorage implements ActionStorageImpl {
                         }
                     }
                 }
-                if (mob.getType() == null || mob.getLevel() == null || mob.getSpawnLocation() == null) {
+                if (mob.getType() == null || mob.getSpawnLocation() == null) {
                     throw new ActionFormatException("'mob-spawns' entry is missing a mob type or location", name);
                 }
                 mobs.add(mob);

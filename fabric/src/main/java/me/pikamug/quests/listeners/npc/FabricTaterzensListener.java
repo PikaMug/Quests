@@ -12,6 +12,7 @@ package me.pikamug.quests.listeners.npc;
 
 import me.pikamug.quests.FabricMixinEvents;
 import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.dependencies.npc.FabricEntityNpcDependency;
 import net.minecraft.world.entity.Entity;
 
 /**
@@ -20,8 +21,11 @@ import net.minecraft.world.entity.Entity;
  */
 public class FabricTaterzensListener extends FabricNpcListener {
 
-    public FabricTaterzensListener(FabricQuestsPlugin plugin) {
+    private final FabricEntityNpcDependency dependency;
+
+    public FabricTaterzensListener(FabricQuestsPlugin plugin, FabricEntityNpcDependency dependency) {
         super(plugin);
+        this.dependency = dependency;
         register();
     }
 
@@ -38,11 +42,6 @@ public class FabricTaterzensListener extends FabricNpcListener {
 
     @Override
     public boolean isNpc(Entity entity) {
-        if (entity == null) return false;
-        try {
-            return Class.forName("org.samo_lego.taterzens.npc.TaterzenNPC").isInstance(entity);
-        } catch (final ClassNotFoundException e) {
-            return false;
-        }
+        return dependency.isNpc(entity);
     }
 }

@@ -11,7 +11,10 @@
 package me.pikamug.quests.mixin;
 
 import me.pikamug.quests.FabricMixinEvents;
-import me.pikamug.quests.gui.FabricQuestMenu;
+import me.pikamug.quests.FabricQuestsPlugin;
+import me.pikamug.quests.player.FabricQuester;
+import me.pikamug.quests.quests.FabricQuest;
+import me.pikamug.quests.quests.Quest;
 import me.pikamug.quests.util.FabricItemUtil;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -28,7 +31,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Routes clicks in the quest-selection chest menu to the quest offer logic.
- * The menu's own container is a {@link FabricQuestMenu.QuestMenuContainer},
+ * The menu's own container is a {@link FabricQuester.QuestMenuContainer},
  * so regular slots never transfer items. Also enforces the quest journal
  * protections so the journal cannot leave the player's own inventory.
  */
@@ -47,11 +50,32 @@ public abstract class MixinAbstractContainerMenu {
         if (menu instanceof ChestMenu) {
             ChestMenu chestMenu = (ChestMenu) menu;
             final Container container = chestMenu.getContainer();
-            if (container instanceof FabricQuestMenu.QuestMenuContainer) {
-                FabricQuestMenu.QuestMenuContainer questMenu = (FabricQuestMenu.QuestMenuContainer) container;
-                questMenu.select(serverPlayer, slot);
-                serverPlayer.closeContainer();
+            if (container instanceof FabricQuester.QuestMenuContainer) {
                 ci.cancel();
+                final ItemStack clicked = slot >= 0 && slot < menu.slots.size()
+                        ? menu.getSlot(slot).getItem() : ItemStack.EMPTY;
+                if (clicked.isEmpty()) {
+                    return;
+                }
+                final FabricQuestsPlugin plugin = FabricQuestsPlugin.getInstance();
+                final FabricQuester quester = plugin.getQuester(serverPlayer.getUUID());
+                for (final Quest quest : plugin.getLoadedQuests()) {
+                    final FabricQuest fabricQuest = (FabricQuest) quest;
+                    if (fabricQuest.getGUIDisplay() == null) {
+                        continue;
+                    }
+                    if (FabricItemUtil.compareItems(clicked, fabricQuest.prepareDisplay(quester), false) == 0) {
+                        if (quester.canAcceptOffer(fabricQuest, true)) {
+                            try {
+                                quester.takeQuest(fabricQuest, false);
+                            } catch (final Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        serverPlayer.closeContainer();
+                        return;
+                    }
+                }
                 return;
             }
         }

@@ -619,7 +619,7 @@ public class BukkitQuester implements Quester {
                 final String msg = BukkitLang.get(getPlayer(), "questTooEarly").replace("<quest>",
                         bukkitQuest.getName()).replace("<time>", BukkitMiscUtil
                         .getTime(getRemainingCooldown(bukkitQuest)));
-                getPlayer().sendMessage(ChatColor.YELLOW + msg);
+                sendMessage(ChatColor.YELLOW + msg);
             }
             return false;
         } else if (bukkitQuest.getRegionStart() != null) {
@@ -627,7 +627,7 @@ public class BukkitQuester implements Quester {
                 if (giveReason) {
                     final String msg = BukkitLang.get(getPlayer(), "questInvalidLocation").replace("<quest>",
                             bukkitQuest.getName());
-                    getPlayer().sendMessage(ChatColor.YELLOW + msg);
+                    sendMessage(ChatColor.YELLOW + msg);
                 }
                 return false;
             }
