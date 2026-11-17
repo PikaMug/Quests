@@ -351,7 +351,7 @@ public class FabricCondition implements Condition {
                 }
                 final String value;
                 try {
-                    value = FabricPlaceholderSupport.parse(player, i);
+                    value = FabricPlaceholderSupport.setPlaceholders(player, i);
                 } catch (final Throwable t) {
                     plugin.getPluginLogger().warn("Failed to resolve placeholder '" + i + "'");
                     return false;

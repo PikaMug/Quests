@@ -15,6 +15,7 @@ import me.pikamug.quests.Quests;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.convo.misc.FabricQuestAbandonPrompt;
 import me.pikamug.quests.convo.misc.FabricQuestAcceptPrompt;
+import me.pikamug.quests.dependencies.FabricPlaceholderSupport;
 import me.pikamug.quests.dependencies.npc.FabricNpcDependency;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quest.FabricQuestQuitEvent;
@@ -1152,240 +1153,186 @@ public class FabricQuester implements Quester {
             //plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
             return objectives;
         }
-        final QuestProgress progress = getQuestProgressOrDefault(quest);
+        final QuestProgress data = getQuestProgressOrDefault(quest);
         final ServerPlayer player = getPlayer();
-        final LinkedList<String> overrides = stage.getObjectiveOverrides() != null
-                ? stage.getObjectiveOverrides() : new LinkedList<>();
+        final LinkedList<String> overrides = stage.getObjectiveOverrides();
         int objIndex = -1;
 
         // Break blocks
-        for (int i = 0; i < stage.getBlocksToBreak().size(); i++) {
+        for (int i = 0; i < data.getBlocksBroken().size(); i++) {
             objIndex++;
-            final Object goalObj = stage.getBlocksToBreak().get(i);
-            if (goalObj == null) continue;
-            final int goal = getBlockAmount(stage.getBlocksToBreakAmounts(), i);
-            final int current = (progress.getBlocksBroken().size() > i) ? progress.getBlocksBroken().get(i) : 0;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "break", current, goal)
-                    .replace("<item>", blockName(goalObj))
-                    .replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.BREAK_BLOCK, message, current, goal));
-        }
-
-        // Place blocks
-        for (int i = 0; i < stage.getBlocksToPlace().size(); i++) {
-            objIndex++;
-            final Object goalObj = stage.getBlocksToPlace().get(i);
-            if (goalObj == null) continue;
-            final int goal = getBlockAmount(stage.getBlocksToPlaceAmounts(), i);
-            final int current = (progress.getBlocksPlaced().size() > i) ? progress.getBlocksPlaced().get(i) : 0;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "place", current, goal)
-                    .replace("<item>", blockName(goalObj))
-                    .replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.PLACE_BLOCK, message, current, goal));
+            final int progress = data.getBlocksBroken().get(i);
+            if (i >= stage.getBlocksToBreak().size()) { break; }
+            final ItemStack goal = stage.getBlocksToBreak().get(i);
+            final ChatFormatting color = progress < goal.getCount() ? ChatFormatting.GREEN : ChatFormatting.GRAY;
+            String message;
+            if (!ignoreOverrides && objIndex < overrides.size()) {
+                message = formatCurrentObjectiveMessage(color, overrides.get(objIndex), progress, goal.getCount());
+            } else {
+                message = formatCurrentObjectiveMessage(color, FabricLang.get(getPlayer(), "break"),
+                        progress, goal.getCount());
+            }
+            if (formatNames) {
+                message = message.replace("<item>", FabricItemUtil.getName(goal));
+            }
+            objectives.add(new FabricObjective(ObjectiveType.BREAK_BLOCK, message, progress, goal));
         }
 
         // Damage blocks
-        for (int i = 0; i < stage.getBlocksToDamage().size(); i++) {
+        for (int i = 0; i < data.getBlocksDamaged().size(); i++) {
             objIndex++;
+            final int current = data.getBlocksDamaged().get(i);
+            if (i >= stage.getBlocksToDamage().size()) { break; }
             final Object goalObj = stage.getBlocksToDamage().get(i);
             if (goalObj == null) continue;
             final int goal = getBlockAmount(stage.getBlocksToDamageAmounts(), i);
-            final int current = (progress.getBlocksDamaged().size() > i) ? progress.getBlocksDamaged().get(i) : 0;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "damage", current, goal)
-                    .replace("<item>", blockName(goalObj))
-                    .replaceAll("\\s{2,}", " ").trim();
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "damage", current, goal)
+                    .replace("<item>", blockName(goalObj));
             objectives.add(new FabricObjective(ObjectiveType.DAMAGE_BLOCK, message, current, goal));
         }
 
-        // Use blocks
-        for (int i = 0; i < stage.getBlocksToUse().size(); i++) {
+        // Place blocks
+        for (int i = 0; i < data.getBlocksPlaced().size(); i++) {
             objIndex++;
+            final int current = data.getBlocksPlaced().get(i);
+            if (i >= stage.getBlocksToPlace().size()) { break; }
+            final Object goalObj = stage.getBlocksToPlace().get(i);
+            if (goalObj == null) continue;
+            final int goal = getBlockAmount(stage.getBlocksToPlaceAmounts(), i);
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "place", current, goal)
+                    .replace("<item>", blockName(goalObj));
+            objectives.add(new FabricObjective(ObjectiveType.PLACE_BLOCK, message, current, goal));
+        }
+
+        // Use blocks
+        for (int i = 0; i < data.getBlocksUsed().size(); i++) {
+            objIndex++;
+            final int current = data.getBlocksUsed().get(i);
+            if (i >= stage.getBlocksToUse().size()) { break; }
             final Object goalObj = stage.getBlocksToUse().get(i);
             if (goalObj == null) continue;
             final int goal = getBlockAmount(stage.getBlocksToUseAmounts(), i);
-            final int current = (progress.getBlocksUsed().size() > i) ? progress.getBlocksUsed().get(i) : 0;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "use", current, goal)
-                    .replace("<item>", blockName(goalObj))
-                    .replaceAll("\\s{2,}", " ").trim();
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "use", current, goal)
+                    .replace("<item>", blockName(goalObj));
             objectives.add(new FabricObjective(ObjectiveType.USE_BLOCK, message, current, goal));
         }
 
         // Items crafted
-        for (int i = 0; i < stage.getItemsToCraft().size(); i++) {
+        for (int i = 0; i < data.getItemsCrafted().size(); i++) {
             objIndex++;
+            final int current = data.getItemsCrafted().get(i);
+            if (i >= stage.getItemsToCraft().size()) { break; }
             final Object goalObj = stage.getItemsToCraft().get(i);
             if (!(goalObj instanceof ItemStack)) continue;
-            ItemStack cGoal = (ItemStack) goalObj;
-            final int goal = Math.max(1, cGoal.getCount());
-            final int current = (progress.getItemsCrafted().size() > i) ? progress.getItemsCrafted().get(i) : 0;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "craftItem", current, goal)
-                    .replace("<item>", FabricItemUtil.getName(cGoal))
-                    .replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.CRAFT_ITEM, message, current, goal));
+            final ItemStack goal = (ItemStack) goalObj;
+            final int goalAmount = Math.max(1, goal.getCount());
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "craftItem", current,
+                    goalAmount)
+                    .replace("<item>", FabricItemUtil.getName(goal));
+            objectives.add(new FabricObjective(ObjectiveType.CRAFT_ITEM, message, current, goalAmount));
         }
 
         // Items smelted
-        for (int i = 0; i < stage.getItemsToSmelt().size(); i++) {
+        for (int i = 0; i < data.getItemsSmelted().size(); i++) {
             objIndex++;
+            final int current = data.getItemsSmelted().get(i);
+            if (i >= stage.getItemsToSmelt().size()) { break; }
             final Object goalObj = stage.getItemsToSmelt().get(i);
             if (!(goalObj instanceof ItemStack)) continue;
-            ItemStack sGoal = (ItemStack) goalObj;
-            final int goal = Math.max(1, sGoal.getCount());
-            final int current = (progress.getItemsSmelted().size() > i) ? progress.getItemsSmelted().get(i) : 0;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "smeltItem", current, goal)
-                    .replace("<item>", FabricItemUtil.getName(sGoal))
-                    .replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.SMELT_ITEM, message, current, goal));
+            final ItemStack goal = (ItemStack) goalObj;
+            final int goalAmount = Math.max(1, goal.getCount());
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "smeltItem", current,
+                    goalAmount)
+                    .replace("<item>", FabricItemUtil.getName(goal));
+            objectives.add(new FabricObjective(ObjectiveType.SMELT_ITEM, message, current, goalAmount));
         }
 
         // Items enchanted
-        for (int i = 0; i < stage.getItemsToEnchant().size(); i++) {
+        for (int i = 0; i < data.getItemsEnchanted().size(); i++) {
             objIndex++;
+            final int current = data.getItemsEnchanted().get(i);
+            if (i >= stage.getItemsToEnchant().size()) { break; }
             final Object goalObj = stage.getItemsToEnchant().get(i);
             if (!(goalObj instanceof ItemStack)) continue;
-            ItemStack eGoal = (ItemStack) goalObj;
-            final int goal = Math.max(1, eGoal.getCount());
-            final int current = (progress.getItemsEnchanted().size() > i) ? progress.getItemsEnchanted().get(i) : 0;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "enchItem", current, goal);
-            final ItemEnchantments ench = eGoal.get(DataComponents.ENCHANTMENTS);
-            if (ench != null && !ench.isEmpty()) {
-                final java.util.Map.Entry<net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment>, Integer> first = ench.entrySet().iterator().next();
-                final Holder<Enchantment> holder = first.getKey();
-                String enchName = holder.getRegisteredName();
-                if (enchName != null && enchName.indexOf(':') != -1) {
-                    enchName = enchName.substring(enchName.indexOf(':') + 1);
-                }
-                message = message.replace("<enchantment>", FabricMiscUtil.snakeCaseToUpperCamelCase(enchName))
-                            .replace("<level>", toRoman(first.getValue()));
+            final ItemStack goal = (ItemStack) goalObj;
+            final int goalAmount = Math.max(1, goal.getCount());
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "enchItem", current,
+                    goalAmount)
+                    .replace("<item>", FabricItemUtil.getName(goal));
+            final ItemEnchantments ench = goal.get(DataComponents.ENCHANTMENTS);
+            if (ench == null || ench.isEmpty()) {
+                objectives.add(new FabricObjective(ObjectiveType.ENCHANT_ITEM,
+                        message.replace("<enchantment>", "").replace("<level>", ""), current, goalAmount));
             } else {
-                message = message.replace("<enchantment>", "").replace("<level>", "");
+                for (final Map.Entry<Holder<Enchantment>, Integer> entry : ench.entrySet()) {
+                    String enchName = entry.getKey().getRegisteredName();
+                    if (enchName != null && enchName.indexOf(':') != -1) {
+                        enchName = enchName.substring(enchName.indexOf(':') + 1);
+                    }
+                    objectives.add(new FabricObjective(ObjectiveType.ENCHANT_ITEM,
+                            message.replace("<enchantment>", enchName != null
+                                            ? FabricMiscUtil.snakeCaseToUpperCamelCase(enchName) : "")
+                                    .replace("<level>", toRoman(entry.getValue())), current, goalAmount));
+                }
             }
-            message = message.replace("<item>", FabricItemUtil.getName(eGoal))
-                    .replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.ENCHANT_ITEM, message, current, goal));
         }
 
         // Items brewed
-        for (int i = 0; i < stage.getItemsToBrew().size(); i++) {
+        for (int i = 0; i < data.getItemsBrewed().size(); i++) {
             objIndex++;
+            final int current = data.getItemsBrewed().get(i);
+            if (i >= stage.getItemsToBrew().size()) { break; }
             final Object goalObj = stage.getItemsToBrew().get(i);
             if (!(goalObj instanceof ItemStack)) continue;
-            ItemStack bGoal = (ItemStack) goalObj;
-            final int goal = Math.max(1, bGoal.getCount());
-            final int current = (progress.getItemsBrewed().size() > i) ? progress.getItemsBrewed().get(i) : 0;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "brewItem", current, goal)
-                    .replace("<item>", FabricItemUtil.getName(bGoal))
+            final ItemStack goal = (ItemStack) goalObj;
+            final int goalAmount = Math.max(1, goal.getCount());
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "brewItem", current,
+                    goalAmount)
+                    .replace("<item>", FabricItemUtil.getName(goal))
                     .replace(" <level>", "")
-                    .replace("<level>", "")
-                    .replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.BREW_ITEM, message, current, goal));
+                    .replace("<level>", "");
+            objectives.add(new FabricObjective(ObjectiveType.BREW_ITEM, message, current, goalAmount));
         }
 
         // Items consumed
-        for (int i = 0; i < stage.getItemsToConsume().size(); i++) {
+        for (int i = 0; i < data.getItemsConsumed().size(); i++) {
             objIndex++;
+            final int current = data.getItemsConsumed().get(i);
+            if (i >= stage.getItemsToConsume().size()) { break; }
             final Object goalObj = stage.getItemsToConsume().get(i);
             if (!(goalObj instanceof ItemStack)) continue;
-            ItemStack cnGoal = (ItemStack) goalObj;
-            final int goal = Math.max(1, cnGoal.getCount());
-            final int current = (progress.getItemsConsumed().size() > i) ? progress.getItemsConsumed().get(i) : 0;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "consumeItem", current, goal)
-                    .replace("<item>", FabricItemUtil.getName(cnGoal))
+            final ItemStack goal = (ItemStack) goalObj;
+            final int goalAmount = Math.max(1, goal.getCount());
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "consumeItem", current,
+                    goalAmount)
+                    .replace("<item>", FabricItemUtil.getName(goal))
                     .replace(" <level>", "")
-                    .replace("<level>", "")
-                    .replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.CONSUME_ITEM, message, current, goal));
+                    .replace("<level>", "");
+            objectives.add(new FabricObjective(ObjectiveType.CONSUME_ITEM, message, current, goalAmount));
         }
 
         // Items delivered
-        for (int i = 0; i < stage.getItemsToDeliver().size(); i++) {
+        for (int i = 0; i < data.getItemsDelivered().size(); i++) {
             objIndex++;
+            final int current = data.getItemsDelivered().get(i);
+            if (i >= stage.getItemsToDeliver().size()) { break; }
             final Object goalObj = stage.getItemsToDeliver().get(i);
             if (!(goalObj instanceof ItemStack)) continue;
-            ItemStack goal = (ItemStack) goalObj;
+            final ItemStack goal = (ItemStack) goalObj;
             final int goalAmount = Math.max(1, goal.getCount());
-            final int current = (progress.getItemsDelivered().size() > i) ? progress.getItemsDelivered().get(i) : 0;
             final UUID npcUuid = (stage.getItemDeliveryTargets().size() > i)
                     ? stage.getItemDeliveryTargets().get(i) : null;
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "deliver", current, goalAmount)
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "deliver", current,
+                    goalAmount)
                     .replace("<item>", FabricItemUtil.getName(goal))
-                    .replace("<npc>", npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?")
-                    .replaceAll("\\s{2,}", " ").trim();
+                    .replace("<npc>", npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?");
             objectives.add(new FabricObjective(ObjectiveType.DELIVER_ITEM, message, current, goalAmount));
-        }
-
-        // Mobs killed
-        for (int i = 0; i < stage.getMobsToKill().size(); i++) {
-            objIndex++;
-            final int goal = (stage.getMobNumToKill() != null && stage.getMobNumToKill().size() > i)
-                    ? stage.getMobNumToKill().get(i) : 1;
-            final int current = (progress.getMobNumKilled().size() > i) ? progress.getMobNumKilled().get(i) : 0;
-            final String mobName = FabricMiscUtil.snakeCaseToUpperCamelCase(
-                    stage.getMobsToKill().get(i).toString());
-            String message;
-            if (stage.getLocationsToKillWithin().isEmpty()) {
-                message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "kill", current, goal);
-            } else {
-                final String killName = stage.getKillNames() != null && stage.getKillNames().size() > i
-                        && stage.getKillNames().get(i) != null ? stage.getKillNames().get(i) : "?";
-                message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "killAtLocation", current, goal)
-                        .replace("<location>", killName);
-            }
-            message = message.replace("<mob>", mobName).replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.KILL_MOB, message, current, goal));
-        }
-
-        // Mobs tamed
-        for (int i = 0; i < stage.getMobsToTame().size(); i++) {
-            objIndex++;
-            final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
-                    ? stage.getMobNumToTame().get(i) : 1;
-            final int current = (progress.getMobsTamed().size() > i) ? progress.getMobsTamed().get(i) : 0;
-            final Object tameObj = stage.getMobsToTame().get(i);
-            final String mobName = tameObj != null
-                    ? FabricMiscUtil.snakeCaseToUpperCamelCase(tameObj.toString()) : "?";
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "tame", current, goal)
-                    .replace("<mob>", mobName)
-                    .replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.TAME_MOB, message, current, goal));
-        }
-
-        // Fish caught
-        if (stage.getFishToCatch() != null && stage.getFishToCatch() > 0) {
-            objIndex++;
-            final int goal = stage.getFishToCatch();
-            final int current = progress.getFishCaught();
-            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "catchFish", current, goal);
-            objectives.add(new FabricObjective(ObjectiveType.CATCH_FISH, message.trim(), current, goal));
-        }
-
-        // Cows milked
-        if (stage.getCowsToMilk() != null && stage.getCowsToMilk() > 0) {
-            objIndex++;
-            final int goal = stage.getCowsToMilk();
-            final int current = progress.getCowsMilked();
-            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "milkCow", current, goal);
-            objectives.add(new FabricObjective(ObjectiveType.MILK_COW, message.trim(), current, goal));
-        }
-
-        // Sheep sheared
-        for (int i = 0; i < stage.getSheepToShear().size(); i++) {
-            objIndex++;
-            final int goal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
-                    ? stage.getSheepNumToShear().get(i) : 1;
-            final int current = (progress.getSheepSheared().size() > i) ? progress.getSheepSheared().get(i) : 0;
-            final Object dyeObj = stage.getSheepToShear().get(i);
-            final String color = dyeObj != null ? FabricMiscUtil.snakeCaseToUpperCamelCase(dyeObj.toString()) : "?";
-            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "shearSheep", current, goal)
-                    .replace("<color>", color)
-                    .replaceAll("\\s{2,}", " ").trim();
-            objectives.add(new FabricObjective(ObjectiveType.SHEAR_SHEEP, message, current, goal));
         }
 
         // NPCs interacted
         for (int i = 0; i < stage.getNpcsToInteract().size(); i++) {
             objIndex++;
-            final boolean said = (progress.getNpcsInteracted().size() > i) && progress.getNpcsInteracted().get(i);
+            final boolean said = (data.getNpcsInteracted().size() > i) && data.getNpcsInteracted().get(i);
             final UUID npcUuid = stage.getNpcsToInteract().get(i);
             final String npcName = npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?";
             final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "talkTo", said ? 1 : 0, 1)
@@ -1398,7 +1345,7 @@ public class FabricQuester implements Quester {
             objIndex++;
             final int goal = (stage.getNpcNumToKill() != null && stage.getNpcNumToKill().size() > i)
                     ? stage.getNpcNumToKill().get(i) : 1;
-            final int current = (progress.getNpcsNumKilled().size() > i) ? progress.getNpcsNumKilled().get(i) : 0;
+            final int current = (data.getNpcsNumKilled().size() > i) ? data.getNpcsNumKilled().get(i) : 0;
             String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "kill", current, goal);
             final UUID npcUuid = stage.getNpcsToKill().get(i);
             final String npcName = npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?";
@@ -1410,11 +1357,77 @@ public class FabricQuester implements Quester {
             objectives.add(new FabricObjective(ObjectiveType.KILL_NPC, message, current, goal));
         }
 
+        // Mobs killed
+        for (int i = 0; i < stage.getMobsToKill().size(); i++) {
+            objIndex++;
+            final int goal = (stage.getMobNumToKill() != null && stage.getMobNumToKill().size() > i)
+                    ? stage.getMobNumToKill().get(i) : 1;
+            final int current = (data.getMobNumKilled().size() > i) ? data.getMobNumKilled().get(i) : 0;
+            final String mobName = FabricMiscUtil.snakeCaseToUpperCamelCase(
+                    stage.getMobsToKill().get(i).toString());
+            String message;
+            if (stage.getLocationsToKillWithin().isEmpty()) {
+                message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "kill", current, goal);
+            } else {
+                final String killName = stage.getKillNames() != null && stage.getKillNames().size() > i
+                        && stage.getKillNames().get(i) != null ? stage.getKillNames().get(i) : "?";
+                message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "killAtLocation", current, goal)
+                        .replace("<location>", killName);
+            }
+            message = message.replace("<mob>", mobName);
+            objectives.add(new FabricObjective(ObjectiveType.KILL_MOB, message, current, goal));
+        }
+
+        // Mobs tamed
+        for (int i = 0; i < stage.getMobsToTame().size(); i++) {
+            objIndex++;
+            final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
+                    ? stage.getMobNumToTame().get(i) : 1;
+            final int current = (data.getMobsTamed().size() > i) ? data.getMobsTamed().get(i) : 0;
+            final Object tameObj = stage.getMobsToTame().get(i);
+            final String mobName = tameObj != null
+                    ? FabricMiscUtil.snakeCaseToUpperCamelCase(tameObj.toString()) : "?";
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "tame", current, goal)
+                    .replace("<mob>", mobName);
+            objectives.add(new FabricObjective(ObjectiveType.TAME_MOB, message, current, goal));
+        }
+
+        // Fish caught
+        if (stage.getFishToCatch() != null && stage.getFishToCatch() > 0) {
+            objIndex++;
+            final int goal = stage.getFishToCatch();
+            final int current = data.getFishCaught();
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "catchFish", current, goal);
+            objectives.add(new FabricObjective(ObjectiveType.CATCH_FISH, message, current, goal));
+        }
+
+        // Cows milked
+        if (stage.getCowsToMilk() != null && stage.getCowsToMilk() > 0) {
+            objIndex++;
+            final int goal = stage.getCowsToMilk();
+            final int current = data.getCowsMilked();
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "milkCow", current, goal);
+            objectives.add(new FabricObjective(ObjectiveType.MILK_COW, message, current, goal));
+        }
+
+        // Sheep sheared
+        for (int i = 0; i < stage.getSheepToShear().size(); i++) {
+            objIndex++;
+            final int goal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
+                    ? stage.getSheepNumToShear().get(i) : 1;
+            final int current = (data.getSheepSheared().size() > i) ? data.getSheepSheared().get(i) : 0;
+            final Object dyeObj = stage.getSheepToShear().get(i);
+            final String color = dyeObj != null ? FabricMiscUtil.snakeCaseToUpperCamelCase(dyeObj.toString()) : "?";
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "shearSheep", current, goal)
+                    .replace("<color>", color);
+            objectives.add(new FabricObjective(ObjectiveType.SHEAR_SHEEP, message, current, goal));
+        }
+
         // Players killed
         if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
             objIndex++;
             final int goal = stage.getPlayersToKill();
-            final int current = progress.getPlayersKilled();
+            final int current = data.getPlayersKilled();
             final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "killPlayer", current, goal);
             objectives.add(new FabricObjective(ObjectiveType.KILL_PLAYER, message, current, goal));
         }
@@ -1422,7 +1435,7 @@ public class FabricQuester implements Quester {
         // Locations to reach
         for (int i = 0; i < stage.getLocationsToReach().size(); i++) {
             objIndex++;
-            final boolean reached = (progress.getLocationsReached().size() > i) && progress.getLocationsReached().get(i);
+            final boolean reached = (data.getLocationsReached().size() > i) && data.getLocationsReached().get(i);
             final String locationName = (stage.getLocationNames() != null && stage.getLocationNames().size() > i
                     && stage.getLocationNames().get(i) != null) ? stage.getLocationNames().get(i) : "?";
             final String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "goTo", reached ? 1 : 0, 1)
@@ -1433,7 +1446,7 @@ public class FabricQuester implements Quester {
         // Passwords said
         for (int i = 0; i < stage.getPasswordDisplays().size(); i++) {
             objIndex++;
-            final boolean said = (progress.getPasswordsSaid().size() > i) && progress.getPasswordsSaid().get(i);
+            final boolean said = (data.getPasswordsSaid().size() > i) && data.getPasswordsSaid().get(i);
             final String display = stage.getPasswordDisplays().get(i);
             final String message = display != null ? display : "";
             objectives.add(new FabricObjective(ObjectiveType.PASSWORD, message, said ? 1 : 0, 1));
@@ -1446,14 +1459,14 @@ public class FabricQuester implements Quester {
             if (co == null) continue;
             final int goal = (stage.getCustomObjectiveCounts() != null && stage.getCustomObjectiveCounts().size() > i)
                     ? stage.getCustomObjectiveCounts().get(i) : 1;
-            final int current = (progress.getCustomObjectiveCounts().size() > i)
-                    ? progress.getCustomObjectiveCounts().get(i) : 0;
+            final int current = (data.getCustomObjectiveCounts().size() > i)
+                    ? data.getCustomObjectiveCounts().get(i) : 0;
             String message;
             if (!ignoreOverrides && objIndex < overrides.size()) {
                 final String s = overrides.get(objIndex);
-                message = FabricConfigUtil.parseString((s != null ? s : "")
+                message = (s != null ? s : "")
                         .replace("<count>", current + "/" + goal)
-                        .replace("%count%", current + "/" + goal));
+                        .replace("%count%", current + "/" + goal);
             } else {
                 message = co.getDisplay() != null ? co.getDisplay() : "";
             }
@@ -1473,12 +1486,39 @@ public class FabricQuester implements Quester {
             if (co.canShowCount()) {
                 message = message.replace("%count%", current + "/" + goal);
             }
-            objectives.add(new FabricObjective(ObjectiveType.CUSTOM, message.trim(), current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.CUSTOM, message, current, goal));
         }
 
-
+        for (int i = 0; i < objectives.size(); i++) {
+            final Objective objective = objectives.get(i);
+            String message = objective.getMessage();
+            if (message != null) {
+                message = FabricConfigUtil.parseString(message.trim().replaceAll("\\s{2,}", ""));
+                objectives.set(i, new FabricObjective(objective.getType(), message, objective.getProgress(),
+                        objective.getGoal()));
+            }
+        }
 
         return objectives;
+    }
+
+    /**
+     * Format current objective message with count and placeholders
+     *
+     * @param color Color for text
+     * @param message Text to format
+     * @param progress Objective progress
+     * @param goal Objective goal
+     * @return Formatted message
+     */
+    private String formatCurrentObjectiveMessage(ChatFormatting color, String message, int progress, int goal) {
+        message = color + message;
+        message = message.replace("<count>", "" + color + progress + "/" + goal);
+        message = message.replace("%count%", "" + color + progress + "/" + goal);
+        if (plugin.getDependencies().getPlaceholderApi() != null) {
+            message = FabricPlaceholderSupport.setPlaceholders(getPlayer(), message);
+        }
+        return message;
     }
 
     private String blockName(final Object goalObj) {
@@ -1489,20 +1529,6 @@ public class FabricQuester implements Quester {
         final String raw = goalObj.toString();
         return FabricMiscUtil.snakeCaseToUpperCamelCase(
                 raw.indexOf(':') != -1 ? raw.substring(raw.indexOf(':') + 1) : raw);
-    }
-
-    private String objectiveLine(final ServerPlayer player, final boolean ignoreOverrides,
-            final LinkedList<String> overrides, final int objIndex, final String langKey, final int current,
-            final int goal) {
-        if (!ignoreOverrides && overrides != null && objIndex < overrides.size()) {
-            final String s = overrides.get(objIndex);
-            return FabricConfigUtil.parseString((s != null ? s : "").replace("<count>", current + "/" + goal)
-                    .replace("%count%", current + "/" + goal));
-        }
-        return FabricLang.get(player, langKey)
-                .replace("<count>", current + "/" + goal)
-                .replace("%count%", current + "/" + goal)
-                .replace("<goal>", current + "/" + goal);
     }
 
     private int listProgress(final LinkedList<Integer> list, final int index) {

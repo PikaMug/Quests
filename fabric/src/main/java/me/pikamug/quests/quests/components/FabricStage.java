@@ -14,6 +14,7 @@ import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -24,10 +25,10 @@ import java.util.UUID;
 
 public class FabricStage implements Stage {
 
-    private LinkedList<Object> blocksToBreak = new LinkedList<>();
-    private LinkedList<Object> blocksToDamage = new LinkedList<>();
-    private LinkedList<Object> blocksToPlace = new LinkedList<>();
-    private LinkedList<Object> blocksToUse = new LinkedList<>();
+    private LinkedList<ItemStack> blocksToBreak = new LinkedList<>();
+    private LinkedList<ItemStack> blocksToDamage = new LinkedList<>();
+    private LinkedList<ItemStack> blocksToPlace = new LinkedList<>();
+    private LinkedList<ItemStack> blocksToUse = new LinkedList<>();
     private LinkedList<Integer> blocksToBreakAmounts = new LinkedList<>();
     private LinkedList<Integer> blocksToDamageAmounts = new LinkedList<>();
     private LinkedList<Integer> blocksToPlaceAmounts = new LinkedList<>();
@@ -36,12 +37,12 @@ public class FabricStage implements Stage {
     private LinkedList<Short> blocksToDamageDurability = new LinkedList<>();
     private LinkedList<Short> blocksToPlaceDurability = new LinkedList<>();
     private LinkedList<Short> blocksToUseDurability = new LinkedList<>();
-    private LinkedList<Object> itemsToCraft = new LinkedList<>();
-    private LinkedList<Object> itemsToSmelt = new LinkedList<>();
-    private LinkedList<Object> itemsToEnchant = new LinkedList<>();
-    private LinkedList<Object> itemsToBrew = new LinkedList<>();
-    private LinkedList<Object> itemsToConsume = new LinkedList<>();
-    private LinkedList<Object> itemsToDeliver = new LinkedList<>();
+    private LinkedList<ItemStack> itemsToCraft = new LinkedList<>();
+    private LinkedList<ItemStack> itemsToSmelt = new LinkedList<>();
+    private LinkedList<ItemStack> itemsToEnchant = new LinkedList<>();
+    private LinkedList<ItemStack> itemsToBrew = new LinkedList<>();
+    private LinkedList<ItemStack> itemsToConsume = new LinkedList<>();
+    private LinkedList<ItemStack> itemsToDeliver = new LinkedList<>();
     private LinkedList<UUID> itemDeliveryTargets = new LinkedList<UUID>() {
 
         private static final long serialVersionUID = -2774443496142382127L;
@@ -139,15 +140,15 @@ public class FabricStage implements Stage {
     private final LinkedList<Entry<String, Object>> customObjectiveData = new LinkedList<>();
 
     @Override
-    public LinkedList<Object> getBlocksToBreak() {
+    public LinkedList<ItemStack> getBlocksToBreak() {
         return blocksToBreak;
     }
 
-    public boolean addBlockToBreak(@NotNull final Object blockToBreak) {
+    public boolean addBlockToBreak(@NotNull final ItemStack blockToBreak) {
         return blocksToBreak.add(blockToBreak);
     }
 
-    public void setBlocksToBreak(final LinkedList<Object> blocksToBreak) {
+    public void setBlocksToBreak(final LinkedList<ItemStack> blocksToBreak) {
         this.blocksToBreak = blocksToBreak;
     }
 
@@ -168,15 +169,15 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getBlocksToDamage() {
+    public LinkedList<ItemStack> getBlocksToDamage() {
         return blocksToDamage;
     }
 
-    public boolean addBlockToDamage(@NotNull final Object blockToDamage) {
+    public boolean addBlockToDamage(@NotNull final ItemStack blockToDamage) {
         return blocksToDamage.add(blockToDamage);
     }
 
-    public void setBlocksToDamage(final LinkedList<Object> blocksToDamage) {
+    public void setBlocksToDamage(final LinkedList<ItemStack> blocksToDamage) {
         this.blocksToDamage = blocksToDamage;
     }
 
@@ -197,15 +198,15 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getBlocksToPlace() {
+    public LinkedList<ItemStack> getBlocksToPlace() {
         return blocksToPlace;
     }
 
-    public boolean addBlockToPlace(@NotNull final Object blockToPlace) {
+    public boolean addBlockToPlace(@NotNull final ItemStack blockToPlace) {
         return blocksToPlace.add(blockToPlace);
     }
 
-    public void setBlocksToPlace(final LinkedList<Object> blocksToPlace) {
+    public void setBlocksToPlace(final LinkedList<ItemStack> blocksToPlace) {
         this.blocksToPlace = blocksToPlace;
     }
 
@@ -226,15 +227,15 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getBlocksToUse() {
+    public LinkedList<ItemStack> getBlocksToUse() {
         return blocksToUse;
     }
 
-    public boolean addBlockToUse(@NotNull final Object blockToUse) {
+    public boolean addBlockToUse(@NotNull final ItemStack blockToUse) {
         return blocksToUse.add(blockToUse);
     }
 
-    public void setBlocksToUse(final LinkedList<Object> blocksToUse) {
+    public void setBlocksToUse(final LinkedList<ItemStack> blocksToUse) {
         this.blocksToUse = blocksToUse;
     }
 
@@ -255,80 +256,80 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getItemsToCraft() {
+    public LinkedList<ItemStack> getItemsToCraft() {
         return itemsToCraft;
     }
 
-    public boolean addItemToCraft(@NotNull final Object itemToCraft) {
+    public boolean addItemToCraft(@NotNull final ItemStack itemToCraft) {
         return itemsToCraft.add(itemToCraft);
     }
 
-    public void setItemsToCraft(final LinkedList<Object> itemsToCraft) {
+    public void setItemsToCraft(final LinkedList<ItemStack> itemsToCraft) {
         this.itemsToCraft = itemsToCraft;
     }
 
     @Override
-    public LinkedList<Object> getItemsToSmelt() {
+    public LinkedList<ItemStack> getItemsToSmelt() {
         return itemsToSmelt;
     }
 
-    public boolean addItemToSmelt(@NotNull final Object itemToSmelt) {
+    public boolean addItemToSmelt(@NotNull final ItemStack itemToSmelt) {
         return itemsToSmelt.add(itemToSmelt);
     }
 
-    public void setItemsToSmelt(final LinkedList<Object> itemsToSmelt) {
+    public void setItemsToSmelt(final LinkedList<ItemStack> itemsToSmelt) {
         this.itemsToSmelt = itemsToSmelt;
     }
 
     @Override
-    public LinkedList<Object> getItemsToEnchant() {
+    public LinkedList<ItemStack> getItemsToEnchant() {
         return itemsToEnchant;
     }
 
-    public boolean addItemToEnchant(@NotNull final Object itemToEnchant) {
+    public boolean addItemToEnchant(@NotNull final ItemStack itemToEnchant) {
         return itemsToEnchant.add(itemToEnchant);
     }
 
-    public void setItemsToEnchant(final LinkedList<Object> itemsToEnchant) {
+    public void setItemsToEnchant(final LinkedList<ItemStack> itemsToEnchant) {
         this.itemsToEnchant = itemsToEnchant;
     }
 
     @Override
-    public LinkedList<Object> getItemsToBrew() {
+    public LinkedList<ItemStack> getItemsToBrew() {
         return itemsToBrew;
     }
 
-    public boolean addItemsToBrew(@NotNull final Object itemToBrew) {
+    public boolean addItemsToBrew(@NotNull final ItemStack itemToBrew) {
         return itemsToBrew.add(itemToBrew);
     }
 
-    public void setItemsToBrew(final LinkedList<Object> itemsToBrew) {
+    public void setItemsToBrew(final LinkedList<ItemStack> itemsToBrew) {
         this.itemsToBrew = itemsToBrew;
     }
 
     @Override
-    public LinkedList<Object> getItemsToConsume() {
+    public LinkedList<ItemStack> getItemsToConsume() {
         return itemsToConsume;
     }
 
-    public boolean addItemToConsume(@NotNull final Object itemToConsume) {
+    public boolean addItemToConsume(@NotNull final ItemStack itemToConsume) {
         return itemsToConsume.add(itemToConsume);
     }
 
-    public void setItemsToConsume(final LinkedList<Object> itemsToConsume) {
+    public void setItemsToConsume(final LinkedList<ItemStack> itemsToConsume) {
         this.itemsToConsume = itemsToConsume;
     }
 
     @Override
-    public LinkedList<Object> getItemsToDeliver() {
+    public LinkedList<ItemStack> getItemsToDeliver() {
         return itemsToDeliver;
     }
 
-    public boolean addItemToDeliver(@NotNull final Object itemToDeliver) {
+    public boolean addItemToDeliver(@NotNull final ItemStack itemToDeliver) {
         return itemsToDeliver.add(itemToDeliver);
     }
 
-    public void setItemsToDeliver(final LinkedList<Object> itemsToDeliver) {
+    public void setItemsToDeliver(final LinkedList<ItemStack> itemsToDeliver) {
         this.itemsToDeliver = itemsToDeliver;
     }
 

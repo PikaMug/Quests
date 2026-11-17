@@ -240,28 +240,28 @@ public class FabricQuestFactory implements QuestFactory {
                 index++;
                 SessionData.set(uuid, pref, Boolean.TRUE);
                 if (!fabricStage.getBlocksToBreak().isEmpty()) {
-                    SessionData.set(uuid, pref + Key.S_BREAK_NAMES, toStringList(fabricStage.getBlocksToBreak()));
+                    SessionData.set(uuid, pref + Key.S_BREAK_NAMES, toItemList(fabricStage.getBlocksToBreak()));
                     SessionData.set(uuid, pref + Key.S_BREAK_AMOUNTS,
                             new LinkedList<>(fabricStage.getBlocksToBreakAmounts()));
                     SessionData.set(uuid, pref + Key.S_BREAK_DURABILITY,
                             new LinkedList<>(fabricStage.getBlocksToBreakDurability()));
                 }
                 if (!fabricStage.getBlocksToDamage().isEmpty()) {
-                    SessionData.set(uuid, pref + Key.S_DAMAGE_NAMES, toStringList(fabricStage.getBlocksToDamage()));
+                    SessionData.set(uuid, pref + Key.S_DAMAGE_NAMES, toItemList(fabricStage.getBlocksToDamage()));
                     SessionData.set(uuid, pref + Key.S_DAMAGE_AMOUNTS,
                             new LinkedList<>(fabricStage.getBlocksToDamageAmounts()));
                     SessionData.set(uuid, pref + Key.S_DAMAGE_DURABILITY,
                             new LinkedList<>(fabricStage.getBlocksToDamageDurability()));
                 }
                 if (!fabricStage.getBlocksToPlace().isEmpty()) {
-                    SessionData.set(uuid, pref + Key.S_PLACE_NAMES, toStringList(fabricStage.getBlocksToPlace()));
+                    SessionData.set(uuid, pref + Key.S_PLACE_NAMES, toItemList(fabricStage.getBlocksToPlace()));
                     SessionData.set(uuid, pref + Key.S_PLACE_AMOUNTS,
                             new LinkedList<>(fabricStage.getBlocksToPlaceAmounts()));
                     SessionData.set(uuid, pref + Key.S_PLACE_DURABILITY,
                             new LinkedList<>(fabricStage.getBlocksToPlaceDurability()));
                 }
                 if (!fabricStage.getBlocksToUse().isEmpty()) {
-                    SessionData.set(uuid, pref + Key.S_USE_NAMES, toStringList(fabricStage.getBlocksToUse()));
+                    SessionData.set(uuid, pref + Key.S_USE_NAMES, toItemList(fabricStage.getBlocksToUse()));
                     SessionData.set(uuid, pref + Key.S_USE_AMOUNTS,
                             new LinkedList<>(fabricStage.getBlocksToUseAmounts()));
                     SessionData.set(uuid, pref + Key.S_USE_DURABILITY,
@@ -430,14 +430,8 @@ public class FabricQuestFactory implements QuestFactory {
         return list;
     }
 
-    private static LinkedList<ItemStack> toItemList(final LinkedList<Object> source) {
-        final LinkedList<ItemStack> list = new LinkedList<>();
-        for (final Object o : source) {
-            if (o instanceof ItemStack) {
-                list.add((ItemStack) o);
-            }
-        }
-        return list;
+    private static LinkedList<ItemStack> toItemList(final LinkedList<ItemStack> source) {
+        return new LinkedList<>(source);
     }
 
     public void clearData(final UUID uuid) {
