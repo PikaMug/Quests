@@ -514,7 +514,6 @@ public class FabricQuester implements Quester {
      * @param giveReason Whether to inform Quester of unavailability
      * @return true if successful
      */
-    @Override
     public boolean offerQuest(final Quest quest, final boolean giveReason) {
         if (quest == null) {
             return false;
@@ -555,7 +554,7 @@ public class FabricQuester implements Quester {
      * @param giveReason Whether to inform Quester of unavailability
      * @return true if available
      */
-    public boolean canAcceptOffer(Quest quest, boolean giveReason) {
+    public boolean canAcceptOffer(final Quest quest, final boolean giveReason) {
         if (quest == null) {
             return false;
         }
@@ -728,7 +727,7 @@ public class FabricQuester implements Quester {
                 }
 
                 // If quest is not active, or new period of activity should override player cooldown
-                if (!active || (pln.getOverride() && completedEnd > 0L && currentTime < completedEnd)) {
+                if (!active || (quest.getPlanner().getOverride() && completedEnd > 0L && currentTime < completedEnd)) {
                     if (giveReason) {
                         final String early = FabricLang.get(getPlayer(), "plnTooEarly").replace("<quest>", quest.getName())
                                 .replace("<time>", FabricMiscUtil.getTime(completedEnd - currentTime));
@@ -816,7 +815,8 @@ public class FabricQuester implements Quester {
         }
         final Stage stage = quest.getStage(0);
         if (player != null) {
-            sendMessage(ChatFormatting.GOLD + FabricLang.get(getPlayer(), "objectives").replace("<quest>", quest.getName()));
+            FabricLang.send(player, ChatFormatting.GOLD + FabricLang.get(player, "objectives")
+                    .replace("<quest>", quest.getName()));
             showCurrentObjectives(quest, this, false);
             if (stage != null && stage.getStartMessage() != null) {
                 for (final String line : FabricConfigUtil.parseStringWithPossibleLineBreaks(
@@ -889,31 +889,55 @@ public class FabricQuester implements Quester {
         return false;
     }
 
-    @Override
-    public void quitQuest(Quest quest, String message) {
-        quitQuest(quest, message != null ? new String[]{message} : new String[0]);
+    /**
+     * End a quest for this Quester
+     *
+     * @param quest The quest to start
+     * @param message Message to inform player, can be left null or empty
+     * @since 3.8.6
+     */
+    public void quitQuest(final Quest quest, final String message) {
+        quitQuest(quest, new String[] {message});
     }
 
-    @Override
-    public void quitQuest(Quest quest, String[] messages) {
-        if (quest == null) return;
+    /**
+     * End a quest for this Quester
+     *
+     * @param quest The quest to start
+     * @param messages Messages to inform player, can be left null or empty
+     * @since 3.8.6
+     */
+    public void quitQuest(final Quest quest, final String[] messages) {
+        if (quest == null) {
+            return;
+        }
         hardQuit(quest);
-        for (final String msg : messages) {
-            if (msg != null && !msg.isEmpty()) {
-                sendMessage(msg);
+        if (plugin.getConfigSettings().getConsoleLogging() > 1) {
+            plugin.getPluginLogger().info(getOfflinePlayer().getUniqueId() + " quit quest " + quest.getName());
+        }
+        for (final String message : messages) {
+            if (getOfflinePlayer().isOnline()) {
+                FabricLang.send(getPlayer(), message);
             }
         }
         saveData();
         updateJournal();
+        if (compassTargetQuestId != null && compassTargetQuestId.equals(quest.getId())) {
+            compassTargetQuestId = null;
+        }
     }
 
-    @Override
+    /**
+     * Show the player a list of their available quests
+     *
+     * @param quester Quester to show the list
+     * @param page Page to display, with 7 quests per page
+     */
     public void listQuests(final Quester quester, final int page) {
+        // Although we could copy the quests list to a new object, we instead opt to
+        // duplicate code to improve efficiency if ignore-locked-quests is set to 'false'
         final int rows = 7;
         final ServerPlayer player = getPlayer();
-        if (player == null) {
-            return;
-        }
         final Collection<Quest> quests = plugin.getLoadedQuests();
         if (plugin.getConfigSettings().canIgnoreLockedQuests()) {
             final LinkedList<Quest> available = new LinkedList<>();
@@ -929,50 +953,72 @@ public class FabricQuester implements Quester {
                 }
             }
             if ((available.size() + rows) <= (page * rows) || available.isEmpty()) {
-                sendMessage(ChatFormatting.YELLOW + FabricLang.get(player, "pageNotExist"));
-                return;
-            }
-            sendMessage(ChatFormatting.GOLD + FabricLang.get(player, "questListTitle"));
-            int fromOrder = (page - 1) * rows;
-            final List<Quest> subQuests = available.size() >= (fromOrder + rows)
-                    ? available.subList(fromOrder, fromOrder + rows)
-                    : available.subList(fromOrder, available.size());
-            fromOrder++;
-            for (final Quest q : subQuests) {
-                sendMessage((quester.canAcceptOffer(q, false) ? ChatFormatting.YELLOW : ChatFormatting.GRAY)
-                        + Integer.toString(fromOrder) + ". " + q.getName());
+                FabricLang.send(player, ChatFormatting.YELLOW + FabricLang.get(player, "pageNotExist"));
+            } else {
+                FabricLang.send(player, ChatFormatting.GOLD + FabricLang.get(player, "questListTitle"));
+                int fromOrder = (page - 1) * rows;
+                final List<Quest> subQuests;
+                if (available.size() >= (fromOrder + rows)) {
+                    subQuests = available.subList((fromOrder), (fromOrder + rows));
+                } else {
+                    subQuests = available.subList((fromOrder), available.size());
+                }
                 fromOrder++;
+                for (final Quest q : subQuests) {
+                    if (quester.canAcceptOffer(q, false)) {
+                        quester.sendMessage(ChatFormatting.YELLOW + Integer.toString(fromOrder) + ". "
+                                + q.getName());
+                    } else {
+                        quester.sendMessage(ChatFormatting.GRAY + Integer.toString(fromOrder) + ". "
+                                + q.getName());
+                    }
+                    fromOrder++;
+                }
+                final int numPages = (int) Math.ceil(((double) available.size()) / ((double) rows));
+                String msg = FabricLang.get(player, "pageFooter");
+                msg = msg.replace("<current>", String.valueOf(page));
+                msg = msg.replace("<all>", String.valueOf(numPages));
+                FabricLang.send(player, ChatFormatting.GOLD + msg);
             }
-            final int numPages = (int) Math.ceil(((double) available.size()) / ((double) rows));
-            String msg = FabricLang.get(player, "pageFooter");
-            msg = msg.replace("<current>", String.valueOf(page));
-            msg = msg.replace("<all>", String.valueOf(numPages));
-            sendMessage(ChatFormatting.GOLD + msg);
         } else {
             if ((quests.size() + rows) <= (page * rows) || quests.isEmpty()) {
-                sendMessage(ChatFormatting.YELLOW + FabricLang.get(player, "pageNotExist"));
-                return;
-            }
-            sendMessage(ChatFormatting.GOLD + FabricLang.get(player, "questListTitle"));
-            int fromOrder = (page - 1) * rows;
-            final List<Quest> subQuests = quests.size() >= (fromOrder + rows)
-                    ? new LinkedList<>(quests).subList(fromOrder, fromOrder + rows)
-                    : new LinkedList<>(quests).subList(fromOrder, quests.size());
-            fromOrder++;
-            for (final Quest q : subQuests) {
-                sendMessage((quester.canAcceptOffer(q, false) ? ChatFormatting.YELLOW : ChatFormatting.GRAY)
-                        + Integer.toString(fromOrder) + ". " + q.getName());
+                FabricLang.send(player, ChatFormatting.YELLOW + FabricLang.get(player, "pageNotExist"));
+            } else {
+                FabricLang.send(player, ChatFormatting.GOLD + FabricLang.get(player, "questListTitle"));
+                int fromOrder = (page - 1) * rows;
+                final List<Quest> subQuests;
+                if (quests.size() >= (fromOrder + rows)) {
+                    subQuests = new LinkedList<>(quests).subList((fromOrder), (fromOrder + rows));
+                } else {
+                    subQuests = new LinkedList<>(quests).subList((fromOrder), quests.size());
+                }
                 fromOrder++;
+                for (final Quest q : subQuests) {
+                    if (quester.canAcceptOffer(q, false)) {
+                        FabricLang.send(player, ChatFormatting.YELLOW + Integer.toString(fromOrder) + ". "
+                                + q.getName());
+                    } else {
+                        FabricLang.send(player, ChatFormatting.GRAY + Integer.toString(fromOrder) + ". "
+                                + q.getName());
+                    }
+                    fromOrder++;
+                }
+                final int numPages = (int) Math.ceil(((double) quests.size()) / ((double) rows));
+                String msg = FabricLang.get(player, "pageFooter");
+                msg = msg.replace("<current>", String.valueOf(page));
+                msg = msg.replace("<all>", String.valueOf(numPages));
+                FabricLang.send(player, ChatFormatting.GOLD + msg);
             }
-            final int numPages = (int) Math.ceil(((double) quests.size()) / ((double) rows));
-            String msg = FabricLang.get(player, "pageFooter");
-            msg = msg.replace("<current>", String.valueOf(page));
-            msg = msg.replace("<all>", String.valueOf(numPages));
-            sendMessage(ChatFormatting.GOLD + msg);
         }
     }
 
-    @Override
+    /**
+     * Get current requirements for a quest, both finished and unfinished
+     *
+     * @param quest The quest to get objectives of
+     * @param ignoreOverrides Whether to ignore objective-overrides
+     * @return Ordered list of detailed requirements
+     */
     public LinkedList<String> getCurrentRequirements(final Quest quest, final boolean ignoreOverrides) {
         if (quest == null) {
             return new LinkedList<>();
@@ -1026,8 +1072,10 @@ public class FabricQuester implements Quester {
             }
         }
         for (final Quest q : currentQuests.keySet()) {
-            if (q != null && requirements.getBlockQuestIds().contains(q.getId())) {
-                current.add(ChatFormatting.RED + quest.getName());
+            if (q != null) {
+                if (requirements.getBlockQuestIds().contains(q.getId())) {
+                    current.add(ChatFormatting.RED + quest.getName());
+                }
             }
         }
         for (final Object rawItem : requirements.getItems()) {
@@ -1080,12 +1128,30 @@ public class FabricQuester implements Quester {
         return current;
     }
 
-    @Override
-    public LinkedList<Objective> getCurrentObjectives(Quest quest, boolean ignoreOverrides, boolean formatNames) {
-        final LinkedList<Objective> objs = new LinkedList<>();
-        if (quest == null) return objs;
+    /**
+     * Get current objectives for a quest, both finished and unfinished
+     *
+     * @param quest The quest to get objectives of
+     * @param ignoreOverrides Whether to ignore objective-overrides
+     * @param formatNames Whether to format item/entity names, if applicable
+     * @return Ordered list of detailed objectives
+     */
+    public LinkedList<Objective> getCurrentObjectives(final Quest quest, final boolean ignoreOverrides,
+                                                      final boolean formatNames) {
+        final LinkedList<Objective> objectives = new LinkedList<>();
+        if (quest == null) {
+            plugin.getPluginLogger().severe("Quest was null when getting objectives for " + getLastKnownName());
+            return objectives;
+        }
+        if (getQuestProgressOrDefault(quest) == null) {
+            plugin.getPluginLogger().warning("Quest data was null when getting objectives for " + quest.getName());
+            return objectives;
+        }
         final FabricStage stage = (FabricStage) getCurrentStage(quest);
-        if (stage == null) return objs;
+        if (stage == null) {
+            //plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
+            return objectives;
+        }
         final QuestProgress progress = getQuestProgressOrDefault(quest);
         final ServerPlayer player = getPlayer();
         final LinkedList<String> overrides = stage.getObjectiveOverrides() != null
@@ -1099,10 +1165,10 @@ public class FabricQuester implements Quester {
             if (goalObj == null) continue;
             final int goal = getBlockAmount(stage.getBlocksToBreakAmounts(), i);
             final int current = (progress.getBlocksBroken().size() > i) ? progress.getBlocksBroken().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "break", current, goal)
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "break", current, goal)
                     .replace("<item>", blockName(goalObj))
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.BREAK_BLOCK, msg, current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.BREAK_BLOCK, message, current, goal));
         }
 
         // Place blocks
@@ -1112,10 +1178,10 @@ public class FabricQuester implements Quester {
             if (goalObj == null) continue;
             final int goal = getBlockAmount(stage.getBlocksToPlaceAmounts(), i);
             final int current = (progress.getBlocksPlaced().size() > i) ? progress.getBlocksPlaced().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "place", current, goal)
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "place", current, goal)
                     .replace("<item>", blockName(goalObj))
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.PLACE_BLOCK, msg, current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.PLACE_BLOCK, message, current, goal));
         }
 
         // Damage blocks
@@ -1125,10 +1191,10 @@ public class FabricQuester implements Quester {
             if (goalObj == null) continue;
             final int goal = getBlockAmount(stage.getBlocksToDamageAmounts(), i);
             final int current = (progress.getBlocksDamaged().size() > i) ? progress.getBlocksDamaged().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "damage", current, goal)
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "damage", current, goal)
                     .replace("<item>", blockName(goalObj))
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.DAMAGE_BLOCK, msg, current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.DAMAGE_BLOCK, message, current, goal));
         }
 
         // Use blocks
@@ -1138,10 +1204,10 @@ public class FabricQuester implements Quester {
             if (goalObj == null) continue;
             final int goal = getBlockAmount(stage.getBlocksToUseAmounts(), i);
             final int current = (progress.getBlocksUsed().size() > i) ? progress.getBlocksUsed().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "use", current, goal)
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "use", current, goal)
                     .replace("<item>", blockName(goalObj))
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.USE_BLOCK, msg, current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.USE_BLOCK, message, current, goal));
         }
 
         // Items crafted
@@ -1152,10 +1218,10 @@ public class FabricQuester implements Quester {
             ItemStack cGoal = (ItemStack) goalObj;
             final int goal = Math.max(1, cGoal.getCount());
             final int current = (progress.getItemsCrafted().size() > i) ? progress.getItemsCrafted().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "craftItem", current, goal)
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "craftItem", current, goal)
                     .replace("<item>", FabricItemUtil.getName(cGoal))
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.CRAFT_ITEM, msg, current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.CRAFT_ITEM, message, current, goal));
         }
 
         // Items smelted
@@ -1166,10 +1232,10 @@ public class FabricQuester implements Quester {
             ItemStack sGoal = (ItemStack) goalObj;
             final int goal = Math.max(1, sGoal.getCount());
             final int current = (progress.getItemsSmelted().size() > i) ? progress.getItemsSmelted().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "smeltItem", current, goal)
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "smeltItem", current, goal)
                     .replace("<item>", FabricItemUtil.getName(sGoal))
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.SMELT_ITEM, msg, current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.SMELT_ITEM, message, current, goal));
         }
 
         // Items enchanted
@@ -1180,7 +1246,7 @@ public class FabricQuester implements Quester {
             ItemStack eGoal = (ItemStack) goalObj;
             final int goal = Math.max(1, eGoal.getCount());
             final int current = (progress.getItemsEnchanted().size() > i) ? progress.getItemsEnchanted().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "enchItem", current, goal);
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "enchItem", current, goal);
             final ItemEnchantments ench = eGoal.get(DataComponents.ENCHANTMENTS);
             if (ench != null && !ench.isEmpty()) {
                 final java.util.Map.Entry<net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment>, Integer> first = ench.entrySet().iterator().next();
@@ -1189,14 +1255,14 @@ public class FabricQuester implements Quester {
                 if (enchName != null && enchName.indexOf(':') != -1) {
                     enchName = enchName.substring(enchName.indexOf(':') + 1);
                 }
-                msg = msg.replace("<enchantment>", FabricMiscUtil.snakeCaseToUpperCamelCase(enchName))
+                message = message.replace("<enchantment>", FabricMiscUtil.snakeCaseToUpperCamelCase(enchName))
                             .replace("<level>", toRoman(first.getValue()));
             } else {
-                msg = msg.replace("<enchantment>", "").replace("<level>", "");
+                message = message.replace("<enchantment>", "").replace("<level>", "");
             }
-            msg = msg.replace("<item>", FabricItemUtil.getName(eGoal))
+            message = message.replace("<item>", FabricItemUtil.getName(eGoal))
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.ENCHANT_ITEM, msg, current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.ENCHANT_ITEM, message, current, goal));
         }
 
         // Items brewed
@@ -1207,12 +1273,12 @@ public class FabricQuester implements Quester {
             ItemStack bGoal = (ItemStack) goalObj;
             final int goal = Math.max(1, bGoal.getCount());
             final int current = (progress.getItemsBrewed().size() > i) ? progress.getItemsBrewed().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "brewItem", current, goal)
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "brewItem", current, goal)
                     .replace("<item>", FabricItemUtil.getName(bGoal))
                     .replace(" <level>", "")
                     .replace("<level>", "")
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.BREW_ITEM, msg, current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.BREW_ITEM, message, current, goal));
         }
 
         // Items consumed
@@ -1223,126 +1289,12 @@ public class FabricQuester implements Quester {
             ItemStack cnGoal = (ItemStack) goalObj;
             final int goal = Math.max(1, cnGoal.getCount());
             final int current = (progress.getItemsConsumed().size() > i) ? progress.getItemsConsumed().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "consumeItem", current, goal)
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "consumeItem", current, goal)
                     .replace("<item>", FabricItemUtil.getName(cnGoal))
                     .replace(" <level>", "")
                     .replace("<level>", "")
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.CONSUME_ITEM, msg, current, goal));
-        }
-
-        // Mobs killed
-        for (int i = 0; i < stage.getMobsToKill().size(); i++) {
-            objIndex++;
-            final int goal = (stage.getMobNumToKill() != null && stage.getMobNumToKill().size() > i)
-                    ? stage.getMobNumToKill().get(i) : 1;
-            final int current = (progress.getMobNumKilled().size() > i) ? progress.getMobNumKilled().get(i) : 0;
-            final String mobName = FabricMiscUtil.snakeCaseToUpperCamelCase(
-                    stage.getMobsToKill().get(i).toString());
-            String msg;
-            if (stage.getLocationsToKillWithin().isEmpty()) {
-                msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "kill", current, goal);
-            } else {
-                final String killName = stage.getKillNames() != null && stage.getKillNames().size() > i
-                        && stage.getKillNames().get(i) != null ? stage.getKillNames().get(i) : "?";
-                msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "killAtLocation", current, goal)
-                        .replace("<location>", killName);
-            }
-            msg = msg.replace("<mob>", mobName).replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.KILL_MOB, msg, current, goal));
-        }
-
-        // Mobs tamed
-        for (int i = 0; i < stage.getMobsToTame().size(); i++) {
-            objIndex++;
-            final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
-                    ? stage.getMobNumToTame().get(i) : 1;
-            final int current = (progress.getMobsTamed().size() > i) ? progress.getMobsTamed().get(i) : 0;
-            final Object tameObj = stage.getMobsToTame().get(i);
-            final String mobName = tameObj != null
-                    ? FabricMiscUtil.snakeCaseToUpperCamelCase(tameObj.toString()) : "?";
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "tame", current, goal)
-                    .replace("<mob>", mobName)
-                    .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.TAME_MOB, msg, current, goal));
-        }
-
-        // Fish caught
-        if (stage.getFishToCatch() != null && stage.getFishToCatch() > 0) {
-            objIndex++;
-            final int goal = stage.getFishToCatch();
-            final int current = progress.getFishCaught();
-            final String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "catchFish", current, goal);
-            objs.add(new FabricObjective(ObjectiveType.CATCH_FISH, msg.trim(), current, goal));
-        }
-
-        // Cows milked
-        if (stage.getCowsToMilk() != null && stage.getCowsToMilk() > 0) {
-            objIndex++;
-            final int goal = stage.getCowsToMilk();
-            final int current = progress.getCowsMilked();
-            final String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "milkCow", current, goal);
-            objs.add(new FabricObjective(ObjectiveType.MILK_COW, msg.trim(), current, goal));
-        }
-
-        // Sheep sheared
-        for (int i = 0; i < stage.getSheepToShear().size(); i++) {
-            objIndex++;
-            final int goal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
-                    ? stage.getSheepNumToShear().get(i) : 1;
-            final int current = (progress.getSheepSheared().size() > i) ? progress.getSheepSheared().get(i) : 0;
-            final Object dyeObj = stage.getSheepToShear().get(i);
-            final String color = dyeObj != null ? FabricMiscUtil.snakeCaseToUpperCamelCase(dyeObj.toString()) : "?";
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "shearSheep", current, goal)
-                    .replace("<color>", color)
-                    .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.SHEAR_SHEEP, msg, current, goal));
-        }
-
-        // NPCs interacted
-        for (int i = 0; i < stage.getNpcsToInteract().size(); i++) {
-            objIndex++;
-            final boolean said = (progress.getNpcsInteracted().size() > i) && progress.getNpcsInteracted().get(i);
-            final UUID npcUuid = stage.getNpcsToInteract().get(i);
-            final String npcName = npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?";
-            final String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "talkTo", said ? 1 : 0, 1)
-                    .replace("<npc>", npcName);
-            objs.add(new FabricObjective(ObjectiveType.TALK_TO_NPC, msg, said ? 1 : 0, 1));
-        }
-
-        // NPCs killed
-        for (int i = 0; i < stage.getNpcsToKill().size(); i++) {
-            objIndex++;
-            final int goal = (stage.getNpcNumToKill() != null && stage.getNpcNumToKill().size() > i)
-                    ? stage.getNpcNumToKill().get(i) : 1;
-            final int current = (progress.getNpcsNumKilled().size() > i) ? progress.getNpcsNumKilled().get(i) : 0;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "kill", current, goal);
-            final UUID npcUuid = stage.getNpcsToKill().get(i);
-            final String npcName = npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?";
-            if (msg.contains("<mob>")) {
-                msg = msg.replace("<mob>", npcName);
-            } else {
-                msg += npcName;
-            }
-            objs.add(new FabricObjective(ObjectiveType.KILL_NPC, msg, current, goal));
-        }
-
-        // Players killed
-        if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
-            objIndex++;
-            final int goal = stage.getPlayersToKill();
-            final int current = progress.getPlayersKilled();
-            final String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "killPlayer", current, goal);
-            objs.add(new FabricObjective(ObjectiveType.KILL_PLAYER, msg, current, goal));
-        }
-
-        // Passwords said
-        for (int i = 0; i < stage.getPasswordDisplays().size(); i++) {
-            objIndex++;
-            final boolean said = (progress.getPasswordsSaid().size() > i) && progress.getPasswordsSaid().get(i);
-            final String display = stage.getPasswordDisplays().get(i);
-            final String msg = display != null ? display : "";
-            objs.add(new FabricObjective(ObjectiveType.PASSWORD, msg, said ? 1 : 0, 1));
+            objectives.add(new FabricObjective(ObjectiveType.CONSUME_ITEM, message, current, goal));
         }
 
         // Items delivered
@@ -1355,11 +1307,136 @@ public class FabricQuester implements Quester {
             final int current = (progress.getItemsDelivered().size() > i) ? progress.getItemsDelivered().get(i) : 0;
             final UUID npcUuid = (stage.getItemDeliveryTargets().size() > i)
                     ? stage.getItemDeliveryTargets().get(i) : null;
-            String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "deliver", current, goalAmount)
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "deliver", current, goalAmount)
                     .replace("<item>", FabricItemUtil.getName(goal))
                     .replace("<npc>", npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?")
                     .replaceAll("\\s{2,}", " ").trim();
-            objs.add(new FabricObjective(ObjectiveType.DELIVER_ITEM, msg, current, goalAmount));
+            objectives.add(new FabricObjective(ObjectiveType.DELIVER_ITEM, message, current, goalAmount));
+        }
+
+        // Mobs killed
+        for (int i = 0; i < stage.getMobsToKill().size(); i++) {
+            objIndex++;
+            final int goal = (stage.getMobNumToKill() != null && stage.getMobNumToKill().size() > i)
+                    ? stage.getMobNumToKill().get(i) : 1;
+            final int current = (progress.getMobNumKilled().size() > i) ? progress.getMobNumKilled().get(i) : 0;
+            final String mobName = FabricMiscUtil.snakeCaseToUpperCamelCase(
+                    stage.getMobsToKill().get(i).toString());
+            String message;
+            if (stage.getLocationsToKillWithin().isEmpty()) {
+                message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "kill", current, goal);
+            } else {
+                final String killName = stage.getKillNames() != null && stage.getKillNames().size() > i
+                        && stage.getKillNames().get(i) != null ? stage.getKillNames().get(i) : "?";
+                message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "killAtLocation", current, goal)
+                        .replace("<location>", killName);
+            }
+            message = message.replace("<mob>", mobName).replaceAll("\\s{2,}", " ").trim();
+            objectives.add(new FabricObjective(ObjectiveType.KILL_MOB, message, current, goal));
+        }
+
+        // Mobs tamed
+        for (int i = 0; i < stage.getMobsToTame().size(); i++) {
+            objIndex++;
+            final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
+                    ? stage.getMobNumToTame().get(i) : 1;
+            final int current = (progress.getMobsTamed().size() > i) ? progress.getMobsTamed().get(i) : 0;
+            final Object tameObj = stage.getMobsToTame().get(i);
+            final String mobName = tameObj != null
+                    ? FabricMiscUtil.snakeCaseToUpperCamelCase(tameObj.toString()) : "?";
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "tame", current, goal)
+                    .replace("<mob>", mobName)
+                    .replaceAll("\\s{2,}", " ").trim();
+            objectives.add(new FabricObjective(ObjectiveType.TAME_MOB, message, current, goal));
+        }
+
+        // Fish caught
+        if (stage.getFishToCatch() != null && stage.getFishToCatch() > 0) {
+            objIndex++;
+            final int goal = stage.getFishToCatch();
+            final int current = progress.getFishCaught();
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "catchFish", current, goal);
+            objectives.add(new FabricObjective(ObjectiveType.CATCH_FISH, message.trim(), current, goal));
+        }
+
+        // Cows milked
+        if (stage.getCowsToMilk() != null && stage.getCowsToMilk() > 0) {
+            objIndex++;
+            final int goal = stage.getCowsToMilk();
+            final int current = progress.getCowsMilked();
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "milkCow", current, goal);
+            objectives.add(new FabricObjective(ObjectiveType.MILK_COW, message.trim(), current, goal));
+        }
+
+        // Sheep sheared
+        for (int i = 0; i < stage.getSheepToShear().size(); i++) {
+            objIndex++;
+            final int goal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
+                    ? stage.getSheepNumToShear().get(i) : 1;
+            final int current = (progress.getSheepSheared().size() > i) ? progress.getSheepSheared().get(i) : 0;
+            final Object dyeObj = stage.getSheepToShear().get(i);
+            final String color = dyeObj != null ? FabricMiscUtil.snakeCaseToUpperCamelCase(dyeObj.toString()) : "?";
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "shearSheep", current, goal)
+                    .replace("<color>", color)
+                    .replaceAll("\\s{2,}", " ").trim();
+            objectives.add(new FabricObjective(ObjectiveType.SHEAR_SHEEP, message, current, goal));
+        }
+
+        // NPCs interacted
+        for (int i = 0; i < stage.getNpcsToInteract().size(); i++) {
+            objIndex++;
+            final boolean said = (progress.getNpcsInteracted().size() > i) && progress.getNpcsInteracted().get(i);
+            final UUID npcUuid = stage.getNpcsToInteract().get(i);
+            final String npcName = npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?";
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "talkTo", said ? 1 : 0, 1)
+                    .replace("<npc>", npcName);
+            objectives.add(new FabricObjective(ObjectiveType.TALK_TO_NPC, message, said ? 1 : 0, 1));
+        }
+
+        // NPCs killed
+        for (int i = 0; i < stage.getNpcsToKill().size(); i++) {
+            objIndex++;
+            final int goal = (stage.getNpcNumToKill() != null && stage.getNpcNumToKill().size() > i)
+                    ? stage.getNpcNumToKill().get(i) : 1;
+            final int current = (progress.getNpcsNumKilled().size() > i) ? progress.getNpcsNumKilled().get(i) : 0;
+            String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "kill", current, goal);
+            final UUID npcUuid = stage.getNpcsToKill().get(i);
+            final String npcName = npcUuid != null ? plugin.getDependencies().getNpcName(npcUuid) : "?";
+            if (message.contains("<mob>")) {
+                message = message.replace("<mob>", npcName);
+            } else {
+                message += npcName;
+            }
+            objectives.add(new FabricObjective(ObjectiveType.KILL_NPC, message, current, goal));
+        }
+
+        // Players killed
+        if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
+            objIndex++;
+            final int goal = stage.getPlayersToKill();
+            final int current = progress.getPlayersKilled();
+            final String message = objectiveLine(player, ignoreOverrides, overrides, objIndex, "killPlayer", current, goal);
+            objectives.add(new FabricObjective(ObjectiveType.KILL_PLAYER, message, current, goal));
+        }
+
+        // Locations to reach
+        for (int i = 0; i < stage.getLocationsToReach().size(); i++) {
+            objIndex++;
+            final boolean reached = (progress.getLocationsReached().size() > i) && progress.getLocationsReached().get(i);
+            final String locationName = (stage.getLocationNames() != null && stage.getLocationNames().size() > i
+                    && stage.getLocationNames().get(i) != null) ? stage.getLocationNames().get(i) : "?";
+            final String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "goTo", reached ? 1 : 0, 1)
+                    .replace("<location>", locationName);
+            objectives.add(new FabricObjective(ObjectiveType.REACH_LOCATION, msg, reached ? 1 : 0, 1));
+        }
+
+        // Passwords said
+        for (int i = 0; i < stage.getPasswordDisplays().size(); i++) {
+            objIndex++;
+            final boolean said = (progress.getPasswordsSaid().size() > i) && progress.getPasswordsSaid().get(i);
+            final String display = stage.getPasswordDisplays().get(i);
+            final String message = display != null ? display : "";
+            objectives.add(new FabricObjective(ObjectiveType.PASSWORD, message, said ? 1 : 0, 1));
         }
 
         // Custom objectives
@@ -1371,46 +1448,37 @@ public class FabricQuester implements Quester {
                     ? stage.getCustomObjectiveCounts().get(i) : 1;
             final int current = (progress.getCustomObjectiveCounts().size() > i)
                     ? progress.getCustomObjectiveCounts().get(i) : 0;
-            String msg;
+            String message;
             if (!ignoreOverrides && objIndex < overrides.size()) {
                 final String s = overrides.get(objIndex);
-                msg = FabricConfigUtil.parseString((s != null ? s : "")
+                message = FabricConfigUtil.parseString((s != null ? s : "")
                         .replace("<count>", current + "/" + goal)
                         .replace("%count%", current + "/" + goal));
             } else {
-                msg = co.getDisplay() != null ? co.getDisplay() : "";
+                message = co.getDisplay() != null ? co.getDisplay() : "";
             }
             if (co instanceof FabricCustomObjective) {
                 FabricCustomObjective fab = (FabricCustomObjective) co;
                 for (final Map.Entry<String, Object> prompt : fab.getData()) {
                     final String replacement = "%" + prompt.getKey() + "%";
-                    if (msg.contains(replacement)) {
+                    if (message.contains(replacement)) {
                         for (final Map.Entry<String, Object> e : stage.getCustomObjectiveData()) {
                             if (e.getKey().equals(prompt.getKey())) {
-                                msg = msg.replace(replacement, String.valueOf(e.getValue()));
+                                message = message.replace(replacement, String.valueOf(e.getValue()));
                             }
                         }
                     }
                 }
             }
             if (co.canShowCount()) {
-                msg = msg.replace("%count%", current + "/" + goal);
+                message = message.replace("%count%", current + "/" + goal);
             }
-            objs.add(new FabricObjective(ObjectiveType.CUSTOM, msg.trim(), current, goal));
+            objectives.add(new FabricObjective(ObjectiveType.CUSTOM, message.trim(), current, goal));
         }
 
-        // Locations to reach
-        for (int i = 0; i < stage.getLocationsToReach().size(); i++) {
-            objIndex++;
-            final boolean reached = (progress.getLocationsReached().size() > i) && progress.getLocationsReached().get(i);
-            final String locationName = (stage.getLocationNames() != null && stage.getLocationNames().size() > i
-                    && stage.getLocationNames().get(i) != null) ? stage.getLocationNames().get(i) : "?";
-            final String msg = objectiveLine(player, ignoreOverrides, overrides, objIndex, "goTo", reached ? 1 : 0, 1)
-                    .replace("<location>", locationName);
-            objs.add(new FabricObjective(ObjectiveType.REACH_LOCATION, msg, reached ? 1 : 0, 1));
-        }
 
-        return objs;
+
+        return objectives;
     }
 
     private String blockName(final Object goalObj) {
@@ -1771,8 +1839,16 @@ public class FabricQuester implements Quester {
         return amounts != null && !amounts.isEmpty() && amounts.size() > index;
     }
 
-    @Override
-    public void showCurrentObjectives(Quest quest, Quester quester, boolean ignoreOverrides) {
+    /**
+     * Show current objectives for a quest, if applicable<p>
+     *
+     * Respects PlaceholderAPI and translations, when enabled.
+     *
+     * @param quest The quest to get current stage objectives of
+     * @param quester The player to show current stage objectives to
+     * @param ignoreOverrides Whether to ignore objective-overrides
+     */
+    public void showCurrentObjectives(final Quest quest, final Quester quester, final boolean ignoreOverrides) {
         final LinkedList<Objective> objectives = getCurrentObjectives(quest, ignoreOverrides, true);
         if (objectives.isEmpty()) return;
         for (final Objective obj : objectives) {
@@ -1782,23 +1858,40 @@ public class FabricQuester implements Quester {
         }
     }
 
-    @Override
-    public boolean hasObjective(Quest quest, ObjectiveType type) {
+    /**
+     * Check if player's current stage has the specified objective
+     *
+     * @param quest The quest to check objectives of
+     * @param type The type of objective to check for
+     * @return true if stage contains specified objective
+     */
+    public boolean hasObjective(final Quest quest, final ObjectiveType type) {
         if (quest == null || type == null) return false;
         final Stage stage = getCurrentStage(quest);
         return stage != null && stage.containsObjective(type);
     }
 
-    @Override
-    public boolean hasCustomObjective(Quest quest, String name) {
+    /**
+     * Check if player's current stage has the specified custom objective
+     *
+     * @param quest The quest to check custom objectives of
+     * @param name The exact name of custom objective to check for
+     * @return true if stage contains specified objective
+     */
+    public boolean hasCustomObjective(final Quest quest, final String name) {
         if (quest == null || name == null) return false;
         final Stage stage = getCurrentStage(quest);
         return stage != null && stage.getCustomObjectives().stream()
                 .anyMatch(co -> co.getName().equals(name));
     }
 
-    @Override
-    public void showCurrentConditions(Quest quest, Quester quester) {
+    /**
+     * Show all of a player's conditions for the current stage of a quest.<p>
+     *
+     * @param quest The quest to get current stage objectives of
+     * @param quester The player to show current stage objectives to
+     */
+    public void showCurrentConditions(final Quest quest, final Quester quester) {
         if (quest == null || quester == null) return;
         final Stage stage = quester.getCurrentStage(quest);
         if (stage == null) return;
@@ -1810,8 +1903,13 @@ public class FabricQuester implements Quester {
                 + (condition.getName() != null ? condition.getName() : "Unknown"));
     }
 
-    @Override
-    public boolean testComplete(Quest quest) {
+    /**
+     * Check whether this Quester has completed all objectives for their current stage
+     *
+     * @param quest The quest with the current stage being checked
+     * @return true if all stage objectives are marked complete
+     */
+    public boolean testComplete(final Quest quest) {
         if (quest == null || !currentQuests.containsKey(quest)) return false;
         final FabricStage stage = (FabricStage) getCurrentStage(quest);
         if (stage == null) return false;
@@ -1960,8 +2058,13 @@ public class FabricQuester implements Quester {
         return true;
     }
 
-    @Override
-    public void addEmptiesFor(Quest quest, int stage) {
+    /**
+     * Add empty map values per Quest stage
+     *
+     * @param quest Quest with at least one stage
+     * @param stage Where first stage is '0'
+     */
+    public void addEmptiesFor(final Quest quest, final int stage) {
         final QuestProgress data = new FabricQuestProgress(this);
         data.setDoJournalUpdate(false);
         if (quest == null) {
@@ -2070,7 +2173,11 @@ public class FabricQuester implements Quester {
         hardDataPut(quest, data);
     }
 
-    @Override
+    /**
+     * Save data of the Quester to file
+     *
+     * @return true if successful
+     */
     public boolean saveData() {
         hasData = true;
         try {
@@ -2082,16 +2189,26 @@ public class FabricQuester implements Quester {
         return true;
     }
 
-    @Override
-    public long getCompletionDifference(Quest quest) {
+    /**
+     * Get the difference between System.currentTimeMillis() and the last completed time for a quest
+     *
+     * @param quest The quest to get the last completed time of
+     * @return Difference between now and then in milliseconds
+     */
+    public long getCompletionDifference(final Quest quest) {
         if (quest == null) return 0;
         final Long completedTime = completedTimes.get(quest);
         if (completedTime == null) return 0;
         return System.currentTimeMillis() - completedTime;
     }
 
-    @Override
-    public long getRemainingCooldown(Quest quest) {
+    /**
+     * Get the amount of time left before Quester may take a completed quest again
+     *
+     * @param quest The quest to calculate the cooldown for
+     * @return Length of time in milliseconds
+     */
+    public long getRemainingCooldown(final Quest quest) {
         if (quest == null || !quest.getPlanner().hasCooldown()) return 0;
         final long diff = getCompletionDifference(quest);
         final long cooldown = quest.getPlanner().getCooldown();
@@ -2128,8 +2245,11 @@ public class FabricQuester implements Quester {
         return !currentQuests.isEmpty() || !questProgress.isEmpty() || !completedQuests.isEmpty();
     }
 
-    @Override
-    public void startStageTimer(Quest quest) {
+    /**
+     * Initiate the stage timer
+     * @param quest The quest of which the timer is for
+     */
+    public void startStageTimer(final Quest quest) {
         if (quest == null) return;
         final Stage stage = getCurrentStage(quest);
         if (stage == null || stage.getDelay() < 0) return;
@@ -2148,8 +2268,11 @@ public class FabricQuester implements Quester {
         progress.setDelayStartTime(System.currentTimeMillis());
     }
 
-    @Override
-    public void stopStageTimer(Quest quest) {
+    /**
+     * Pause the stage timer. Useful when a player quits
+     * @param quest The quest of which the timer is for
+     */
+    public void stopStageTimer(final Quest quest) {
         if (quest == null) return;
         final Stage stage = getCurrentStage(quest);
         if (stage == null) return;
@@ -2162,8 +2285,12 @@ public class FabricQuester implements Quester {
         }
     }
 
-    @Override
-    public long getStageTime(Quest quest) {
+    /**
+     * Get remaining stage delay time
+     * @param quest The quest of which the timer is for
+     * @return Remaining time in milliseconds
+     */
+    public long getStageTime(final Quest quest) {
         if (quest == null || !currentQuests.containsKey(quest)) return 0;
         final Stage stage = getCurrentStage(quest);
         if (stage == null) return 0;
@@ -2176,8 +2303,12 @@ public class FabricQuester implements Quester {
         return Math.max(0, stage.getDelay() - elapsed);
     }
 
-    @Override
-    public void checkQuest(Quest quest) {
+    /**
+     * Check whether the provided quest is valid and, if not, inform the Quester
+     *
+     * @param quest The quest to check
+     */
+    public void checkQuest(final Quest quest) {
         if (quest == null || !currentQuests.containsKey(quest)) return;
         final Stage stage = getCurrentStage(quest);
         if (stage == null) return;
@@ -2197,8 +2328,13 @@ public class FabricQuester implements Quester {
         }
     }
 
-    @Override
-    public void showGUIDisplay(UUID npc, LinkedList<Quest> quests) {
+    /**
+     * Show an inventory GUI with quest items to the specified player
+     *
+     * @param npc UUID of the NPC from which the GUI is bound
+     * @param quests List of quests to use for displaying items
+     */
+    public void showGUIDisplay(final UUID npc, final LinkedList<Quest> quests) {
         if (npc == null || quests == null) {
             return;
         }
@@ -2278,7 +2414,6 @@ public class FabricQuester implements Quester {
      *
      * @param quest The quest to quit
      */
-    @Override
     public void hardQuit(final Quest quest) {
         try {
             if (compassTargetQuestId != null && compassTargetQuestId.equals(quest.getId())) {
@@ -2299,8 +2434,14 @@ public class FabricQuester implements Quester {
         }
     }
 
-    @Override
-    public void hardRemove(Quest quest) {
+    /**
+     * Forcibly remove quest from Quester's list of completed quests, then update Quest Journal<p>
+     *
+     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     *
+     * @param quest The quest to remove
+     */
+    public void hardRemove(final Quest quest) {
         if (quest == null) return;
         hardQuit(quest);
         completedQuests.remove(quest);
@@ -2308,7 +2449,11 @@ public class FabricQuester implements Quester {
         amountsCompleted.remove(quest);
     }
 
-    @Override
+    /**
+     * Forcibly clear Quester's list of current quests and data, then update Quest Journal<p>
+     *
+     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     */
     public void hardClear() {
         currentQuests.clear();
         completedQuests.clear();
@@ -2318,22 +2463,38 @@ public class FabricQuester implements Quester {
         questPoints = 0;
     }
 
-    @Override
-    public void hardStagePut(Quest key, Integer val) {
+    /**
+     * Forcibly set Quester's current stage, then update Quest Journal<br>
+     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     *
+     * @param key The quest to set stage of
+     * @param val The stage number to set
+     */
+    public void hardStagePut(final Quest key, final Integer val) {
         if (key != null && val != null) currentQuests.put(key, val);
     }
 
-    @Override
-    public void hardDataPut(Quest key, QuestProgress val) {
+    /**
+     * Forcibly set Quester's quest data, then update Quest Journal<p>
+     *
+     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     *
+     * @param key The quest to set stage of
+     * @param val The data to set
+     */
+    public void hardDataPut(final Quest key, final QuestProgress val) {
         if (key != null && val != null) questProgress.put(key, val);
     }
 
-    @Override
     public boolean canUseCompass() {
         return compassTargetQuestId != null;
     }
 
-    @Override
+    /**
+     * Reset compass target to Quester's bed spawn location<p>
+     *
+     * Will set to Quester's spawn location if bed spawn does not exist
+     */
     public void resetCompass() {
         compassTargetQuestId = null;
         final ServerPlayer player = getPlayer();
@@ -2345,7 +2506,9 @@ public class FabricQuester implements Quester {
                         overworld.dimension(), overworld.getRespawnData().pos(), 0f, 0f)));
     }
 
-    @Override
+    /**
+     * Update compass target to current stage of first available current quest, if possible
+     */
     public void findCompassTarget() {
         // Here we apply this method to OPs by not checking #canUseCompass
         final ServerPlayer player = getPlayer();
@@ -2366,7 +2529,11 @@ public class FabricQuester implements Quester {
         }
     }
 
-    @Override
+    /**
+     * Update compass target to current stage of next available current quest, if possible
+     *
+     * @param notify Whether to notify this quester of result
+     */
     public void findNextCompassTarget(final boolean notify) {
         // Here we apply this method to OPs by not checking #canUseCompass
         final ServerPlayer player = getPlayer();
@@ -2414,7 +2581,7 @@ public class FabricQuester implements Quester {
     }
 
     /** Point the player's compass at the first location of the given stage that has not been reached yet. */
-    private void pointCompass(Quest quest, Stage stage) {
+    private void pointCompass(final Quest quest, final Stage stage) {
         final QuestProgress progress = getQuestProgressOrDefault(quest);
         for (int i = 0; i < stage.getLocationsToReach().size(); i++) {
             final boolean reached = progress.getLocationsReached().size() > i
@@ -2429,7 +2596,7 @@ public class FabricQuester implements Quester {
         }
     }
 
-    private void setPlayerCompass(BlockPos pos) {
+    private void setPlayerCompass(final BlockPos pos) {
         if (pos == null) return;
         final ServerPlayer player = getPlayer();
         if (player == null) return;
@@ -2438,7 +2605,7 @@ public class FabricQuester implements Quester {
                         player.level().dimension(), pos, 0f, 0f)));
     }
 
-    private static BlockPos parseLocationBlock(Object locObj) {
+    private static BlockPos parseLocationBlock(final Object locObj) {
         if (locObj == null) return null;
         final String[] parts = locObj.toString().split(" ");
         if (parts.length < 3) return null;
@@ -2450,8 +2617,14 @@ public class FabricQuester implements Quester {
         }
     }
 
-    @Override
-    public Collection<String> dispatchMultiplayerEverything(Quest quest, ObjectiveType type, BiFunction<Quester, Quest, Void> fun) {
+    /**
+     * Dispatch player event to fellow questers<p>
+     *
+     * @param type The type of objective to progress
+     * @param fun The function to execute, the event call
+     */
+    public Collection<String> dispatchMultiplayerEverything(final Quest quest, final ObjectiveType type,
+                                                            final BiFunction<Quester, Quest, Void> fun) {
         final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest != null) {
             final Collection<Quester> mq = getMultiplayerQuesters(quest);
@@ -2478,8 +2651,16 @@ public class FabricQuester implements Quester {
         return appliedQuestIDs;
     }
 
-    @Override
-    public Collection<String> dispatchMultiplayerObjectives(Quest quest, Stage currentStage, Function<Quester, Void> fun) {
+    /**
+     * Dispatch finish objective to fellow questers
+     *
+     * @param quest The current quest
+     * @param currentStage The current stage of the quest
+     * @param fun The function to execute, the event call
+     * @return applied quest IDs
+     */
+    public Collection<String> dispatchMultiplayerObjectives(final Quest quest, final Stage currentStage,
+                                                            final Function<Quester, Void> fun) {
         final Set<String> appliedQuestIDs = new HashSet<>();
         final Collection<Quester> mq = getMultiplayerQuesters(quest);
         for (final Quester q : mq) {
@@ -2494,8 +2675,13 @@ public class FabricQuester implements Quester {
         return appliedQuestIDs;
     }
 
-    @Override
-    public Collection<Quester> getMultiplayerQuesters(Quest quest) {
+    /**
+     * Get a collection of fellow Questers in a party or group
+     *
+     * @param quest The quest which uses a linked plugin, i.e. Parties or DungeonsXL
+     * @return Potentially empty list of Questers or null for invalid quest
+     */
+    public Collection<Quester> getMultiplayerQuesters(final Quest quest) {
         final Set<Quester> mq = new HashSet<>();
         if (quest == null) {
             return mq;
@@ -2551,8 +2737,13 @@ public class FabricQuester implements Quester {
         return mq;
     }
 
-    @Override
-    public boolean meetsCondition(Quest quest, boolean giveReason) {
+    /**
+     * Whether this Quester meets condition of given quest
+     *
+     * @param quest The quest to check
+     * @return Whether to send Quester reason for failure
+     */
+    public boolean meetsCondition(final Quest quest, final boolean giveReason) {
         if (quest == null || !currentQuests.containsKey(quest)) return true;
         final Stage stage = getCurrentStage(quest);
         if (stage == null) return true;
@@ -2578,20 +2769,33 @@ public class FabricQuester implements Quester {
         return true;
     }
 
-    @Override
+    /**
+     * Whether this Quester is currently selecting a block in editor
+     *
+     * @return true if selecting
+     */
     public boolean isSelectingBlock() {
         return plugin.isSelectingBlockStart(id) || plugin.getTempBlocks().containsKey(id);
     }
 
-    @Override
-    public boolean isInRegion(String regionID) {
+    /**
+     * Whether this Quester is in the specified WorldGuard region
+     *
+     * @return true if in specified WorldGuard region
+     */
+    public boolean isInRegion(final String regionID) {
         final ServerPlayer player = getPlayer();
         if (player == null) return false;
         return plugin.getDependencies().isInRegion(player, regionID);
     }
 
-    @Override
-    public boolean canAcceptQuest(UUID npc) {
+    /**
+     * Checks whether an NPC can offer a quest that the player may accept
+     *
+     * @param npc the giver NPC UUID to check
+     * @return true if at least one available quest has not yet been completed
+     */
+    public boolean canAcceptQuest(final UUID npc) {
         for (final Quest q : plugin.getLoadedQuests()) {
             if (q.getNpcStart() != null && !completedQuests.contains(q)) {
                 if (q.getNpcStart().equals(npc)) {
@@ -2605,8 +2809,13 @@ public class FabricQuester implements Quester {
         return false;
     }
 
-    @Override
-    public boolean canAcceptCompletedQuest(UUID npc) {
+    /**
+     * Checks whether an NPC can offer a quest that the player has already completed
+     *
+     * @param npc The giver NPC UUID to check
+     * @return true if at least one available quest has been completed
+     */
+    public boolean canAcceptCompletedQuest(final UUID npc) {
         for (final Quest q : plugin.getLoadedQuests()) {
             if (q.getNpcStart() != null && completedQuests.contains(q)) {
                 if (q.getNpcStart().equals(npc)) {
@@ -2620,8 +2829,13 @@ public class FabricQuester implements Quester {
         return false;
     }
 
-    @Override
-    public boolean canAcceptCompletedRedoableQuest(UUID npc) {
+    /**
+     * Checks whether an NPC can offer a repeatable quest that the player has already completed
+     *
+     * @param npc The giver NPC UUID to check
+     * @return true if at least one available, redoable quest has been completed
+     */
+    public boolean canAcceptCompletedRedoableQuest(final UUID npc) {
         for (final Quest q : plugin.getLoadedQuests()) {
             if (q.getNpcStart() != null && completedQuests.contains(q)
                     && q.getPlanner() != null && q.getPlanner().getCooldown() > -1) {

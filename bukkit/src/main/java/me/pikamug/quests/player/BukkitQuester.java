@@ -14,13 +14,13 @@ import com.alessiodp.parties.api.interfaces.Party;
 import com.alessiodp.parties.api.interfaces.PartyPlayer;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.util.player.UserManager;
+import com.tcoded.folialib.wrapper.task.WrappedTask;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.pikamug.localelib.LocaleManager;
 import me.pikamug.quests.BukkitQuestsPlugin;
 import me.pikamug.quests.Quests;
 import me.pikamug.quests.conditions.BukkitCondition;
 import me.pikamug.quests.config.BukkitConfigSettings;
-import me.pikamug.quests.config.ConfigSettings;
 import me.pikamug.quests.convo.misc.BukkitQuestAbandonPrompt;
 import me.pikamug.quests.convo.misc.BukkitQuestAcceptPrompt;
 import me.pikamug.quests.dependencies.BukkitDependencies;
@@ -56,7 +56,6 @@ import me.pikamug.quests.util.BukkitMiscUtil;
 import me.pikamug.quests.util.RomanNumeral;
 import me.pikamug.quests.util.stack.BlockItemStack;
 import me.pikamug.unite.api.objects.PartyProvider;
-import com.tcoded.folialib.wrapper.task.WrappedTask;
 import org.browsit.conversations.api.Conversations;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -888,16 +887,9 @@ public class BukkitQuester implements Quester {
         if (event.isCancelled()) {
             return false;
         }
-        final ConfigSettings settings = plugin.getConfigSettings();
         if (getPlayer() != null) {
             setQuestIdToQuit(quest.getId());
-            if (settings.canConfirmAbandon()) {
-                /*final ConversationFactory cf = new ConversationFactory(plugin).withModality(false)
-                        .withPrefix(context -> ChatColor.GRAY.toString())
-                        .withFirstPrompt(new BukkitQuestAbandonPrompt(plugin)).withTimeout(settings.getAcceptTimeout())
-                        .thatExcludesNonPlayersWithMessage("Console may not perform this conversation!")
-                        .addConversationAbandonedListener(plugin.getConvoListener());
-                cf.buildConversation(getPlayer()).begin();*/
+            if (plugin.getConfigSettings().canConfirmAbandon()) {
                 new BukkitQuestAbandonPrompt(getUUID(), plugin).start();
             } else {
                 quitQuest(quest, messages);
@@ -1200,22 +1192,22 @@ public class BukkitQuester implements Quester {
      */
     public LinkedList<Objective> getCurrentObjectives(final Quest quest, final boolean ignoreOverrides,
                                                             final boolean formatNames) {
+        final LinkedList<Objective> objectives = new LinkedList<>();
         if (quest == null) {
             plugin.getLogger().severe("Quest was null when getting objectives for " + getLastKnownName());
-            return new LinkedList<>();
+            return objectives;
         }
         if (getQuestProgressOrDefault(quest) == null) {
             plugin.getLogger().warning("Quest data was null when getting objectives for " + quest.getName());
-            return new LinkedList<>();
+            return objectives;
         }
         final BukkitStage stage = (BukkitStage) getCurrentStage(quest);
         if (stage == null) {
             //plugin.getLogger().warning("Current stage was null when getting objectives for " + quest.getName());
-            return new LinkedList<>();
+            return objectives;
         }
         final BukkitDependencies depends = plugin.getDependencies();
         final BukkitQuestProgress data = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
-        final LinkedList<Objective> objectives = new LinkedList<>();
         final LinkedList<String> overrides = stage.getObjectiveOverrides();
         int objIndex = -1;
         for (int i = 0; i < data.getBlocksBroken().size(); i++) {
