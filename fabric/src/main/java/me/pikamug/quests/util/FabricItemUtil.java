@@ -15,9 +15,14 @@ import com.google.gson.JsonNull;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import me.pikamug.quests.FabricQuestsPlugin;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.CustomData;
 
 import java.util.Optional;
@@ -145,6 +150,36 @@ public class FabricItemUtil {
     public static String getName(ItemStack item) {
         if (item == null || item.isEmpty()) return "Air";
         try { String n = item.getHoverName().getString(); if (n == null || n.trim().isEmpty() || n.equals("Air")) return item.getItem().toString(); return n; } catch (Exception e) { return item.getItem().toString(); }
+    }
+
+    public static String getPrettyPotionLevel(final ItemStack stack) {
+        String prettyString = "";
+        if (stack == null || stack.isEmpty()) {
+            return prettyString;
+        }
+        final PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+        if (contents == null) {
+            return prettyString;
+        }
+        final Optional<Holder<Potion>> potion = contents.potion();
+        if (potion.isEmpty()) {
+            return prettyString;
+        }
+        final String registeredName = potion.get().getRegisteredName();
+        if (registeredName == null) {
+            return prettyString;
+        }
+        String name = registeredName;
+        if (name.indexOf(':') != -1) {
+            name = name.substring(name.indexOf(':') + 1);
+        }
+        if (name.startsWith("strong_")) {
+            final int level = name.contains("slowness") ? 4 : 2;
+            prettyString = ChatFormatting.GREEN + RomanNumeral.getNumeral(level) + ChatFormatting.RESET;
+        } else if (name.startsWith("long_")) {
+            prettyString = ChatFormatting.GREEN + "+" + ChatFormatting.RESET;
+        }
+        return prettyString;
     }
 
     public static String getMaterialName(ItemStack item) {

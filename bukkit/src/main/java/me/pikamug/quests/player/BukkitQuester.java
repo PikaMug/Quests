@@ -1207,7 +1207,7 @@ public class BukkitQuester implements Quester {
             return objectives;
         }
         final BukkitDependencies depends = plugin.getDependencies();
-        final BukkitQuestProgress data = (BukkitQuestProgress) getQuestProgressOrDefault(quest);
+        final QuestProgress data = getQuestProgressOrDefault(quest);
         final LinkedList<String> overrides = stage.getObjectiveOverrides();
         int objIndex = -1;
         for (int i = 0; i < data.getBlocksBroken().size(); i++) {

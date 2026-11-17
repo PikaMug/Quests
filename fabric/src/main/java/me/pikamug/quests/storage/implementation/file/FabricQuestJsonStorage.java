@@ -455,12 +455,12 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                                 FabricStage stage, String type) {
         if (json.has(key)) {
             final JsonArray arr = json.getAsJsonArray(key);
-            final LinkedList<Object> list = new LinkedList<>();
+            final LinkedList<ItemStack> list = new LinkedList<>();
             arr.forEach(e -> {
                 if (e.isJsonObject()) {
-                    list.add(e.getAsJsonObject().toString());
+                    list.add(FabricItemUtil.deserializeFromJson(e.getAsJsonObject()));
                 } else {
-                    list.add(normalizeBlockName(e.getAsString()));
+                    list.add(FabricItemUtil.readItemStack(normalizeBlockName(e.getAsString())));
                 }
             });
             final LinkedList<Integer> amounts = new LinkedList<>();
@@ -469,6 +469,12 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             }
             while (amounts.size() < list.size()) {
                 amounts.add(1);
+            }
+            for (int i = 0; i < list.size(); i++) {
+                final ItemStack goal = list.get(i);
+                if (goal != null && !goal.isEmpty()) {
+                    goal.setCount(Math.max(1, amounts.get(i)));
+                }
             }
             final LinkedList<Short> durability = new LinkedList<>();
             if (json.has(durabilityKey)) {
@@ -528,7 +534,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
     private void parseItemList(JsonObject json, String key, FabricStage stage, String type) {
         if (json.has(key)) {
             final JsonArray arr = json.getAsJsonArray(key);
-            final LinkedList<Object> list = new LinkedList<>();
+            final LinkedList<ItemStack> list = new LinkedList<>();
             arr.forEach(e -> {
                 if (e.isJsonObject()) {
                     list.add(FabricItemUtil.deserializeFromJson(e.getAsJsonObject()));
