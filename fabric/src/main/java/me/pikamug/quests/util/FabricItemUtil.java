@@ -23,7 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.WrittenBookContent;
 
 import java.util.Optional;
 
@@ -147,9 +147,79 @@ public class FabricItemUtil {
         return compareItems(one, two, false) == 0;
     }
 
-    public static String getName(ItemStack item) {
+    public static String getMaterialName(ItemStack item) {
+        if (item == null || item.isEmpty()) return "AIR";
+        return item.getItem().toString();
+    }
+
+    public static String getDisplayString(ItemStack item) {
         if (item == null || item.isEmpty()) return "Air";
-        try { String n = item.getHoverName().getString(); if (n == null || n.trim().isEmpty() || n.equals("Air")) return item.getItem().toString(); return n; } catch (Exception e) { return item.getItem().toString(); }
+        final String name = item.getHoverName().getString();
+        final int count = item.getCount();
+        if (count > 1) {
+            return name + " x" + count;
+        }
+        return name;
+    }
+
+    /**
+     * Returns a formatted display name. If none exists, returns item name.
+     *
+     * @param is ItemStack to check
+     * @return true display or item name, if stack is not null
+     */
+    public static String getName(final ItemStack is) {
+        if (is == null) {
+            return null;
+        }
+        final String text;
+        if (is.has(DataComponents.CUSTOM_NAME)) {
+            text = "" + ChatFormatting.DARK_AQUA + ChatFormatting.ITALIC + is.getDisplayName();
+        } else if (is.getItem() == Items.WRITTEN_BOOK) {
+            WrittenBookContent bookMeta = is.get(DataComponents.WRITTEN_BOOK_CONTENT);
+            text = "" + ChatFormatting.DARK_AQUA + ChatFormatting.LIGHT_PURPLE + bookMeta.title();
+        } else {
+            text = ChatFormatting.AQUA + getPrettyItemName(is.getItemName().toString());
+        }
+        return text;
+    }
+
+    /**
+     * Checks whether an ItemStack is a Quest Journal
+     *
+     * @param is ItemStack to check
+     * @return true if item is a written book carrying the Quests journal marker
+     */
+    public static boolean isJournal(final ItemStack is) {
+        if (is == null || is.isEmpty() || is.getItem() != Items.WRITTEN_BOOK) return false;
+        final net.minecraft.world.item.component.CustomData data = is.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+        if (data == null || data.isEmpty()) return false;
+        return data.copyTag().getBooleanOr("quests.journal", false);
+    }
+
+    /**
+     * Cleans up item names. 'WOODEN_BUTTON' becomes 'Wooden Button'
+     *
+     * @param itemName any item name, ideally
+     * @return cleaned-up string
+     */
+    public static String getPrettyItemName(final String itemName) {
+        final Identifier material = Identifier.tryParse(itemName);
+        if (material == null) {
+            return "invalid";
+        }
+        final String baseString = material.toString();
+        final String[] substrings = baseString.split("_");
+        String prettyString = "";
+        int size = 1;
+        for (final String s : substrings) {
+            prettyString = prettyString.concat(FabricMiscUtil.getCapitalized(s));
+            if (size < substrings.length) {
+                prettyString = prettyString.concat(" ");
+            }
+            size++;
+        }
+        return prettyString;
     }
 
     public static String getPrettyPotionLevel(final ItemStack stack) {
@@ -180,33 +250,5 @@ public class FabricItemUtil {
             prettyString = ChatFormatting.GREEN + "+" + ChatFormatting.RESET;
         }
         return prettyString;
-    }
-
-    public static String getMaterialName(ItemStack item) {
-        if (item == null || item.isEmpty()) return "AIR";
-        return item.getItem().toString();
-    }
-
-    public static String getDisplayString(ItemStack item) {
-        if (item == null || item.isEmpty()) return "Air";
-        final String name = item.getHoverName().getString();
-        final int count = item.getCount();
-        if (count > 1) {
-            return name + " x" + count;
-        }
-        return name;
-    }
-
-    /**
-     * Checks whether an ItemStack is a Quest Journal
-     *
-     * @param is ItemStack to check
-     * @return true if item is a written book carrying the Quests journal marker
-     */
-    public static boolean isJournal(ItemStack is) {
-        if (is == null || is.isEmpty() || is.getItem() != Items.WRITTEN_BOOK) return false;
-        final net.minecraft.world.item.component.CustomData data = is.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
-        if (data == null || data.isEmpty()) return false;
-        return data.copyTag().getBooleanOr("quests.journal", false);
     }
 }

@@ -130,7 +130,7 @@ public class FabricConfigUtil {
         return parsed;
     }
 
-    public static String parseString(final String s, final me.pikamug.quests.quests.Quest quest, final ServerPlayer player) {
+    public static String parseString(final String s, final Quest quest, final ServerPlayer player) {
         String parsed = parseString(s, quest);
         /*if (FabricDependencies.placeholder != null && player != null) {
             parsed = PlaceholderAPI.setPlaceholders(player, parsed);

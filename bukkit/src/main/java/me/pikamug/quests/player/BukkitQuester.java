@@ -1736,9 +1736,9 @@ public class BukkitQuester implements Quester {
             objIndex++;
             final BukkitObjective objective = (BukkitObjective) obj;
             if (!ignoreOverrides && objIndex < overrides.size()) {
-                String s = stage.getObjectiveOverrides().get(objIndex);
-                String message = (!s.trim().isEmpty() ? "- " : "") + ChatColor.GREEN + BukkitConfigUtil
-                        .parseString(s, quest, q.getPlayer());
+                final String s = overrides.get(objIndex);
+                String message = (!s.trim().isEmpty() ? "- " : "") + ChatColor.GREEN
+                        + BukkitConfigUtil.parseString(s, quest, q.getPlayer());
                 message = message.replace("<count>", objective.getProgress() + "/" + objective.getGoal());
                 message = message.replace("%count%", objective.getProgress() + "/" + objective.getGoal());
                 if (plugin.getDependencies().getPlaceholderApi() != null) {
@@ -1816,10 +1816,9 @@ public class BukkitQuester implements Quester {
                     quester.sendMessage(message);
                 }
             }
-            if (!ignoreOverrides && !stage.getObjectiveOverrides().isEmpty()) {
-                for (int i = objIndex ; i < stage.getObjectiveOverrides().size(); i++) {
-                    String msg = ChatColor.GREEN + BukkitConfigUtil.parseString(stage.getObjectiveOverrides().get(i),
-                            quest, getPlayer());
+            if (!ignoreOverrides && !overrides.isEmpty()) {
+                for (int i = objIndex ; i < overrides.size(); i++) {
+                    String msg = ChatColor.GREEN + BukkitConfigUtil.parseString(overrides.get(i), quest, getPlayer());
                     if (plugin.getDependencies().getPlaceholderApi() != null) {
                         msg = PlaceholderAPI.setPlaceholders(getPlayer(), msg);
                     }
@@ -3394,8 +3393,8 @@ public class BukkitQuester implements Quester {
             } else {
                 sendMessage(message.replace("<item>", BukkitItemUtil.getName(goalBlock)));
             }
-        } else if (type.equals(ObjectiveType.DAMAGE_BLOCK)) {
-            final String message = formatCompletedObjectiveMessage("damage", goalBlock.getAmount());
+        } else if (type.equals(ObjectiveType.PLACE_BLOCK)) {
+            final String message = formatCompletedObjectiveMessage("place", goalBlock.getAmount());
             if (plugin.getConfigSettings().canTranslateNames()) {
                 if (!plugin.getLocaleManager().sendMessage(p, message,
                         goalBlock.getType(), goalBlock.getDurability(), null)) {
@@ -3404,8 +3403,8 @@ public class BukkitQuester implements Quester {
             } else {
                 sendMessage(message.replace("<item>", BukkitItemUtil.getName(goalBlock)));
             }
-        } else if (type.equals(ObjectiveType.PLACE_BLOCK)) {
-            final String message = formatCompletedObjectiveMessage("place", goalBlock.getAmount());
+        } else if (type.equals(ObjectiveType.DAMAGE_BLOCK)) {
+            final String message = formatCompletedObjectiveMessage("damage", goalBlock.getAmount());
             if (plugin.getConfigSettings().canTranslateNames()) {
                 if (!plugin.getLocaleManager().sendMessage(p, message,
                         goalBlock.getType(), goalBlock.getDurability(), null)) {
