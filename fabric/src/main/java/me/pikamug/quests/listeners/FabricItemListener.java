@@ -16,6 +16,7 @@ import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.QuestProgress;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.FabricObjective;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricItemUtil;
 import net.minecraft.core.component.DataComponents;
@@ -237,7 +238,8 @@ public class FabricItemListener {
             progress.set(i, after);
             quester.firePostUpdateObjective(quest, type, i);
             if (before < goalAmount && after >= goalAmount) {
-                quester.finishObjective(quest, type, i);
+                quester.finishObjective(quest, new FabricObjective(type, null, after, goalAmount,
+                        (ItemStack) goal), i);
             }
             quester.checkQuest(quest);
         }

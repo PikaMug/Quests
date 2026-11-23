@@ -8,12 +8,13 @@ import com.google.gson.JsonObject;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.conditions.Condition;
+import me.pikamug.quests.exceptions.QuestFormatException;
 import me.pikamug.quests.quests.FabricQuest;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.exceptions.QuestFormatException;
 import me.pikamug.quests.quests.components.FabricStage;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.storage.implementation.QuestStorageImpl;
+import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLocation;
 import net.minecraft.core.BlockPos;
@@ -25,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -295,8 +295,15 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         // Kill location restrictions
         if (json.has("locations-to-kill")) {
             final JsonArray arr = json.getAsJsonArray("locations-to-kill");
-            final LinkedList<Object> locs = new LinkedList<>();
-            arr.forEach(e -> locs.add(e.getAsString()));
+            final LinkedList<FabricLocation> locs = new LinkedList<>();
+            arr.forEach(e -> {
+                final FabricLocation loc = FabricConfigUtil.getLocation(e.getAsString());
+                if (loc != null) {
+                    locs.add(loc);
+                } else {
+                    plugin.getPluginLogger().warning("Invalid locations-to-kill entry: " + e.getAsString());
+                }
+            });
             stage.setLocationsToKillWithin(locs);
         }
         if (json.has("kill-location-radii")) {
@@ -314,8 +321,15 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         // Location objectives
         if (json.has("locations-to-reach")) {
             final JsonArray arr = json.getAsJsonArray("locations-to-reach");
-            final LinkedList<Object> locs = new LinkedList<>();
-            arr.forEach(e -> locs.add(e.getAsString()));
+            final LinkedList<FabricLocation> locs = new LinkedList<>();
+            arr.forEach(e -> {
+                final FabricLocation loc = FabricConfigUtil.getLocation(e.getAsString());
+                if (loc != null) {
+                    locs.add(loc);
+                } else {
+                    plugin.getPluginLogger().warning("Invalid locations-to-reach entry: " + e.getAsString());
+                }
+            });
             stage.setLocationsToReach(locs);
         }
         if (json.has("reach-location-radii")) {

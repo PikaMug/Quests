@@ -16,6 +16,7 @@ import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.FabricObjective;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricLang;
 import net.minecraft.ChatFormatting;
@@ -111,7 +112,7 @@ public class FabricChatListener {
             quester.firePreUpdateObjective(quest, ObjectiveType.PASSWORD, index);
             progress.getPasswordsSaid().set(index, true);
             quester.firePostUpdateObjective(quest, ObjectiveType.PASSWORD, index);
-            quester.finishObjective(quest, ObjectiveType.PASSWORD, index);
+            quester.finishObjective(quest, new FabricObjective(ObjectiveType.PASSWORD, null, 1, 1, null), index);
         }
         quester.checkQuest(quest);
     }

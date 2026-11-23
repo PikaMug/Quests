@@ -422,7 +422,7 @@ public class FabricQuestFactory implements QuestFactory {
         }
     }
 
-    private static LinkedList<String> toStringList(final LinkedList<Object> source) {
+    private static LinkedList<String> toStringList(final LinkedList<?> source) {
         final LinkedList<String> list = new LinkedList<>();
         for (final Object o : source) {
             list.add(Objects.toString(o, null));

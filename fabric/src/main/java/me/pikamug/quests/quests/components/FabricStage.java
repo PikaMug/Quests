@@ -14,6 +14,8 @@ import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.conditions.Condition;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
+import me.pikamug.quests.util.FabricLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,7 +106,7 @@ public class FabricStage implements Stage {
     private LinkedList<Integer> npcNumToKill = new LinkedList<>();
     private LinkedList<Object> mobsToKill = new LinkedList<>();
     private LinkedList<Integer> mobNumToKill = new LinkedList<>();
-    private LinkedList<Object> locationsToKillWithin = new LinkedList<>();
+    private LinkedList<FabricLocation> locationsToKillWithin = new LinkedList<>();
     private LinkedList<Integer> radiiToKillWithin = new LinkedList<>();
     private LinkedList<String> killNames = new LinkedList<>();
     private LinkedList<Object> mobsToTame = new LinkedList<>();
@@ -114,9 +116,9 @@ public class FabricStage implements Stage {
     private LinkedList<Object> sheepToShear = new LinkedList<>();
     private LinkedList<Integer> sheepNumToShear = new LinkedList<>();
     private Integer playersToKill;
-    private LinkedList<Object> locationsToReach = new LinkedList<>();
+    private LinkedList<FabricLocation> locationsToReach = new LinkedList<>();
     private LinkedList<Integer> radiiToReachWithin = new LinkedList<>();
-    private LinkedList<Object> worldsToReachWithin = new LinkedList<>();
+    private LinkedList<ServerLevel> worldsToReachWithin = new LinkedList<>();
     private LinkedList<String> locationNames = new LinkedList<>();
     private LinkedList<String> passwordDisplays = new LinkedList<>();
     private LinkedList<String> passwordPhrases = new LinkedList<>();
@@ -431,15 +433,15 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getLocationsToKillWithin() {
+    public LinkedList<FabricLocation> getLocationsToKillWithin() {
         return locationsToKillWithin;
     }
 
-    public boolean addLocationToKillWithin(final Object locationToKillWithin) {
+    public boolean addLocationToKillWithin(final FabricLocation locationToKillWithin) {
         return locationsToKillWithin.add(locationToKillWithin);
     }
 
-    public void setLocationsToKillWithin(final LinkedList<Object> locationsToKillWithin) {
+    public void setLocationsToKillWithin(final LinkedList<FabricLocation> locationsToKillWithin) {
         this.locationsToKillWithin = locationsToKillWithin;
     }
 
@@ -472,15 +474,15 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getLocationsToReach() {
+    public LinkedList<FabricLocation> getLocationsToReach() {
         return locationsToReach;
     }
 
-    public boolean addLocationToReach(final Object locationToReach) {
+    public boolean addLocationToReach(final FabricLocation locationToReach) {
         return locationsToReach.add(locationToReach);
     }
 
-    public void setLocationsToReach(final LinkedList<Object> locationsToReach) {
+    public void setLocationsToReach(final LinkedList<FabricLocation> locationsToReach) {
         this.locationsToReach = locationsToReach;
     }
 
@@ -499,15 +501,15 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getWorldsToReachWithin() {
+    public LinkedList<ServerLevel> getWorldsToReachWithin() {
         return worldsToReachWithin;
     }
 
-    public boolean addWorldToReachWithin(final Object worldToReachWithin) {
+    public boolean addWorldToReachWithin(final ServerLevel worldToReachWithin) {
         return worldsToReachWithin.add(worldToReachWithin);
     }
 
-    public void setWorldsToReachWithin(final LinkedList<Object> worldsToReachWithin) {
+    public void setWorldsToReachWithin(final LinkedList<ServerLevel> worldsToReachWithin) {
         this.worldsToReachWithin = worldsToReachWithin;
     }
 

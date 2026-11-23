@@ -5,6 +5,7 @@ import me.pikamug.quests.dependencies.FabricDependencies;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.FabricObjective;
 import me.pikamug.quests.quests.components.Stage;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
@@ -91,7 +92,7 @@ public class FabricPlayerMoveThread implements Runnable {
                         quester.firePreUpdateObjective(quest, ObjectiveType.REACH_LOCATION, i);
                         progress.getLocationsReached().set(i, true);
                         quester.firePostUpdateObjective(quest, ObjectiveType.REACH_LOCATION, i);
-                        quester.finishObjective(quest, ObjectiveType.REACH_LOCATION, i);
+                        quester.finishObjective(quest, new FabricObjective(ObjectiveType.REACH_LOCATION, null, 1, 1, null), i);
                         changed = true;
                     }
                 }

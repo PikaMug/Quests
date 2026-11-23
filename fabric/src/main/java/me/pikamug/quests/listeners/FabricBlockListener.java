@@ -21,6 +21,7 @@ import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.player.QuestProgress;
 import me.pikamug.quests.quests.FabricQuest;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.FabricObjective;
 import me.pikamug.quests.quests.components.FabricStage;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricItemUtil;
@@ -105,7 +106,8 @@ public class FabricBlockListener {
                 progress.getBlocksDamaged().set(i, before + 1);
                 quester.firePostUpdateObjective(quest, ObjectiveType.DAMAGE_BLOCK, i);
                 if (before < goal && progress.getBlocksDamaged().get(i) >= goal) {
-                    quester.finishObjective(quest, ObjectiveType.DAMAGE_BLOCK, i);
+                    quester.finishObjective(quest, new FabricObjective(ObjectiveType.DAMAGE_BLOCK, null,
+                            progress.getBlocksDamaged().get(i), goal, stage.getBlocksToDamage().get(i)), i);
                 }
                 quester.checkQuest(quest);
             }
@@ -172,7 +174,8 @@ public class FabricBlockListener {
                 progress.getBlocksBroken().set(i, before + 1);
                 quester.firePostUpdateObjective(quest, ObjectiveType.BREAK_BLOCK, i);
                 if (before < goal && progress.getBlocksBroken().get(i) >= goal) {
-                    quester.finishObjective(quest, ObjectiveType.BREAK_BLOCK, i);
+                    quester.finishObjective(quest, new FabricObjective(ObjectiveType.BREAK_BLOCK, null,
+                            progress.getBlocksBroken().get(i), goal, stage.getBlocksToBreak().get(i)), i);
                 }
                 quester.checkQuest(quest);
             }
@@ -249,7 +252,8 @@ public class FabricBlockListener {
                 progress.getBlocksPlaced().set(i, before + 1);
                 quester.firePostUpdateObjective(quest, ObjectiveType.PLACE_BLOCK, i);
                 if (before < goal && progress.getBlocksPlaced().get(i) >= goal) {
-                    quester.finishObjective(quest, ObjectiveType.PLACE_BLOCK, i);
+                    quester.finishObjective(quest, new FabricObjective(ObjectiveType.PLACE_BLOCK, null,
+                            progress.getBlocksPlaced().get(i), goal, stage.getBlocksToPlace().get(i)), i);
                 }
                 quester.checkQuest(quest);
             }
@@ -388,7 +392,8 @@ public class FabricBlockListener {
                 progress.getBlocksUsed().set(i, before + 1);
                 quester.firePostUpdateObjective(quest, ObjectiveType.USE_BLOCK, i);
                 if (before < goal && progress.getBlocksUsed().get(i) >= goal) {
-                    quester.finishObjective(quest, ObjectiveType.USE_BLOCK, i);
+                    quester.finishObjective(quest, new FabricObjective(ObjectiveType.USE_BLOCK, null,
+                            progress.getBlocksUsed().get(i), goal, stage.getBlocksToUse().get(i)), i);
                 }
                 quester.checkQuest(quest);
             }

@@ -3338,24 +3338,15 @@ public class BukkitQuester implements Quester {
     /**
      * Complete a quest objective
      *
-     * @param quest
-     *            Quest containing the objective
-     * @param objective
-     *            Objective for type, progress and goal
-     * @param mob
-     *            Mob being killed or tamed, if any
-     * @param extra
-     *            Extra mob enum like career or ocelot type, if any
-     * @param npc
-     *            UUID of NPC being talked to or killed, if any
-     * @param location
-     *            Location for user to reach, if any
-     * @param color
-     *            Shear color, if any
-     * @param pass
-     *            Password, if any
-     * @param co
-     *            Custom objective, if any. See {@link CustomObjective}
+     * @param quest Quest containing the objective
+     * @param objective Objective for type, progress and goal
+     * @param mob Mob being killed or tamed, if any
+     * @param extra Extra mob enum like career or ocelot type, if any
+     * @param npc UUID of NPC being talked to or killed, if any
+     * @param location Location for user to reach, if any
+     * @param color Shear color, if any
+     * @param pass Password, if any
+     * @param co Custom objective, if any. See {@link CustomObjective}
      */
     @SuppressWarnings("deprecation")
     public void finishObjective(final Quest quest, final Objective objective, final EntityType mob,
@@ -3652,14 +3643,14 @@ public class BukkitQuester implements Quester {
      * @return Formatted message
      */
     private String formatCompletedObjectiveMessage(final String langKey, final int goal) {
-        String message = ChatColor.GREEN + "(" + BukkitLang.get(getPlayer(), "completed") + ") " + BukkitLang.get(langKey);
+        String message = "(" + BukkitLang.get(getPlayer(), "completed") + ") " + BukkitLang.get(langKey);
         if (message.contains("<count>")) {
             message = message.replace("<count>", goal + "/" + goal);
         }
         if (plugin.getDependencies().getPlaceholderApi() != null) {
             message = PlaceholderAPI.setPlaceholders(getPlayer(), message);
         }
-        return message;
+        return ChatColor.GREEN + message;
     }
 
     /**

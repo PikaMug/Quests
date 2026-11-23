@@ -33,6 +33,16 @@ public class FabricObjective implements Objective {
         this.goalObj = new Object();
     }
 
+    public FabricObjective(final ObjectiveType type, @Nullable final String message, final int progress,
+                           final int goal, @Nullable final Object goalObj) {
+        this.type = type;
+        this.message = message;
+        this.progress = progress;
+        this.goal = goal;
+        this.progressObj = progress;
+        this.goalObj = goalObj != null ? goalObj : new Object();
+    }
+
     public FabricObjective(final ObjectiveType type, @Nullable final String message, final @NotNull Object progress,
                            final @NotNull Object goal) {
         this.type = type;

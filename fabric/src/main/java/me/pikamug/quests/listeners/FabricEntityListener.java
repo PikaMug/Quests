@@ -15,6 +15,7 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.FabricObjective;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricMiscUtil;
@@ -100,7 +101,8 @@ public class FabricEntityListener {
                         progress.getNpcsNumKilled().set(i, before + 1);
                         quester.firePostUpdateObjective(quest, ObjectiveType.KILL_NPC, i);
                         if (before < goal && progress.getNpcsNumKilled().get(i) >= goal) {
-                            quester.finishObjective(quest, ObjectiveType.KILL_NPC, i);
+                            quester.finishObjective(quest, new FabricObjective(ObjectiveType.KILL_NPC, null,
+                                    progress.getNpcsNumKilled().get(i), goal, null), i);
                         }
                         matched = true;
                     }
@@ -119,7 +121,8 @@ public class FabricEntityListener {
                 quester.firePostUpdateObjective(quest, ObjectiveType.KILL_PLAYER, 0);
                 if (beforeKill < stage.getPlayersToKill()
                         && progress.getPlayersKilled() >= stage.getPlayersToKill()) {
-                    quester.finishObjective(quest, ObjectiveType.KILL_PLAYER, 0);
+                    quester.finishObjective(quest, new FabricObjective(ObjectiveType.KILL_PLAYER, null,
+                            progress.getPlayersKilled(), stage.getPlayersToKill(), null), 0);
                 }
                 quester.checkQuest(quest);
                 dispatchPlayerKill(quester, quest, dispatchedPlayerQuestIDs);
@@ -139,7 +142,8 @@ public class FabricEntityListener {
                         progress.getMobNumKilled().set(i, before + 1);
                         quester.firePostUpdateObjective(quest, ObjectiveType.KILL_MOB, i);
                         if (before < goal && progress.getMobNumKilled().get(i) >= goal) {
-                            quester.finishObjective(quest, ObjectiveType.KILL_MOB, i);
+                            quester.finishObjective(quest, new FabricObjective(ObjectiveType.KILL_MOB, null,
+                                    progress.getMobNumKilled().get(i), goal, null), i);
                         }
                         matched = true;
                     }
@@ -168,7 +172,8 @@ public class FabricEntityListener {
                 qProgress.getMobNumKilled().set(i, Math.min(qBefore + 1, qGoal));
                 ((FabricQuester) q).firePostUpdateObjective(cq, ObjectiveType.KILL_MOB, i);
                 if (qBefore < qGoal && qProgress.getMobNumKilled().get(i) >= qGoal) {
-                    ((FabricQuester) q).finishObjective(cq, ObjectiveType.KILL_MOB, i);
+                    ((FabricQuester) q).finishObjective(cq, new FabricObjective(ObjectiveType.KILL_MOB, null,
+                            qProgress.getMobNumKilled().get(i), qGoal, null), i);
                 }
                 if (q.testComplete(cq)) q.checkQuest(cq);
             }
@@ -193,7 +198,8 @@ public class FabricEntityListener {
                 qProgress.getNpcsNumKilled().set(i, Math.min(qBefore + 1, qGoal));
                 ((FabricQuester) q).firePostUpdateObjective(cq, ObjectiveType.KILL_NPC, i);
                 if (qBefore < qGoal && qProgress.getNpcsNumKilled().get(i) >= qGoal) {
-                    ((FabricQuester) q).finishObjective(cq, ObjectiveType.KILL_NPC, i);
+                    ((FabricQuester) q).finishObjective(cq, new FabricObjective(ObjectiveType.KILL_NPC, null,
+                            qProgress.getNpcsNumKilled().get(i), qGoal, null), i);
                 }
                 if (q.testComplete(cq)) q.checkQuest(cq);
             }
@@ -212,7 +218,8 @@ public class FabricEntityListener {
             qProgress.setPlayersKilled(Math.min(qBefore + 1, qStage.getPlayersToKill()));
             ((FabricQuester) q).firePostUpdateObjective(cq, ObjectiveType.KILL_PLAYER, 0);
             if (qBefore < qStage.getPlayersToKill() && qProgress.getPlayersKilled() >= qStage.getPlayersToKill()) {
-                ((FabricQuester) q).finishObjective(cq, ObjectiveType.KILL_PLAYER, 0);
+                ((FabricQuester) q).finishObjective(cq, new FabricObjective(ObjectiveType.KILL_PLAYER, null,
+                        qProgress.getPlayersKilled(), qStage.getPlayersToKill(), null), 0);
             }
             if (q.testComplete(cq)) q.checkQuest(cq);
             return null;
@@ -324,7 +331,8 @@ public class FabricEntityListener {
         progress.setCowsMilked(beforeMilk + 1);
         quester.firePostUpdateObjective(quest, ObjectiveType.MILK_COW, 0);
         if (beforeMilk < stage.getCowsToMilk() && progress.getCowsMilked() >= stage.getCowsToMilk()) {
-            quester.finishObjective(quest, ObjectiveType.MILK_COW, 0);
+            quester.finishObjective(quest, new FabricObjective(ObjectiveType.MILK_COW, null,
+                    progress.getCowsMilked(), stage.getCowsToMilk(), null), 0);
         }
         quester.checkQuest(quest);
     }
@@ -360,7 +368,8 @@ public class FabricEntityListener {
         progress.setFishCaught(beforeFish + 1);
         quester.firePostUpdateObjective(quest, ObjectiveType.CATCH_FISH, 0);
         if (beforeFish < stage.getFishToCatch() && progress.getFishCaught() >= stage.getFishToCatch()) {
-            quester.finishObjective(quest, ObjectiveType.CATCH_FISH, 0);
+            quester.finishObjective(quest, new FabricObjective(ObjectiveType.CATCH_FISH, null,
+                    progress.getFishCaught(), stage.getFishToCatch(), null), 0);
         }
         quester.checkQuest(quest);
     }
@@ -422,7 +431,8 @@ public class FabricEntityListener {
                 progress.getSheepSheared().set(i, before + 1);
                 quester.firePostUpdateObjective(quest, ObjectiveType.SHEAR_SHEEP, i);
                 if (before < shearGoal && progress.getSheepSheared().get(i) >= shearGoal) {
-                    quester.finishObjective(quest, ObjectiveType.SHEAR_SHEEP, i);
+                    quester.finishObjective(quest, new FabricObjective(ObjectiveType.SHEAR_SHEEP, null,
+                            progress.getSheepSheared().get(i), shearGoal, null), i);
                 }
                 matched = true;
             }
@@ -485,7 +495,8 @@ public class FabricEntityListener {
                 progress.getMobsTamed().set(i, before + 1);
                 quester.firePostUpdateObjective(quest, ObjectiveType.TAME_MOB, i);
                 if (before < goal && progress.getMobsTamed().get(i) >= goal) {
-                    quester.finishObjective(quest, ObjectiveType.TAME_MOB, i);
+                    quester.finishObjective(quest, new FabricObjective(ObjectiveType.TAME_MOB, null,
+                            progress.getMobsTamed().get(i), goal, null), i);
                 }
                 matched = true;
             }

@@ -5,6 +5,7 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
+import me.pikamug.quests.quests.components.FabricObjective;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricInventoryUtil;
@@ -230,7 +231,7 @@ public class FabricPlayerListener {
                         final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         if (!progress.getNpcsInteracted().get(i)) {
                             progress.getNpcsInteracted().set(i, true);
-                            quester.finishObjective(quest, ObjectiveType.TALK_TO_NPC, i);
+                            quester.finishObjective(quest, new FabricObjective(ObjectiveType.TALK_TO_NPC, null, 1, 1, null), i);
                         }
                         matched = true;
                     }
@@ -256,7 +257,8 @@ public class FabricPlayerListener {
 
         if (newProgress >= goalAmount) {
             if (amount < goalAmount) {
-                quester.finishObjective(quest, ObjectiveType.DELIVER_ITEM, index);
+                quester.finishObjective(quest, new FabricObjective(ObjectiveType.DELIVER_ITEM, null,
+                        newProgress, goalAmount, goal), index);
             }
             quester.checkQuest(quest);
         } else {
