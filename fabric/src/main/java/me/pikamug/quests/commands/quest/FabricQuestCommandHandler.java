@@ -15,7 +15,7 @@ import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.commands.FabricQuestsSubCommand;
 import me.pikamug.quests.player.FabricQuester;
 import me.pikamug.quests.quests.Quest;
-import me.pikamug.quests.quests.components.Requirements;
+import me.pikamug.quests.quests.components.FabricRequirements;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.AnsiUtil;
 import me.pikamug.quests.util.FabricItemUtil;
@@ -102,7 +102,7 @@ public class FabricQuestCommandHandler {
         }
         player.sendSystemMessage(Component.literal(" "));
         if (plugin.getConfigSettings().canShowQuestReqs()) {
-            final Requirements reqs = quest.getRequirements();
+            final FabricRequirements reqs = (FabricRequirements) quest.getRequirements();
             if (reqs != null && reqs.hasRequirement()) {
                 player.sendSystemMessage(Component.literal(ChatFormatting.GOLD + FabricLang.get(player, "requirements")));
                 for (final String perm : reqs.getPermissions()) {
@@ -124,16 +124,13 @@ public class FabricQuestCommandHandler {
                                 + reqs.getQuestPoints() + " " + FabricLang.get(player, "questPoints")));
                     }
                 }
-                for (final Object item : reqs.getItems()) {
-                    if (item instanceof ItemStack) {
-                        ItemStack is = (ItemStack) item;
-                        if (hasItem(player, is)) {
-                            player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- "
-                                    + ChatFormatting.GREEN + FabricItemUtil.getDisplayString(is)));
-                        } else {
-                            player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- "
-                                    + ChatFormatting.RED + FabricItemUtil.getDisplayString(is)));
-                        }
+                for (final ItemStack is : reqs.getItems()) {
+                    if (quester.hasItem(is)) {
+                        player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- "
+                                + ChatFormatting.GREEN + FabricItemUtil.getDisplayString(is)));
+                    } else {
+                        player.sendSystemMessage(Component.literal(ChatFormatting.GRAY + "- "
+                                + ChatFormatting.RED + FabricItemUtil.getDisplayString(is)));
                     }
                 }
                 for (final Quest completed : quester.getCompletedQuests()) {
@@ -166,17 +163,6 @@ public class FabricQuestCommandHandler {
             }
         }
         return Command.SINGLE_SUCCESS;
-    }
-
-    private boolean hasItem(final ServerPlayer player, final ItemStack goal) {
-        int need = Math.max(1, goal.getCount());
-        for (final ItemStack is : player.getInventory().getNonEquipmentItems()) {
-            if (!is.isEmpty() && FabricItemUtil.matches(is, goal)) {
-                need -= is.getCount();
-                if (need <= 0) return true;
-            }
-        }
-        return false;
     }
 
     /**

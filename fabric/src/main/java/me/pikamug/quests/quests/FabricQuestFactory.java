@@ -25,8 +25,11 @@ import me.pikamug.quests.quests.components.Rewards;
 import me.pikamug.quests.quests.components.Stage;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLocation;
+import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.Key;
 import me.pikamug.quests.util.SessionData;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
@@ -50,6 +53,7 @@ public class FabricQuestFactory implements QuestFactory {
     private final FabricQuestsPlugin plugin;
     private ConcurrentHashMap<UUID, Block> selectedBlockStarts = new ConcurrentHashMap<>();
     private ConcurrentHashMap<UUID, Block> selectedKillLocations = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, Block> selectedReachLocations = new ConcurrentHashMap<>();
     private Set<UUID> selectingNpcs = ConcurrentHashMap.newKeySet();
     private List<String> namesOfQuestsBeingEdited = new LinkedList<>();
 
@@ -71,6 +75,14 @@ public class FabricQuestFactory implements QuestFactory {
 
     public void setSelectedKillLocations(final ConcurrentHashMap<UUID, Block> selectedKillLocations) {
         this.selectedKillLocations = selectedKillLocations;
+    }
+
+    public ConcurrentHashMap<UUID, Block> getSelectedReachLocations() {
+        return selectedReachLocations;
+    }
+
+    public void setSelectedReachLocations(final ConcurrentHashMap<UUID, Block> selectedReachLocations) {
+        this.selectedReachLocations = selectedReachLocations;
     }
 
     public Set<UUID> getSelectingNpcs() {
@@ -316,7 +328,8 @@ public class FabricQuestFactory implements QuestFactory {
                     SessionData.set(uuid, pref + Key.S_NPCS_TO_KILL_AMOUNTS, fabricStage.getNpcNumToKill());
                 }
                 if (!fabricStage.getMobsToKill().isEmpty()) {
-                    SessionData.set(uuid, pref + Key.S_MOB_TYPES, toStringList(fabricStage.getMobsToKill()));
+                    SessionData.set(uuid, pref + Key.S_MOB_TYPES,
+                            mobTypeListToStringList(fabricStage.getMobsToKill()));
                     SessionData.set(uuid, pref + Key.S_MOB_AMOUNTS,
                             new LinkedList<>(fabricStage.getMobNumToKill()));
                     if (!fabricStage.getLocationsToKillWithin().isEmpty()) {
@@ -337,12 +350,14 @@ public class FabricQuestFactory implements QuestFactory {
                             fabricStage.getLocationNames());
                 }
                 if (!fabricStage.getMobsToTame().isEmpty()) {
-                    SessionData.set(uuid, pref + Key.S_TAME_TYPES, toStringList(fabricStage.getMobsToTame()));
+                    SessionData.set(uuid, pref + Key.S_TAME_TYPES,
+                            mobTypeListToStringList(fabricStage.getMobsToTame()));
                     SessionData.set(uuid, pref + Key.S_TAME_AMOUNTS,
                             new LinkedList<>(fabricStage.getMobNumToTame()));
                 }
                 if (!fabricStage.getSheepToShear().isEmpty()) {
-                    SessionData.set(uuid, pref + Key.S_SHEAR_COLORS, toStringList(fabricStage.getSheepToShear()));
+                    SessionData.set(uuid, pref + Key.S_SHEAR_COLORS,
+                            dyeColorListToStringList(fabricStage.getSheepToShear()));
                     SessionData.set(uuid, pref + Key.S_SHEAR_AMOUNTS,
                             new LinkedList<>(fabricStage.getSheepNumToShear()));
                 }
@@ -426,6 +441,22 @@ public class FabricQuestFactory implements QuestFactory {
         final LinkedList<String> list = new LinkedList<>();
         for (final Object o : source) {
             list.add(Objects.toString(o, null));
+        }
+        return list;
+    }
+
+    private static LinkedList<String> mobTypeListToStringList(final LinkedList<? extends EntityType<?>> source) {
+        final LinkedList<String> list = new LinkedList<>();
+        for (final EntityType<?> type : source) {
+            list.add(FabricMiscUtil.getMobTypeName(type));
+        }
+        return list;
+    }
+
+    private static LinkedList<String> dyeColorListToStringList(final LinkedList<? extends DyeColor> source) {
+        final LinkedList<String> list = new LinkedList<>();
+        for (final DyeColor color : source) {
+            list.add(FabricMiscUtil.getPrettyDyeColorName(color));
         }
         return list;
     }

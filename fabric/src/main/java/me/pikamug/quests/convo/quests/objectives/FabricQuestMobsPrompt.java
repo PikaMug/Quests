@@ -24,6 +24,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 
@@ -156,7 +157,9 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
                 if (mobs != null && amounts != null) {
                     for (int i = 0; i < mobs.size(); i++) {
                         text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.BLUE)
-                                .append(mobs.get(i)).append(ChatFormatting.GRAY).append(" x ").append(ChatFormatting.AQUA)
+                                .append(FabricMiscUtil.getPrettyMobName(
+                                        FabricMiscUtil.getProperMobType(mobs.get(i))))
+                                .append(ChatFormatting.GRAY).append(" x ").append(ChatFormatting.AQUA)
                                 .append(amounts.get(i));
                     }
                 }
@@ -189,7 +192,9 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
                 if (colors != null && amounts != null) {
                     for (int i = 0; i < colors.size(); i++) {
                         text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.BLUE)
-                                .append(colors.get(i)).append(ChatFormatting.GRAY).append(" x ").append(ChatFormatting.AQUA)
+                                .append(FabricMiscUtil.getPrettyDyeColorName(
+                                        FabricMiscUtil.getProperDyeColor(colors.get(i))))
+                                .append(ChatFormatting.GRAY).append(" x ").append(ChatFormatting.AQUA)
                                 .append(amounts.get(i));
                     }
                 }
@@ -1327,7 +1332,9 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
                     final List<String> shearColors = (List<String>) SessionData.get(uuid, pref + Key.S_SHEAR_COLORS);
                     if (shearColors != null) {
                         for (final String s : shearColors) {
-                            text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA).append(s);
+                            text.append("\n").append(ChatFormatting.GRAY).append("     - ").append(ChatFormatting.AQUA)
+                                    .append(FabricMiscUtil.getPrettyDyeColorName(
+                                            FabricMiscUtil.getProperDyeColor(s)));
                         }
                     }
                     return text.toString();
@@ -1467,8 +1474,9 @@ public class FabricQuestMobsPrompt extends FabricQuestsEditorIntegerPrompt {
             if (!input.equalsIgnoreCase(FabricLang.get("cmdCancel"))) {
                 final LinkedList<String> colors = new LinkedList<>();
                 for (final String s : input.split(" ")) {
-                    if (FabricMiscUtil.getProperDyeColor(s) != null) {
-                        colors.add(s);
+                    final DyeColor color = FabricMiscUtil.getProperDyeColor(s);
+                    if (color != null) {
+                        colors.add(color.getSerializedName());
                         SessionData.set(uuid, pref + Key.S_SHEAR_COLORS, colors);
 
                         LinkedList<Integer> amounts = new LinkedList<>();

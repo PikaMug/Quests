@@ -53,6 +53,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
@@ -60,12 +61,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.level.storage.LevelData;
 import org.browsit.conversations.api.Conversations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1416,7 +1420,7 @@ public class FabricQuester implements Quester {
             npcKillIndex++;
         }
         int mobKillIndex = 0;
-        for (final Object e : stage.getMobsToKill()) {
+        for (final EntityType<?> e : stage.getMobsToKill()) {
             objIndex++;
             int progress = 0;
             if (data.getMobNumKilled().size() > mobKillIndex) {
@@ -1447,13 +1451,13 @@ public class FabricQuester implements Quester {
                 message = FabricPlaceholderSupport.setPlaceholders(getPlayer(), message);
             }
             if (formatNames) {
-                message = message.replace("<mob>", FabricMiscUtil.snakeCaseToUpperCamelCase(e.toString()));
+                message = message.replace("<mob>", FabricMiscUtil.getPrettyMobName(e));
             }
             objectives.add(new FabricObjective(ObjectiveType.KILL_MOB, message, progress, goal, e));
             mobKillIndex++;
         }
         int tameIndex = 0;
-        for (final Object e : stage.getMobsToTame()) {
+        for (final EntityType<?> e : stage.getMobsToTame()) {
             objIndex++;
             int progress = 0;
             if (data.getMobsTamed().size() > tameIndex) {
@@ -1472,8 +1476,8 @@ public class FabricQuester implements Quester {
                 message += " <mob>";
             }
             if (formatNames) {
-                message = message.replace("<mob>", FabricMiscUtil.snakeCaseToUpperCamelCase(
-                        stage.getMobsToTame().get(tameIndex).toString()));
+                message = message.replace("<mob>", FabricMiscUtil.getPrettyMobName(
+                        stage.getMobsToTame().get(tameIndex)));
             }
             objectives.add(new FabricObjective(ObjectiveType.TAME_MOB, message, progress, goal, e));
             tameIndex++;
@@ -1521,8 +1525,8 @@ public class FabricQuester implements Quester {
                 message = formatCurrentObjectiveMessage(color, FabricLang.get(getPlayer(), "shearSheep"),
                         progress, goal);
             }
-            message = message.replace("<color>", FabricMiscUtil.snakeCaseToUpperCamelCase(
-                    stage.getSheepToShear().get(shearIndex).toString()));
+            message = message.replace("<color>", FabricMiscUtil.getPrettyDyeColorName(
+                    stage.getSheepToShear().get(shearIndex)));
             objectives.add(new FabricObjective(ObjectiveType.SHEAR_SHEEP, message, progress, goal));
             shearIndex++;
         }
@@ -1682,8 +1686,8 @@ public class FabricQuester implements Quester {
             if (obj.getGoalObject() instanceof ItemStack) {
                 message = message.replace("<item>", FabricItemUtil.getName((ItemStack) obj.getGoalObject()));
             } else if (obj.getType() == ObjectiveType.KILL_MOB || obj.getType() == ObjectiveType.TAME_MOB) {
-                message = message.replace("<mob>", FabricMiscUtil.snakeCaseToUpperCamelCase(
-                        obj.getGoalObject().toString()));
+                message = message.replace("<mob>", FabricMiscUtil.getPrettyMobName(
+                        (EntityType<?>) obj.getGoalObject()));
             }
             if (obj.getType() == ObjectiveType.CUSTOM) {
                 message = message.trim().replaceAll("\\s{2,}", "");
@@ -1941,8 +1945,8 @@ public class FabricQuester implements Quester {
                 break;
             case KILL_MOB:
                 sendMessage(formatCompletedObjectiveMessage("kill", objective.getGoal())
-                        .replace("<mob>", FabricMiscUtil.snakeCaseToUpperCamelCase(
-                                stage.getMobsToKill().get(index).toString())));
+                        .replace("<mob>", FabricMiscUtil.getPrettyMobName(
+                                (EntityType<?>) stage.getMobsToKill().get(index))));
                 break;
             case KILL_NPC:
                 final UUID npcKillUuid = stage.getNpcsToKill().get(index);
@@ -1963,8 +1967,8 @@ public class FabricQuester implements Quester {
             case TAME_MOB:
                 if (index >= stage.getMobsToTame().size()) return;
                 sendMessage(formatCompletedObjectiveMessage("tame", objective.getGoal())
-                        .replace("<mob>", FabricMiscUtil.snakeCaseToUpperCamelCase(
-                                stage.getMobsToTame().get(index).toString())));
+                        .replace("<mob>", FabricMiscUtil.getPrettyMobName(
+                                (EntityType<?>) stage.getMobsToTame().get(index))));
                 break;
             case CATCH_FISH:
                 sendMessage(formatCompletedObjectiveMessage("catchFish", objective.getGoal()));
@@ -1975,8 +1979,8 @@ public class FabricQuester implements Quester {
             case SHEAR_SHEEP:
                 if (index >= stage.getSheepToShear().size()) return;
                 sendMessage(formatCompletedObjectiveMessage("shearSheep", objective.getGoal())
-                        .replace("<color>", FabricMiscUtil.snakeCaseToUpperCamelCase(
-                                stage.getSheepToShear().get(index).toString())));
+                        .replace("<color>", FabricMiscUtil.getPrettyDyeColorName(
+                                (DyeColor) stage.getSheepToShear().get(index))));
                 break;
             case REACH_LOCATION:
                 if (index >= stage.getLocationsToReach().size()) return;
@@ -2132,7 +2136,7 @@ public class FabricQuester implements Quester {
             }
         }
         if (!s.getMobsToKill().isEmpty()) {
-            for (final Object ignored : s.getMobsToKill()) {
+            for (final EntityType ignored : s.getMobsToKill()) {
                 data.mobNumKilled.add(0);
             }
         }
@@ -2145,12 +2149,12 @@ public class FabricQuester implements Quester {
             }
         }
         if (!s.getMobsToTame().isEmpty()) {
-            for (final Object ignored : s.getMobsToTame()) {
+            for (final EntityType ignored : s.getMobsToTame()) {
                 data.mobsTamed.add(0);
             }
         }
         if (!s.getSheepToShear().isEmpty()) {
-            for (final Object ignored : s.getSheepToShear()) {
+            for (final DyeColor ignored : s.getSheepToShear()) {
                 data.sheepSheared.add(0);
             }
         }
@@ -2204,22 +2208,7 @@ public class FabricQuester implements Quester {
      * @return Length of time in milliseconds
      */
     public long getRemainingCooldown(final Quest quest) {
-        if (quest == null || !quest.getPlanner().hasCooldown()) return 0;
-        final long diff = getCompletionDifference(quest);
-        final long cooldown = quest.getPlanner().getCooldown();
-        if (diff >= cooldown) return 0;
-        return cooldown - diff;
-    }
-
-    /**
-     * Load data of the Quester from storage
-     *
-     * @deprecated Use {@link #hasData()}
-     * @return true if successful
-     */
-    @Deprecated
-    public boolean loadData() {
-        return plugin.getStorage().loadQuester(id) != null;
+        return quest.getPlanner().getCooldown() - getCompletionDifference(quest);
     }
 
     /**
@@ -2242,6 +2231,7 @@ public class FabricQuester implements Quester {
 
     /**
      * Initiate the stage timer
+     *
      * @param quest The quest of which the timer is for
      */
     public void startStageTimer(final Quest quest) {
@@ -2265,37 +2255,33 @@ public class FabricQuester implements Quester {
 
     /**
      * Pause the stage timer. Useful when a player quits
+     *
      * @param quest The quest of which the timer is for
      */
     public void stopStageTimer(final Quest quest) {
-        if (quest == null) return;
-        final Stage stage = getCurrentStage(quest);
-        if (stage == null) return;
-        final QuestProgress progress = getQuestProgressOrDefault(quest);
-        final long elapsed = System.currentTimeMillis() - progress.getDelayStartTime();
-        if (progress.getDelayTimeLeft() > -1) {
-            progress.setDelayTimeLeft(progress.getDelayTimeLeft() - elapsed);
+        if (getQuestProgressOrDefault(quest).getDelayTimeLeft() > -1) {
+            getQuestProgressOrDefault(quest).setDelayTimeLeft(getQuestProgressOrDefault(quest).getDelayTimeLeft()
+                    - (System.currentTimeMillis() - getQuestProgressOrDefault(quest).getDelayStartTime()));
         } else {
-            progress.setDelayTimeLeft(stage.getDelay() - elapsed);
+            getQuestProgressOrDefault(quest).setDelayTimeLeft(getCurrentStage(quest).getDelay()
+                    - (System.currentTimeMillis() - getQuestProgressOrDefault(quest).getDelayStartTime()));
         }
     }
 
     /**
      * Get remaining stage delay time
+     *
      * @param quest The quest of which the timer is for
      * @return Remaining time in milliseconds
      */
     public long getStageTime(final Quest quest) {
-        if (quest == null || !currentQuests.containsKey(quest)) return 0;
-        final Stage stage = getCurrentStage(quest);
-        if (stage == null) return 0;
-        final QuestProgress progress = getQuestProgress(quest);
-        if (progress == null || progress.getDelayStartTime() <= 0) return 0;
-        final long elapsed = System.currentTimeMillis() - progress.getDelayStartTime();
-        if (progress.getDelayTimeLeft() > -1) {
-            return Math.max(0, progress.getDelayTimeLeft() - elapsed);
+        if (getQuestProgressOrDefault(quest).getDelayTimeLeft() > -1) {
+            return getQuestProgressOrDefault(quest).getDelayTimeLeft() - (System.currentTimeMillis()
+                    - getQuestProgressOrDefault(quest).getDelayStartTime());
+        } else {
+            return getCurrentStage(quest).getDelay() - (System.currentTimeMillis()
+                    - getQuestProgressOrDefault(quest).getDelayStartTime());
         }
-        return Math.max(0, stage.getDelay() - elapsed);
     }
 
     /**
@@ -2304,22 +2290,28 @@ public class FabricQuester implements Quester {
      * @param quest The quest to check
      */
     public void checkQuest(final Quest quest) {
-        if (quest == null || !currentQuests.containsKey(quest)) return;
-        final Stage stage = getCurrentStage(quest);
-        if (stage == null) return;
-
-        // Check conditions
-        final Condition condition = stage.getCondition();
-        if (condition != null && !condition.check(this, quest)) {
-            if (condition.isFailQuest()) {
-                quest.failQuest(this);
-                return;
+        if (quest != null) {
+            boolean exists = false;
+            for (final Quest q : plugin.getLoadedQuests()) {
+                if (q.getId().equalsIgnoreCase(quest.getId())) {
+                    final Stage stage = getCurrentStage(quest);
+                    if (stage != null) {
+                        quest.updateCompass(this, stage);
+                        // TODO - decide whether to handle this
+                        /*if (q.equals(quest) == false) {
+                            if (getPlayer() != null && getPlayer().isOnline()) {
+                                quitQuest(quest, ChatColor.GOLD + Lang.get("questModified")
+                                        .replace("<quest>", quest.getName()));
+                            }
+                        }*/
+                    }
+                    exists = true;
+                    break;
+                }
             }
-        }
-
-        // Test completion
-        if (testComplete(quest)) {
-            quest.nextStage(this, true);
+            if (!exists) {
+                sendMessage(ChatFormatting.RED + FabricLang.get("questNotExist").replace("<quest>", quest.getName()));
+            }
         }
     }
 
@@ -2340,10 +2332,6 @@ public class FabricQuester implements Quester {
         final FabricQuesterPreOpenGUIEvent preEvent = new FabricQuesterPreOpenGUIEvent(this, npc, guiQuests);
         FabricQuesterPreOpenGUIEvent.EVENT.invoker().onEvent(preEvent);
         if (preEvent.isCancelled()) {
-            return;
-        }
-        if (quests.isEmpty()) {
-            sendMessage(FabricLang.get(getPlayer(), "noCurrentQuest"));
             return;
         }
         final ServerPlayer player = getPlayer();
@@ -2399,7 +2387,7 @@ public class FabricQuester implements Quester {
     /**
      * Forcibly remove quest from Quester's list of completed quests, then update Quest Journal<p>
      *
-     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * Does not save changes to disk. Consider calling {@link #saveData()}
      *
      * @param quest The quest to remove
      */
@@ -2414,7 +2402,7 @@ public class FabricQuester implements Quester {
     /**
      * Forcibly clear Quester's list of current quests and data, then update Quest Journal<p>
      *
-     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * Does not save changes to disk. Consider calling {@link #saveData()}
      */
     public void hardClear() {
         currentQuests.clear();
@@ -2427,7 +2415,7 @@ public class FabricQuester implements Quester {
 
     /**
      * Forcibly set Quester's current stage, then update Quest Journal<br>
-     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * Does not save changes to disk. Consider calling {@link #saveData()}
      *
      * @param key The quest to set stage of
      * @param val The stage number to set
@@ -2439,7 +2427,7 @@ public class FabricQuester implements Quester {
     /**
      * Forcibly set Quester's quest data, then update Quest Journal<p>
      *
-     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * Does not save changes to disk. Consider calling {@link #saveData()}
      *
      * @param key The quest to set stage of
      * @param val The data to set
@@ -2449,7 +2437,13 @@ public class FabricQuester implements Quester {
     }
 
     public boolean canUseCompass() {
-        return compassTargetQuestId != null;
+        if (getPlayer() != null) {
+            final FabricDependencies dependencies = plugin.getDependencies();
+            if (!dependencies.hasPermission(id, "worldedit.navigation.jumpto")) {
+                return dependencies.hasPermission(id, "quests.compass");
+            }
+        }
+        return false;
     }
 
     /**
@@ -2460,12 +2454,22 @@ public class FabricQuester implements Quester {
     public void resetCompass() {
         compassTargetQuestId = null;
         final ServerPlayer player = getPlayer();
-        final net.minecraft.server.MinecraftServer server = FabricQuestsPlugin.getInstance().getServer();
-        if (player == null || server == null) return;
-        final net.minecraft.server.level.ServerLevel overworld = server.overworld();
-        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket(
-                net.minecraft.world.level.storage.LevelData.RespawnData.of(
-                        overworld.dimension(), overworld.getRespawnData().pos(), 0f, 0f)));
+        if (player == null) {
+            return;
+        }
+        if (!canUseCompass()) {
+            return;
+        }
+
+        LevelData.RespawnData defaultRespawnData = null;
+        final ServerPlayer.RespawnConfig respawnConfig = player.getRespawnConfig();
+        if (respawnConfig != null) {
+            defaultRespawnData = respawnConfig.respawnData();
+        }
+        if (defaultRespawnData == null) {
+            defaultRespawnData = player.level().getRespawnData();
+        }
+        player.connection.send(new ClientboundSetDefaultSpawnPositionPacket(defaultRespawnData));
     }
 
     /**
@@ -2473,8 +2477,7 @@ public class FabricQuester implements Quester {
      */
     public void findCompassTarget() {
         // Here we apply this method to OPs by not checking #canUseCompass
-        final ServerPlayer player = getPlayer();
-        if (player == null || !plugin.getDependencies().hasPermission(id, "quests.compass")) {
+        if (getPlayer() == null || !plugin.getDependencies().hasPermission(id, "quests.compass")) {
             return;
         }
         for (final Quest quest : currentQuests.keySet()) {
@@ -2543,6 +2546,25 @@ public class FabricQuester implements Quester {
     }
 
     /**
+     * Check whether the Quester's inventory contains the specified item
+     *
+     * @param is The item with a specified amount to check
+     * @return true if the inventory contains at least the amount of the specified stack
+     */
+    public boolean hasItem(final ItemStack is) {
+        if (getPlayer() == null) {
+            return false;
+        }
+        int playerAmount = 0;
+        for (final ItemStack stack : getPlayer().getInventory().getNonEquipmentItems()) {
+            if (!stack.isEmpty() && FabricItemUtil.matches(stack, is)) {
+                playerAmount += stack.getCount();
+            }
+        }
+        return playerAmount >= is.getCount();
+    }
+
+    /**
      * Dispatch player event to fellow questers<p>
      *
      * @param type The type of objective to progress
@@ -2552,25 +2574,52 @@ public class FabricQuester implements Quester {
                                                             final BiFunction<Quester, Quest, Void> fun) {
         final Set<String> appliedQuestIDs = new HashSet<>();
         if (quest != null) {
-            final Collection<Quester> mq = getMultiplayerQuesters(quest);
-            for (final Quester q : mq) {
-                if (q == null) {
-                    continue;
-                }
-                if (quest.getOptions().canShareSameQuestOnly()) {
-                    if (q.getCurrentStage(quest) != null) {
-                        fun.apply(q, quest);
-                        appliedQuestIDs.add(quest.getId());
+            try {
+                if (quest.getOptions().canGiveGloballyAtLogin()) {
+                    final List<Quester> mq = getGlobalQuesters(quest);
+                    if (mq == null) {
+                        return appliedQuestIDs;
                     }
-                }
-                q.getCurrentQuests().forEach((otherQuest, i) -> {
-                    if (otherQuest.getStage(i).containsObjective(type)) {
-                        if (!otherQuest.getOptions().canShareSameQuestOnly()) {
-                            fun.apply(q, otherQuest);
-                            appliedQuestIDs.add(otherQuest.getId());
+                    for (final Quester q : mq) {
+                        if (q == null) {
+                            continue;
                         }
+                        q.getCurrentQuests().forEach((otherQuest, i) -> {
+                            if (otherQuest.getStage(i).containsObjective(type)) {
+                                fun.apply(q, otherQuest);
+                                appliedQuestIDs.add(otherQuest.getId());
+                            }
+                        });
                     }
-                });
+                } else if (quest.getOptions().getShareProgressLevel() == 1) {
+                    final Collection<Quester> mq = getMultiplayerQuesters(quest);
+                    if (mq == null) {
+                        return appliedQuestIDs;
+                    }
+                    for (final Quester q : mq) {
+                        if (q == null) {
+                            continue;
+                        }
+                        if (quest.getOptions().canShareSameQuestOnly()) {
+                            if (q.getCurrentStage(quest) != null) {
+                                fun.apply(q, quest);
+                                appliedQuestIDs.add(quest.getId());
+                            }
+                        }
+                        q.getCurrentQuests().forEach((otherQuest, i) -> {
+                            if (otherQuest.getStage(i).containsObjective(type)) {
+                                if (!otherQuest.getOptions().canShareSameQuestOnly()) {
+                                    fun.apply(q, otherQuest);
+                                    appliedQuestIDs.add(otherQuest.getId());
+                                }
+                            }
+                        });
+                    }
+                }
+            } catch (final Exception e) {
+                plugin.getPluginLogger().severe("Error occurred while dispatching " + type.name() + " for quest ID "
+                        + quest.getId());
+                e.printStackTrace();
             }
         }
         return appliedQuestIDs;
@@ -2646,17 +2695,32 @@ public class FabricQuester implements Quester {
                 FabricQuestsPlugin.LOGGER.warn("Failed to resolve party members for quest ID {}", quest.getId(), e);
             }
         }
-        // Fallback: proximity-based sharing
-        final ServerPlayer player = getPlayer();
-        if (player == null) return mq;
-        final double shareDistance = quest.getOptions().getShareDistance();
-        if (shareDistance <= 0) return mq;
-        for (final ServerPlayer other : player.level().players()) {
-            if (other.equals(player)) continue;
-            if (player.distanceTo(other) > shareDistance) continue;
-            final FabricQuester otherQuester = plugin.getQuester(other.getUUID());
-            if (otherQuester.getCurrentQuests().containsKey(quest)) {
-                mq.add(otherQuester);
+        return mq;
+    }
+
+    /**
+     * Get a list of fellow Questers participating in a global quest
+     *
+     * @param quest The server-wide, global quest
+     * @return Potentially empty list of Questers or null for invalid quest
+     */
+    public List<Quester> getGlobalQuesters(final Quest quest) {
+        if (quest == null) {
+            return null;
+        }
+        final List<Quester> mq = new LinkedList<>();
+        if (quest.getOptions().canGiveGloballyAtLogin()) {
+            for (final Quester oq : plugin.getOnlineQuesters()) {
+                if (oq.getUUID().equals(getUUID())) {
+                    continue;
+                }
+                if (oq.getCurrentQuests().containsKey(quest)) {
+                    mq.add(oq);
+                }
+            }
+            if (!mq.isEmpty() && plugin.getConfigSettings().getConsoleLogging() > 3) {
+                plugin.getPluginLogger().info("Found " + mq.size() + " global members for quest ID "
+                        + quest.getId());
             }
         }
         return mq;
@@ -2700,7 +2764,18 @@ public class FabricQuester implements Quester {
      * @return true if selecting
      */
     public boolean isSelectingBlock() {
-        return plugin.isSelectingBlockStart(id) || plugin.getTempBlocks().containsKey(id);
+        if (getPlayer() == null) {
+            return false;
+        }
+        final UUID uuid = getPlayer().getUUID();
+        return plugin.getQuestFactory().getSelectedBlockStarts().containsKey(uuid)
+                || plugin.getQuestFactory().getSelectedKillLocations().containsKey(uuid)
+                || plugin.getQuestFactory().getSelectedReachLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedExplosionLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedEffectLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedMobLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedLightningLocations().containsKey(uuid)
+                || plugin.getActionFactory().getSelectedTeleportLocations().containsKey(uuid);
     }
 
     /**
@@ -2710,7 +2785,9 @@ public class FabricQuester implements Quester {
      */
     public boolean isInRegion(final String regionID) {
         final ServerPlayer player = getPlayer();
-        if (player == null) return false;
+        if (player == null) {
+            return false;
+        }
         return plugin.getDependencies().isInRegion(player, regionID);
     }
 
@@ -2722,7 +2799,7 @@ public class FabricQuester implements Quester {
      */
     public boolean canAcceptQuest(final UUID npc) {
         for (final Quest q : plugin.getLoadedQuests()) {
-            if (q.getNpcStart() != null && !completedQuests.contains(q)) {
+            if (q.getNpcStart() != null && !getCompletedQuests().contains(q)) {
                 if (q.getNpcStart().equals(npc)) {
                     final boolean ignoreLockedQuests = plugin.getConfigSettings().canIgnoreLockedQuests();
                     if (!ignoreLockedQuests || q.testRequirements(this)) {
@@ -2742,7 +2819,7 @@ public class FabricQuester implements Quester {
      */
     public boolean canAcceptCompletedQuest(final UUID npc) {
         for (final Quest q : plugin.getLoadedQuests()) {
-            if (q.getNpcStart() != null && completedQuests.contains(q)) {
+            if (q.getNpcStart() != null && getCompletedQuests().contains(q)) {
                 if (q.getNpcStart().equals(npc)) {
                     final boolean ignoreLockedQuests = plugin.getConfigSettings().canIgnoreLockedQuests();
                     if (!ignoreLockedQuests || q.testRequirements(this)) {
@@ -2762,8 +2839,8 @@ public class FabricQuester implements Quester {
      */
     public boolean canAcceptCompletedRedoableQuest(final UUID npc) {
         for (final Quest q : plugin.getLoadedQuests()) {
-            if (q.getNpcStart() != null && completedQuests.contains(q)
-                    && q.getPlanner() != null && q.getPlanner().getCooldown() > -1) {
+            if (q.getNpcStart() != null && getCompletedQuests().contains(q)
+                    && q.getPlanner().getCooldown() > -1) {
                 if (q.getNpcStart().equals(npc)) {
                     final boolean ignoreLockedQuests = plugin.getConfigSettings().canIgnoreLockedQuests();
                     if (!ignoreLockedQuests || q.testRequirements(this)) {
@@ -2779,6 +2856,7 @@ public class FabricQuester implements Quester {
         return questProgress;
     }
 
+    //TODO - this method should not exist
     public void setHasData(final boolean hasData) {
         this.hasData = hasData;
     }

@@ -3966,17 +3966,6 @@ public class BukkitQuester implements Quester {
     }
 
     /**
-     * Load data of the Quester from storage
-     *
-     * @deprecated Use {@link #hasData()}
-     * @return true if successful
-     */
-    @Deprecated
-    public boolean loadData() {
-        return plugin.getStorage().loadQuester(id) != null;
-    }
-
-    /**
      * Check whether the Quester has data saved to hard storage
      *
      * @return true if successful
@@ -3996,6 +3985,7 @@ public class BukkitQuester implements Quester {
 
     /**
      * Initiate the stage timer
+     *
      * @param quest The quest of which the timer is for
      */
     public void startStageTimer(final Quest quest) {
@@ -4018,6 +4008,7 @@ public class BukkitQuester implements Quester {
 
     /**
      * Pause the stage timer. Useful when a player quits
+     *
      * @param quest The quest of which the timer is for
      */
     public void stopStageTimer(final Quest quest) {
@@ -4088,7 +4079,7 @@ public class BukkitQuester implements Quester {
         }
         final String name = plugin.getDependencies().getNpcName(npc);
         final LinkedList<BukkitQuest> qs = new LinkedList<>();
-        for (Quest q : quests) {
+        for (final Quest q : quests) {
             qs.add((BukkitQuest) q);
         }
         final BukkitQuesterPreOpenGUIEvent preEvent = new BukkitQuesterPreOpenGUIEvent(this, npc, qs);
@@ -4144,7 +4135,7 @@ public class BukkitQuester implements Quester {
     /**
      * Forcibly remove quest from Quester's list of completed quests, then update Quest Journal<p>
      *
-     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * Does not save changes to disk. Consider calling {@link #saveData()}
      *
      * @param quest The quest to remove
      */
@@ -4159,7 +4150,7 @@ public class BukkitQuester implements Quester {
     /**
      * Forcibly clear Quester's list of current quests and data, then update Quest Journal<p>
      *
-     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * Does not save changes to disk. Consider calling {@link #saveData()}
      */
     public void hardClear() {
         try {
@@ -4173,7 +4164,7 @@ public class BukkitQuester implements Quester {
 
     /**
      * Forcibly set Quester's current stage, then update Quest Journal<br>
-     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * Does not save changes to disk. Consider calling {@link #saveData()}
      *
      * @param key The quest to set stage of
      * @param val The stage number to set
@@ -4189,7 +4180,7 @@ public class BukkitQuester implements Quester {
     /**
      * Forcibly set Quester's quest data, then update Quest Journal<p>
      *
-     * Does not save changes to disk. Consider calling {@link #saveData()} followed by {@link #loadData()}
+     * Does not save changes to disk. Consider calling {@link #saveData()}
      *
      * @param key The quest to set stage of
      * @param val The data to set
@@ -4313,9 +4304,11 @@ public class BukkitQuester implements Quester {
      * @return true if the inventory contains at least the amount of the specified stack
      */
     public boolean hasItem(final ItemStack is) {
-        final Inventory inv = getPlayer().getInventory();
+        if (getPlayer() == null) {
+            return false;
+        }
         int playerAmount = 0;
-        for (final ItemStack stack : inv.getContents()) {
+        for (final ItemStack stack : getPlayer().getInventory().getContents()) {
             if (stack != null) {
                 if (BukkitItemUtil.compareItems(is, stack, false) == 0) {
                     playerAmount += stack.getAmount();
@@ -4588,6 +4581,9 @@ public class BukkitQuester implements Quester {
      * @return true if selecting
      */
     public boolean isSelectingBlock() {
+        if (getPlayer() == null) {
+            return false;
+        }
         final UUID uuid = getPlayer().getUniqueId();
         return plugin.getQuestFactory().getSelectedBlockStarts().containsKey(uuid)
                 || plugin.getQuestFactory().getSelectedKillLocations().containsKey(uuid)
@@ -4605,11 +4601,12 @@ public class BukkitQuester implements Quester {
      * @return true if in specified WorldGuard region
      */
     public boolean isInRegion(final String regionID) {
-        if (getPlayer() == null) {
+        final Player player = getPlayer();
+        if (player == null) {
             return false;
         }
-        return plugin.getDependencies().getWorldGuardApi().getApplicableRegionsIDs(getPlayer().getWorld(),
-                getPlayer().getLocation()).contains(regionID);
+        return plugin.getDependencies().getWorldGuardApi().getApplicableRegionsIDs(player.getWorld(),
+                player.getLocation()).contains(regionID);
     }
 
     /**

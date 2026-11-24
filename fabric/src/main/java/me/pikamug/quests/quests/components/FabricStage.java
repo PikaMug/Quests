@@ -16,6 +16,8 @@ import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.module.CustomObjective;
 import me.pikamug.quests.util.FabricLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,16 +106,16 @@ public class FabricStage implements Stage {
         }
     };
     private LinkedList<Integer> npcNumToKill = new LinkedList<>();
-    private LinkedList<Object> mobsToKill = new LinkedList<>();
+    private LinkedList<EntityType<?>> mobsToKill = new LinkedList<>();
     private LinkedList<Integer> mobNumToKill = new LinkedList<>();
     private LinkedList<FabricLocation> locationsToKillWithin = new LinkedList<>();
     private LinkedList<Integer> radiiToKillWithin = new LinkedList<>();
     private LinkedList<String> killNames = new LinkedList<>();
-    private LinkedList<Object> mobsToTame = new LinkedList<>();
+    private LinkedList<EntityType<?>> mobsToTame = new LinkedList<>();
     private LinkedList<Integer> mobNumToTame = new LinkedList<>();
     private Integer fishToCatch;
     private Integer cowsToMilk;
-    private LinkedList<Object> sheepToShear = new LinkedList<>();
+    private LinkedList<DyeColor> sheepToShear = new LinkedList<>();
     private LinkedList<Integer> sheepNumToShear = new LinkedList<>();
     private Integer playersToKill;
     private LinkedList<FabricLocation> locationsToReach = new LinkedList<>();
@@ -406,15 +408,15 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getMobsToKill() {
+    public LinkedList<EntityType<?>> getMobsToKill() {
         return mobsToKill;
     }
 
-    public boolean addMobToKill(final Object mobToKill) {
+    public boolean addMobToKill(final EntityType<?> mobToKill) {
         return mobsToKill.add(mobToKill);
     }
 
-    public void setMobsToKill(final LinkedList<Object> mobsToKill) {
+    public void setMobsToKill(final LinkedList<EntityType<?>> mobsToKill) {
         this.mobsToKill = mobsToKill;
     }
 
@@ -528,15 +530,15 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getMobsToTame() {
+    public LinkedList<EntityType<?>> getMobsToTame() {
         return mobsToTame;
     }
 
-    public boolean addMobToTame(final Object mobToTame) {
+    public boolean addMobToTame(final EntityType<?> mobToTame) {
         return mobsToTame.add(mobToTame);
     }
 
-    public void setMobsToTame(final LinkedList<Object> mobsToTame) {
+    public void setMobsToTame(final LinkedList<EntityType<?>> mobsToTame) {
         this.mobsToTame = mobsToTame;
     }
 
@@ -585,15 +587,15 @@ public class FabricStage implements Stage {
     }
 
     @Override
-    public LinkedList<Object> getSheepToShear() {
+    public LinkedList<DyeColor> getSheepToShear() {
         return sheepToShear;
     }
 
-    public boolean addSheepToShear(final Object sheepToShear) {
+    public boolean addSheepToShear(final DyeColor sheepToShear) {
         return this.sheepToShear.add(sheepToShear);
     }
 
-    public void setSheepToShear(final LinkedList<Object> sheepToShear) {
+    public void setSheepToShear(final LinkedList<DyeColor> sheepToShear) {
         this.sheepToShear = sheepToShear;
     }
 

@@ -20,6 +20,7 @@ import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -43,11 +44,43 @@ public class FabricMiscUtil {
 
     public static EntityType<?> getEntityType(String name) {
         if (name == null) return null;
-        return entityTypeCache.computeIfAbsent(name.toUpperCase(Locale.ROOT), k -> {
-            final Identifier id = Identifier.tryParse(name.toLowerCase(Locale.ROOT));
+        final String normalized = normalizeEntityId(name);
+        if (normalized.isEmpty()) return null;
+        return entityTypeCache.computeIfAbsent(normalized.toUpperCase(Locale.ROOT), k -> {
+            final Identifier id = Identifier.tryParse(normalized);
             if (id == null) return null;
             return BuiltInRegistries.ENTITY_TYPE.getOptional(id).orElse(null);
         });
+    }
+
+    private static String normalizeEntityId(final String name) {
+        String normalized = name.trim().replaceAll("([a-z0-9])([A-Z])", "$1_$2")
+                .toLowerCase(Locale.ROOT).replace(' ', '_').replace('-', '_');
+        if (normalized.indexOf(':') == -1) {
+            switch (normalized.replace("_", "")) {
+            case "mushroomcow":
+                normalized = "mooshroom";
+                break;
+            case "pigzombie":
+                normalized = "zombified_piglin";
+                break;
+            case "snowman":
+                normalized = "snow_golem";
+                break;
+            case "firework":
+                normalized = "firework_rocket";
+                break;
+            case "primedtnt":
+                normalized = "tnt";
+                break;
+            case "lightning":
+                normalized = "lightning_bolt";
+                break;
+            default:
+                break;
+            }
+        }
+        return normalized;
     }
 
     public static String getPrettyMobName(EntityType<?> type) {
@@ -116,6 +149,11 @@ public class FabricMiscUtil {
         return getEntityType(mob);
     }
 
+    public static String getMobTypeName(final EntityType<?> type) {
+        if (type == null) return "Unknown";
+        return snakeCaseToUpperCamelCase(EntityType.getKey(type).getPath());
+    }
+
     public static String snakeCaseToUpperCamelCase(final String input) {
         if (input == null || input.isEmpty()) return input;
         final String[] parts = input.toLowerCase().split("_");
@@ -128,15 +166,41 @@ public class FabricMiscUtil {
         return sb.toString();
     }
 
-    public static String getProperDyeColor(final String input) {
+    public static DyeColor getProperDyeColor(final String input) {
         if (input == null) return null;
-        final String stripped = input.toLowerCase().replace("_", "").replace(" ", "");
-        if (stripped.equals("lightgray") || stripped.equals("silver")) return "LIGHT_GRAY";
-        if (stripped.equals("dark") || stripped.equals("darkgray")) return "DARK_GRAY";
-        return stripped.toUpperCase();
+        final String stripped = input.trim().toLowerCase(Locale.ROOT)
+                .replace("_", "").replace(" ", "").replace("-", "");
+        if (stripped.isEmpty() || stripped.equals("null")) return DyeColor.WHITE;
+        if (stripped.equals("silver")) return DyeColor.LIGHT_GRAY;
+        if (stripped.equals("dark") || stripped.equals("darkgray")) return DyeColor.GRAY;
+        for (final DyeColor color : DyeColor.values()) {
+            if (color.getSerializedName().replace("_", "").equals(stripped)) {
+                return color;
+            }
+        }
+        return null;
     }
 
+    public static String getDyeColorName(final DyeColor color) {
+        if (color == null) return DyeColor.WHITE.getSerializedName();
+        return color.getSerializedName();
+    }
 
-
-
+    public static String getPrettyDyeColorName(final DyeColor color) {
+        if (color == null) return "White";
+        final String key = "COLOR_" + color.name();
+        final String translated = FabricLang.get(key);
+        if (translated != null && !translated.equalsIgnoreCase("NULL") && !translated.equals(key)) {
+            return translated;
+        }
+        final String[] parts = color.getSerializedName().split("_");
+        final StringBuilder sb = new StringBuilder();
+        for (final String part : parts) {
+            if (!part.isEmpty()) {
+                if (sb.length() > 0) sb.append(' ');
+                sb.append(Character.toUpperCase(part.charAt(0))).append(part.substring(1));
+            }
+        }
+        return sb.toString();
+    }
 }

@@ -17,8 +17,11 @@ import me.pikamug.quests.storage.implementation.QuestStorageImpl;
 import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricItemUtil;
 import me.pikamug.quests.util.FabricLocation;
+import me.pikamug.quests.util.FabricMiscUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 
 import java.io.Reader;
@@ -221,7 +224,6 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> list.add(e.getAsString()));
             stage.setPasswordPhrases(list);
         }
-        // Block objectives
         parseBlockList(json, "break-block-names", "break-block-amounts", "break-block-durability",
                 stage, "break");
         parseBlockList(json, "damage-block-names", "damage-block-amounts", "damage-block-durability",
@@ -230,8 +232,6 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                 stage, "place");
         parseBlockList(json, "use-block-names", "use-block-amounts", "use-block-durability",
                 stage, "use");
-        // Note: cut-block objectives are intentionally not supported in this port
-        // Item objectives
         parseItemList(json, "items-to-craft", stage, "craft");
         parseItemList(json, "items-to-smelt", stage, "smelt");
         parseItemList(json, "items-to-enchant", stage, "enchant");
@@ -252,11 +252,17 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> msgs.add(e.getAsString()));
             stage.setDeliverMessages(msgs);
         }
-        // Mob objectives
         if (json.has("mobs-to-kill")) {
             final JsonArray arr = json.getAsJsonArray("mobs-to-kill");
-            final LinkedList<Object> mobs = new LinkedList<>();
-            arr.forEach(e -> mobs.add(e.getAsString()));
+            final LinkedList<EntityType<?>> mobs = new LinkedList<>();
+            arr.forEach(e -> {
+                final EntityType<?> type = FabricMiscUtil.getProperMobType(e.getAsString());
+                if (type != null) {
+                    mobs.add(type);
+                } else {
+                    plugin.getPluginLogger().warning("Invalid mobs-to-kill entry: " + e.getAsString());
+                }
+            });
             stage.setMobsToKill(mobs);
         }
         if (json.has("mob-amounts")) {
@@ -265,7 +271,6 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> nums.add(e.getAsInt()));
             stage.setMobNumToKill(nums);
         }
-        // NPC objectives
         if (json.has("npc-uuids-to-talk-to")) {
             final JsonArray arr = json.getAsJsonArray("npc-uuids-to-talk-to");
             final LinkedList<UUID> npcs = new LinkedList<>();
@@ -288,11 +293,9 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> nums.add(e.getAsInt()));
             stage.setNpcNumToKill(nums);
         }
-        // Player objectives
         if (json.has("players-to-kill")) {
             stage.setPlayersToKill(json.get("players-to-kill").getAsInt());
         }
-        // Kill location restrictions
         if (json.has("locations-to-kill")) {
             final JsonArray arr = json.getAsJsonArray("locations-to-kill");
             final LinkedList<FabricLocation> locs = new LinkedList<>();
@@ -318,7 +321,6 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> names.add(e.getAsString()));
             stage.setKillNames(names);
         }
-        // Location objectives
         if (json.has("locations-to-reach")) {
             final JsonArray arr = json.getAsJsonArray("locations-to-reach");
             final LinkedList<FabricLocation> locs = new LinkedList<>();
@@ -344,11 +346,17 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> names.add(e.getAsString()));
             stage.setLocationNames(names);
         }
-        // Tame objectives
         if (json.has("mobs-to-tame")) {
             final JsonArray arr = json.getAsJsonArray("mobs-to-tame");
-            final LinkedList<Object> mobs = new LinkedList<>();
-            arr.forEach(e -> mobs.add(e.getAsString()));
+            final LinkedList<EntityType<?>> mobs = new LinkedList<>();
+            arr.forEach(e -> {
+                final EntityType<?> type = FabricMiscUtil.getProperMobType(e.getAsString());
+                if (type != null) {
+                    mobs.add(type);
+                } else {
+                    plugin.getPluginLogger().warning("Invalid mobs-to-tame entry: " + e.getAsString());
+                }
+            });
             stage.setMobsToTame(mobs);
         }
         if (json.has("mob-tame-amounts")) {
@@ -357,11 +365,17 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             arr.forEach(e -> nums.add(e.getAsInt()));
             stage.setMobNumToTame(nums);
         }
-        // Shear objectives
         if (json.has("sheep-to-shear")) {
             final JsonArray arr = json.getAsJsonArray("sheep-to-shear");
-            final LinkedList<Object> sheep = new LinkedList<>();
-            arr.forEach(e -> sheep.add(e.getAsString()));
+            final LinkedList<DyeColor> sheep = new LinkedList<>();
+            arr.forEach(e -> {
+                final DyeColor color = FabricMiscUtil.getProperDyeColor(e.getAsString());
+                if (color != null) {
+                    sheep.add(color);
+                } else {
+                    plugin.getPluginLogger().warning("Invalid sheep-to-shear entry: " + e.getAsString());
+                }
+            });
             stage.setSheepToShear(sheep);
         }
         if (json.has("sheep-amounts")) {
@@ -372,7 +386,6 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
         }
         if (json.has("fish-to-catch")) stage.setFishToCatch(json.get("fish-to-catch").getAsInt());
         if (json.has("cows-to-milk")) stage.setCowsToMilk(json.get("cows-to-milk").getAsInt());
-        // Objective overrides
         if (json.has("objective-override")) {
             final JsonElement element = json.get("objective-override");
             final LinkedList<String> overrides = new LinkedList<>();
@@ -384,16 +397,13 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
             }
             stage.setObjectiveOverrides(overrides);
         }
-        // Stage actions
         parseStageAction(json, "start-event", stage, "start");
         parseStageAction(json, "finish-event", stage, "finish");
         parseStageAction(json, "fail-event", stage, "fail");
         parseStageAction(json, "death-event", stage, "death");
         parseStageAction(json, "disconnect-event", stage, "disconnect");
-        // Chat and command event actions
         parseTriggeredActions(json, "chat-events", "chat-event-triggers", stage, true);
         parseTriggeredActions(json, "command-events", "command-event-triggers", stage, false);
-        // Stage condition
         if (json.has("condition")) {
             final Condition condition = resolveCondition(json.get("condition").getAsString());
             if (condition != null) {

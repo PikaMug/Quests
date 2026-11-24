@@ -203,7 +203,7 @@ public class BukkitQuestCommandHandler {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.RED + BukkitItemUtil.getString(is));
                             }
                         }
-                        for (Quest quest : quester.getCompletedQuests()) {
+                        for (final Quest quest : quester.getCompletedQuests()) {
                             if (reqs.getNeededQuestIds().contains(quest.getId())) {
                                 cs.sendMessage(ChatColor.GRAY + "- " + ChatColor.GREEN + BukkitLang.get("complete") + " "
                                         + ChatColor.ITALIC + quest.getName());

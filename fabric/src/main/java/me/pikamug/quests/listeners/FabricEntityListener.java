@@ -29,6 +29,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -132,7 +133,7 @@ public class FabricEntityListener {
             if (!stage.getMobsToKill().isEmpty()) {
                 boolean matched = false;
                 for (int i = 0; i < stage.getMobsToKill().size(); i++) {
-                    if (matchesEntityName(stage.getMobsToKill().get(i), victim.getType())
+                    if (matchesEntityType(stage.getMobsToKill().get(i), victim.getType())
                             && isWithinKillLocation(stage, i, victim.getX(), victim.getY(), victim.getZ(), level)) {
                         final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         final int goal = (stage.getMobNumToKill() != null && stage.getMobNumToKill().size() > i)
@@ -162,7 +163,7 @@ public class FabricEntityListener {
             if (qStage == null || qStage.getMobsToKill().isEmpty()) return null;
             final me.pikamug.quests.player.QuestProgress qProgress = q.getQuestProgressOrDefault(cq);
             for (int i = 0; i < qStage.getMobsToKill().size(); i++) {
-                if (!matchesEntityName(qStage.getMobsToKill().get(i), victim.getType())) continue;
+                if (!matchesEntityType(qStage.getMobsToKill().get(i), victim.getType())) continue;
                 if (!isWithinKillLocation(qStage, i, victim.getX(), victim.getY(), victim.getZ(), level)) continue;
                 if (qProgress.getMobNumKilled().size() <= i) continue;
                 final int qGoal = (qStage.getMobNumToKill() != null && qStage.getMobNumToKill().size() > i)
@@ -276,16 +277,13 @@ public class FabricEntityListener {
         return null;
     }
 
-    private boolean matchesEntityName(Object goal, EntityType<?> type) {
+    private boolean matchesEntityType(final Object goal, final EntityType<?> type) {
         if (goal == null || type == null) return false;
-        final String target = goal.toString().trim();
-        if (target.isEmpty()) return false;
-        final Identifier key = EntityType.getKey(type);
-        final String keyString = key.toString();
-        final String path = key.getPath();
-        if (keyString.equalsIgnoreCase(target)) return true;
-        if (path.equalsIgnoreCase(target)) return true;
-        return ("minecraft:" + target).equalsIgnoreCase(keyString);
+        if (goal instanceof EntityType<?>) return goal == type;
+        if (goal instanceof String) {
+            return FabricMiscUtil.getProperMobType((String) goal) == type;
+        }
+        return false;
     }
 
     private void deferredMilkCheck(ServerPlayer player, Level level, Entity entity) {
@@ -386,13 +384,13 @@ public class FabricEntityListener {
             if (e instanceof Sheep) {
                 Sheep sheep = (Sheep) e;
                 if (sheep.isSheared()) {
-                    applySheepSheared(p, sheep.getColor().getName(), sheep.getColor().name());
+                    applySheepSheared(p, sheep.getColor());
                 }
             }
         }, 1);
     }
 
-    private void applySheepSheared(ServerPlayer player, String colorName, String colorEnumName) {
+    private void applySheepSheared(ServerPlayer player, DyeColor color) {
         final FabricQuester quester = plugin.getQuester(player.getUUID());
         final ObjectiveType type = ObjectiveType.SHEAR_SHEEP;
         final Set<String> dispatchedQuestIDs = new HashSet<>();
@@ -401,28 +399,25 @@ public class FabricEntityListener {
             if (quester.getCurrentQuests().containsKey(quest)
                     && quester.getCurrentStage(quest) != null
                     && quester.getCurrentStage(quest).containsObjective(type)) {
-                applySheepProgress(quester, quest, colorName, colorEnumName);
+                applySheepProgress(quester, quest, color);
             }
 
             dispatchedQuestIDs.addAll(quester.dispatchMultiplayerEverything(quest, type, (q, cq) -> {
                 if (!dispatchedQuestIDs.contains(cq.getId())) {
-                    applySheepProgress((FabricQuester) q, cq, colorName, colorEnumName);
+                    applySheepProgress((FabricQuester) q, cq, color);
                 }
                 return null;
             }));
         }
     }
 
-    private void applySheepProgress(FabricQuester quester, Quest quest, String colorName, String colorEnumName) {
+    private void applySheepProgress(FabricQuester quester, Quest quest, DyeColor color) {
         final Stage stage = quester.getCurrentStage(quest);
         if (stage == null || stage.getSheepToShear().isEmpty()) return;
         boolean matched = false;
         for (int i = 0; i < stage.getSheepToShear().size(); i++) {
-            final Object goal = stage.getSheepToShear().get(i);
-            if (goal == null) continue;
-            final String lowercase = goal.toString().trim().toLowerCase(java.util.Locale.ENGLISH);
-            if (lowercase.equals(colorName.toLowerCase(java.util.Locale.ENGLISH))
-                    || lowercase.equals(colorEnumName.toLowerCase(java.util.Locale.ENGLISH))) {
+            final DyeColor goal = (DyeColor) stage.getSheepToShear().get(i);
+            if (goal != null && goal == color) {
                 final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 final int shearGoal = (stage.getSheepNumToShear() != null && stage.getSheepNumToShear().size() > i)
                         ? stage.getSheepNumToShear().get(i) : 1;
@@ -486,7 +481,7 @@ public class FabricEntityListener {
         if (stage == null || stage.getMobsToTame().isEmpty()) return;
         boolean matched = false;
         for (int i = 0; i < stage.getMobsToTame().size(); i++) {
-            if (matchesEntityName(stage.getMobsToTame().get(i), type)) {
+            if (matchesEntityType(stage.getMobsToTame().get(i), type)) {
                 final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                 final int goal = (stage.getMobNumToTame() != null && stage.getMobNumToTame().size() > i)
                         ? stage.getMobNumToTame().get(i) : 1;
