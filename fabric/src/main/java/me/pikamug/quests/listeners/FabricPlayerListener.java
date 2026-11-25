@@ -231,7 +231,7 @@ public class FabricPlayerListener {
                         final me.pikamug.quests.player.QuestProgress progress = quester.getQuestProgressOrDefault(quest);
                         if (!progress.getNpcsInteracted().get(i)) {
                             progress.getNpcsInteracted().set(i, true);
-                            quester.finishObjective(quest, new FabricObjective(ObjectiveType.TALK_TO_NPC, null, 1, 1, null), i);
+                            quester.finishObjective(quest, new FabricObjective(ObjectiveType.TALK_TO_NPC, null, 1, 1), i);
                         }
                         matched = true;
                     }
@@ -258,7 +258,7 @@ public class FabricPlayerListener {
         if (newProgress >= goalAmount) {
             if (amount < goalAmount) {
                 quester.finishObjective(quest, new FabricObjective(ObjectiveType.DELIVER_ITEM, null,
-                        newProgress, goalAmount, goal), index);
+                        newProgress, goal), index);
             }
             quester.checkQuest(quest);
         } else {

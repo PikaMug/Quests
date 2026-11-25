@@ -156,12 +156,6 @@ public class FabricQuestFactory implements QuestFactory {
             if (!requirements.getPermissions().isEmpty()) {
                 SessionData.set(uuid, Key.REQ_PERMISSION, requirements.getPermissions());
             }
-            if (requirements.getHeroesPrimaryClass() != null) {
-                SessionData.set(uuid, Key.REQ_HEROES_PRIMARY_CLASS, requirements.getHeroesPrimaryClass());
-            }
-            if (requirements.getHeroesSecondaryClass() != null) {
-                SessionData.set(uuid, Key.REQ_HEROES_SECONDARY_CLASS, requirements.getHeroesSecondaryClass());
-            }
             if (!requirements.getCustomRequirements().isEmpty()) {
                 final LinkedList<String> list = new LinkedList<>();
                 final LinkedList<Object> dataMapList = new LinkedList<>();
@@ -200,13 +194,6 @@ public class FabricQuestFactory implements QuestFactory {
             }
             if (!rewards.getPermissionWorlds().isEmpty()) {
                 SessionData.set(uuid, Key.REW_PERMISSION_WORLDS, rewards.getPermissionWorlds());
-            }
-            if (!rewards.getHeroesClasses().isEmpty()) {
-                SessionData.set(uuid, Key.REW_HEROES_CLASSES, rewards.getHeroesClasses());
-                SessionData.set(uuid, Key.REW_HEROES_AMOUNTS, rewards.getHeroesAmounts());
-            }
-            if (!rewards.getPhatLoots().isEmpty()) {
-                SessionData.set(uuid, Key.REW_PHAT_LOOTS, rewards.getPhatLoots());
             }
             if (!rewards.getCustomRewards().isEmpty()) {
                 SessionData.set(uuid, Key.REW_CUSTOM, new LinkedList<>(rewards.getCustomRewards().keySet()));

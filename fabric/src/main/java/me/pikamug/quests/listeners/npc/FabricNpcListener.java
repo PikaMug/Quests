@@ -59,7 +59,7 @@ public abstract class FabricNpcListener {
                         if (!progress.getNpcsInteracted().get(i)) {
                             progress.getNpcsInteracted().set(i, true);
                             quester.finishObjective(quest,
-                                    new FabricObjective(ObjectiveType.TALK_TO_NPC, null, 1, 1, null), i);
+                                    new FabricObjective(ObjectiveType.TALK_TO_NPC, null, 1, 1), i);
                         }
                         matched = true;
                     }

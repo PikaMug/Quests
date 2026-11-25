@@ -238,8 +238,7 @@ public class FabricItemListener {
             progress.set(i, after);
             quester.firePostUpdateObjective(quest, type, i);
             if (before < goalAmount && after >= goalAmount) {
-                quester.finishObjective(quest, new FabricObjective(type, null, after, goalAmount,
-                        (ItemStack) goal), i);
+                quester.finishObjective(quest, new FabricObjective(type, null, after, (ItemStack) goal), i);
             }
             quester.checkQuest(quest);
         }

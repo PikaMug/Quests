@@ -26,8 +26,6 @@ public class FabricRequirements implements Requirements {
     private List<String> neededQuestIds = new LinkedList<>();
     private List<String> blockQuestIds = new LinkedList<>();
     private List<String> permissions = new LinkedList<>();
-    private String heroesPrimaryClass = null;
-    private String heroesSecondaryClass = null;
     private Map<String, Map<String, Object>> customRequirements = new HashMap<>();
     private List<String> detailsOverride = new LinkedList<>();
 
@@ -79,32 +77,6 @@ public class FabricRequirements implements Requirements {
     public void setPermissions(final List<String> permissions) {
         this.permissions = permissions;
     }
-    @Override
-    public List<String> getMcmmoSkills() {
-        return List.of();
-    }
-    @Override
-    public void setMcmmoSkills(final List<String> mcmmoSkills) {
-    }
-    @Override
-    public List<Integer> getMcmmoAmounts() {
-        return List.of();
-    }
-    @Override
-    public void setMcmmoAmounts(final List<Integer> mcmmoAmounts) {
-    }
-    public String getHeroesPrimaryClass() {
-        return heroesPrimaryClass;
-    }
-    public void setHeroesPrimaryClass(final String heroesPrimaryClass) {
-        this.heroesPrimaryClass = heroesPrimaryClass;
-    }
-    public String getHeroesSecondaryClass() {
-        return heroesSecondaryClass;
-    }
-    public void setHeroesSecondaryClass(final String heroesSecondaryClass) {
-        this.heroesSecondaryClass = heroesSecondaryClass;
-    }
     public Map<String, Map<String, Object>> getCustomRequirements() {
         return customRequirements;
     }
@@ -128,8 +100,6 @@ public class FabricRequirements implements Requirements {
         if (!neededQuestIds.isEmpty()) { return true; }
         if (!blockQuestIds.isEmpty()) { return true; }
         if (!permissions.isEmpty()) { return true; }
-        if (heroesPrimaryClass != null) { return true; }
-        if (heroesSecondaryClass != null) { return true; }
         return !customRequirements.isEmpty();
     }
 }

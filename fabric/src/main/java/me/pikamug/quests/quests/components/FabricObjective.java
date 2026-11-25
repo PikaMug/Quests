@@ -10,6 +10,7 @@
 
 package me.pikamug.quests.quests.components;
 
+import me.pikamug.quests.entity.FabricCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -33,16 +34,6 @@ public class FabricObjective implements Objective {
         this.goalObj = new Object();
     }
 
-    public FabricObjective(final ObjectiveType type, @Nullable final String message, final int progress,
-                           final int goal, @Nullable final Object goalObj) {
-        this.type = type;
-        this.message = message;
-        this.progress = progress;
-        this.goal = goal;
-        this.progressObj = progress;
-        this.goalObj = goalObj != null ? goalObj : new Object();
-    }
-
     public FabricObjective(final ObjectiveType type, @Nullable final String message, final @NotNull Object progress,
                            final @NotNull Object goal) {
         this.type = type;
@@ -51,6 +42,8 @@ public class FabricObjective implements Objective {
         this.goalObj = goal;
         if (progressObj instanceof ItemStack) {
             this.progress = ((ItemStack) progressObj).getCount();
+        } else if (progressObj instanceof FabricCountableMob) {
+            this.progress = ((FabricCountableMob) progressObj).getCount();
         } else if (progressObj instanceof Integer) {
             this.progress = (int) progress;
         } else {
@@ -58,6 +51,8 @@ public class FabricObjective implements Objective {
         }
         if (goalObj instanceof ItemStack) {
             this.goal = ((ItemStack) goalObj).getCount();
+        } else if (goalObj instanceof FabricCountableMob) {
+            this.goal = ((FabricCountableMob) goalObj).getCount();
         } else if (goalObj instanceof Integer) {
             this.goal = (int) goalObj;
         } else {
@@ -95,9 +90,6 @@ public class FabricObjective implements Objective {
         return goalObj;
     }
 
-    /**
-     * @deprecated Paper 1.21 builds do not allow ItemStack with 0 amount
-     */
     @Deprecated
     public @Nullable ItemStack getProgressAsItem() {
         return progressObj instanceof ItemStack ? (ItemStack) progressObj : null;
@@ -105,5 +97,13 @@ public class FabricObjective implements Objective {
 
     public @Nullable ItemStack getGoalAsItem() {
         return goalObj instanceof ItemStack ? (ItemStack) goalObj : null;
+    }
+
+    public @Nullable FabricCountableMob getProgressAsMob() {
+        return progressObj instanceof FabricCountableMob ? (FabricCountableMob) progressObj : null;
+    }
+
+    public @Nullable FabricCountableMob getGoalAsMob() {
+        return goalObj instanceof FabricCountableMob ? (FabricCountableMob) goalObj : null;
     }
 }

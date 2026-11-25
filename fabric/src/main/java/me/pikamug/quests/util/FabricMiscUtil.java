@@ -11,6 +11,7 @@
 package me.pikamug.quests.util;
 
 import me.pikamug.quests.FabricQuestsPlugin;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
@@ -166,26 +167,12 @@ public class FabricMiscUtil {
         return sb.toString();
     }
 
-    public static DyeColor getProperDyeColor(final String input) {
-        if (input == null) return null;
-        final String stripped = input.trim().toLowerCase(Locale.ROOT)
-                .replace("_", "").replace(" ", "").replace("-", "");
-        if (stripped.isEmpty() || stripped.equals("null")) return DyeColor.WHITE;
-        if (stripped.equals("silver")) return DyeColor.LIGHT_GRAY;
-        if (stripped.equals("dark") || stripped.equals("darkgray")) return DyeColor.GRAY;
-        for (final DyeColor color : DyeColor.values()) {
-            if (color.getSerializedName().replace("_", "").equals(stripped)) {
-                return color;
-            }
-        }
-        return null;
-    }
-
-    public static String getDyeColorName(final DyeColor color) {
-        if (color == null) return DyeColor.WHITE.getSerializedName();
-        return color.getSerializedName();
-    }
-
+    /**
+     * Gets player-friendly name from type. 'LIGHT_BLUE' becomes 'Light Blue'
+     *
+     * @param color any dye type, ideally
+     * @return cleaned-up string, or 'White' if null
+     */
     public static String getPrettyDyeColorName(final DyeColor color) {
         if (color == null) return "White";
         final String key = "COLOR_" + color.name();
@@ -202,5 +189,68 @@ public class FabricMiscUtil {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Gets DyeColor from name
+     *
+     * @param properName Name to get type from
+     * @return DyeColor or null if invalid
+     */
+    public static DyeColor getProperDyeColor(final String properName) {
+        if (properName == null) {
+            return null;
+        }
+        final String stripped = properName.trim().toLowerCase(Locale.ROOT)
+                .replace("_", "").replace(" ", "").replace("-", "");
+        if (stripped.isEmpty() || stripped.equals("null")) return DyeColor.WHITE;
+        if (stripped.equals("silver")) return DyeColor.LIGHT_GRAY;
+        if (stripped.equals("dark") || stripped.equals("darkgray")) return DyeColor.GRAY;
+        for (final DyeColor color : DyeColor.values()) {
+            if (color.getSerializedName().replace("_", "").equals(stripped)) {
+                return color;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Split text into multiple lines
+     *
+     * @param input Text to convert
+     * @param wordDelimiter Character(s) used to split up text
+     * @param lineLength Maximum number of characters per line
+     * @param lineColor Color to use at start of each new line
+     * @return Converted text
+     */
+    public static LinkedList<String> makeLines(final String input, final String wordDelimiter, final int lineLength,
+                                               final ChatFormatting lineColor) {
+        final LinkedList<String> toReturn = new LinkedList<>();
+        final String[] split = input.split(wordDelimiter);
+        StringBuilder line = new StringBuilder();
+        int currentLength = 0;
+        for (final String piece : split) {
+            if ((currentLength + piece.length()) > (lineLength + 1)) {
+                // TODO - determine whether replaceAll and carots (^) are necessary here
+                final String s = line.toString().replaceAll("^" + wordDelimiter, "");
+                if (lineColor != null) {
+                    toReturn.add(lineColor + s);
+                } else {
+                    toReturn.add(s);
+                }
+                line = new StringBuilder(piece + wordDelimiter);
+                currentLength = piece.length() + 1;
+            } else {
+                line.append(piece).append(wordDelimiter);
+                currentLength += piece.length() + 1;
+            }
+        }
+        if (!line.toString().isEmpty())
+            if (lineColor != null) {
+                toReturn.add(lineColor + line.toString());
+            } else {
+                toReturn.add(line.toString());
+            }
+        return toReturn;
     }
 }

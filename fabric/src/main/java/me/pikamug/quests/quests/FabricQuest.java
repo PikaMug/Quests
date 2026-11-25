@@ -13,6 +13,7 @@ package me.pikamug.quests.quests;
 import me.pikamug.quests.FabricQuestsPlugin;
 import me.pikamug.quests.actions.Action;
 import me.pikamug.quests.actions.FabricAction;
+import me.pikamug.quests.dependencies.FabricPlaceholderSupport;
 import me.pikamug.quests.events.quest.FabricQuestUpdateCompassEvent;
 import me.pikamug.quests.events.quester.FabricQuesterPostChangeStageEvent;
 import me.pikamug.quests.events.quester.FabricQuesterPostCompleteQuestEvent;
@@ -35,6 +36,7 @@ import me.pikamug.quests.tasks.FabricScheduler;
 import me.pikamug.quests.util.FabricConfigUtil;
 import me.pikamug.quests.util.FabricLang;
 import me.pikamug.quests.util.FabricLocation;
+import me.pikamug.quests.util.FabricMiscUtil;
 import me.pikamug.quests.util.FabricOfflinePlayer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -42,13 +44,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemLore;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -60,7 +66,7 @@ public class FabricQuest implements Quest {
     protected String description;
     protected String finished;
     protected ItemStack guiDisplay = null;
-    private LinkedList<Stage> orderedStages = new LinkedList<>();
+    private final LinkedList<Stage> orderedStages = new LinkedList<>();
     protected UUID npcStart;
     protected FabricLocation blockStart;
     protected String regionStart = null;
@@ -139,55 +145,6 @@ public class FabricQuest implements Quest {
         this.guiDisplay = guiDisplay;
     }
 
-    public ItemStack prepareDisplay(final FabricQuester quester) {
-        final ItemStack display = getGUIDisplay().copy();
-        final ServerPlayer player = quester.getPlayer();
-        final String displayName;
-        if (quester.getCompletedQuests().contains(this)) {
-            displayName = ChatFormatting.DARK_PURPLE + FabricConfigUtil.parseString(getName()
-                    + " " + ChatFormatting.GREEN + FabricLang.get(player, "redoCompleted"), this);
-        } else {
-            displayName = ChatFormatting.DARK_PURPLE + FabricConfigUtil.parseString(getName(), this);
-        }
-        display.set(DataComponents.CUSTOM_NAME, Component.literal(displayName));
-        if (display.get(DataComponents.LORE) == null) {
-            final String description = getDescription();
-            if (description != null && !description.isEmpty()) {
-                final String parsed = FabricConfigUtil.parseString(description, this);
-                final ChatFormatting color = parsed.indexOf('\u00A7') == -1
-                        ? ChatFormatting.DARK_GREEN : null;
-                display.set(DataComponents.LORE, new ItemLore(createDisplayLore(parsed, 40, color)));
-            }
-        }
-        return display;
-    }
-
-    private static List<Component> createDisplayLore(final String input, final int lineLength,
-                                                     final ChatFormatting lineColor) {
-        final LinkedList<Component> lines = new LinkedList<>();
-        final String[] pieces = input.split(" ");
-        StringBuilder line = new StringBuilder();
-        int currentLength = 0;
-        for (final String piece : pieces) {
-            if (currentLength + piece.length() > lineLength + 1) {
-                final String text = line.toString().trim();
-                if (!text.isEmpty()) {
-                    lines.add(Component.literal((lineColor != null ? lineColor.toString() : "") + text));
-                }
-                line = new StringBuilder(piece).append(' ');
-                currentLength = piece.length() + 1;
-            } else {
-                line.append(piece).append(' ');
-                currentLength += piece.length() + 1;
-            }
-        }
-        final String text = line.toString().trim();
-        if (!text.isEmpty()) {
-            lines.add(Component.literal((lineColor != null ? lineColor.toString() : "") + text));
-        }
-        return lines;
-    }
-
     @Override
     public Stage getStage(final int index) {
         try {
@@ -200,10 +157,6 @@ public class FabricQuest implements Quest {
     @Override
     public LinkedList<Stage> getStages() {
         return orderedStages;
-    }
-
-    public void setOrderedStages(final LinkedList<Stage> orderedStages) {
-        this.orderedStages = orderedStages;
     }
 
     @Override
@@ -287,6 +240,9 @@ public class FabricQuest implements Quest {
      */
     public void nextStage(final Quester quester, final boolean allowSharedProgress) {
         final FabricQuester q = (FabricQuester) quester;
+        if (q.getPlayer() == null) {
+            return;
+        }
         final Stage currentStage = q.getCurrentStage(this);
         if (currentStage == null) {
             FabricQuestsPlugin.LOGGER.severe("Current stage was null for quester " + q.getPlayer().getStringUUID());
@@ -378,12 +334,15 @@ public class FabricQuest implements Quest {
         updateCompass(quester, nextStage);
         if (player.isOnline()) {
             final ServerPlayer p = q.getPlayer();
+            if (p == null) {
+                return;
+            }
             final String title = FabricLang.get(p, "objectives").replace("<quest>", name);
             FabricLang.send(p, ChatFormatting.GOLD + title);
             quester.showCurrentObjectives(this, quester, false);
             if (quester.getCurrentStage(this) == null) {
                 quester.sendMessage(ChatFormatting.RED + "itemCreateCriticalError");
-                FabricQuestsPlugin.LOGGER.severe("Could not set stage for quest ID " + getId()
+                plugin.getPluginLogger().severe("Could not set stage for quest ID " + getId()
                         + " because the current stage for player " + quester.getLastKnownName() + " was null");
                 return;
             }
@@ -404,31 +363,205 @@ public class FabricQuest implements Quest {
         }
     }
 
-    @Override
-    public boolean updateCompass(Quester quester, Stage stage) {
-        if (quester == null || stage == null) return false;
-        if (quester instanceof FabricQuester) {
-            final FabricQuester q = (FabricQuester) quester;
-            if (q.getOfflinePlayer().isOnline()
-                    && plugin.getDependencies().hasPermission(q.getUUID(), "quests.compass")
-                    && stage.getLocationsToReach() != null && !stage.getLocationsToReach().isEmpty()) {
-                final FabricLocation target = FabricConfigUtil.getLocation(
-                        stage.getLocationsToReach().getFirst().toString());
-                if (target != null) {
-                    final FabricQuestUpdateCompassEvent event
-                            = new FabricQuestUpdateCompassEvent(this, quester, target);
-                    FabricQuestUpdateCompassEvent.EVENT.invoker().onEvent(event);
-                    if (event.isCancelled()) {
-                        return false;
+    /**
+     * Attempt to set location-objective target for compass.<p>
+     *
+     * Method may be called as often as needed.
+     *
+     * @param quester The online quester to have their compass updated
+     * @param stage The stage to process for targets
+     * @return true if quester is online and has permission
+     */
+    public boolean updateCompass(final Quester quester, final Stage stage) {
+        if (quester == null) {
+            return false;
+        }
+        if (stage == null) {
+            return false;
+        }
+        if (!(quester instanceof FabricQuester)) {
+            return false;
+        }
+        final FabricQuester q = (FabricQuester) quester;
+        if (!q.getOfflinePlayer().isOnline()) {
+            return false;
+        }
+        if (!plugin.getDependencies().hasPermission(q.getUUID(), "quests.compass")) {
+            return false;
+        }
+        final Quest quest = this;
+        FabricScheduler.runLater(() -> {
+            FabricLocation targetLocation = null;
+            if (stage.getNpcsToInteract() != null && !stage.getNpcsToInteract().isEmpty()) {
+                targetLocation = plugin.getDependencies().getNpcLocation(stage.getNpcsToInteract().getFirst());
+            } else if (stage.getNpcsToKill() != null && !stage.getNpcsToKill().isEmpty()) {
+                targetLocation = plugin.getDependencies().getNpcLocation(stage.getNpcsToKill().getFirst());
+            } else if (stage.getLocationsToReach() != null && !stage.getLocationsToReach().isEmpty()) {
+                targetLocation = (FabricLocation) stage.getLocationsToReach().getFirst();
+            } else if (stage.getItemDeliveryTargets() != null && !stage.getItemDeliveryTargets().isEmpty()) {
+                targetLocation = plugin.getDependencies().getNpcLocation(stage.getItemDeliveryTargets().getFirst());
+            } else if (stage.getPlayersToKill() != null && stage.getPlayersToKill() > 0) {
+                final ServerPlayer player = q.getPlayer();
+                if (player == null) {
+                    return;
+                }
+                final ServerLevel level = player.level();
+                FabricLocation nearest = null;
+                double oldDistance = 30000000;
+                for (final ServerPlayer p : level.players()) {
+                    if (p.getUUID().equals(q.getUUID())) {
+                        continue;
+                    }
+                    final double newDistance = player.distanceToSqr(p);
+                    if (newDistance < oldDistance) {
+                        nearest = new FabricLocation(level, p.getX(), p.getY(), p.getZ());
+                        oldDistance = newDistance;
                     }
                 }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            } else if (stage.getMobsToKill() != null && !stage.getMobsToKill().isEmpty()) {
+                final ServerPlayer player = q.getPlayer();
+                if (player == null) {
+                    return;
+                }
+                final ServerLevel level = player.level();
+                FabricLocation nearest = null;
+                double oldDistance = 30000000;
+                final EntityType<?> et = (EntityType<?>) stage.getMobsToKill().getFirst();
+                for (final Entity e : level.getAllEntities()) {
+                    if (!e.getType().equals(et)) {
+                        continue;
+                    }
+                    final double newDistance = player.distanceToSqr(e);
+                    if (newDistance < oldDistance) {
+                        nearest = new FabricLocation(level, e.getX(), e.getY(), e.getZ());
+                        oldDistance = newDistance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            } else if (stage.getMobsToTame() != null && !stage.getMobsToTame().isEmpty()) {
+                final ServerPlayer player = q.getPlayer();
+                if (player == null) {
+                    return;
+                }
+                final ServerLevel level = player.level();
+                FabricLocation nearest = null;
+                double oldDistance = 30000000;
+                final EntityType<?> et = (EntityType<?>) stage.getMobsToTame().getFirst();
+                for (final Entity e : level.getAllEntities()) {
+                    if (!e.getType().equals(et)) {
+                        continue;
+                    }
+                    final double newDistance = player.distanceToSqr(e);
+                    if (newDistance < oldDistance) {
+                        nearest = new FabricLocation(level, e.getX(), e.getY(), e.getZ());
+                        oldDistance = newDistance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
+            } else if (stage.getSheepToShear() != null && !stage.getSheepToShear().isEmpty()) {
+                final ServerPlayer player = q.getPlayer();
+                if (player == null) {
+                    return;
+                }
+                final ServerLevel level = player.level();
+                FabricLocation nearest = null;
+                double oldDistance = 30000000;
+                final DyeColor dc = (DyeColor) stage.getSheepToShear().getFirst();
+                for (final Entity e : level.getAllEntities()) {
+                    if (!(e instanceof Sheep)) {
+                        continue;
+                    }
+                    final Sheep s = (Sheep) e;
+                    if (s.getColor().equals(dc)) {
+                        continue;
+                    }
+                    final double newDistance = player.distanceToSqr(e);
+                    if (newDistance < oldDistance) {
+                        nearest = new FabricLocation(level, e.getX(), e.getY(), e.getZ());
+                        oldDistance = newDistance;
+                    }
+                }
+                if (nearest != null) {
+                    targetLocation = nearest;
+                }
             }
-        }
-        quester.setCompassTarget(this);
+            if (targetLocation != null && targetLocation.getWorld() != null) {
+                final ServerPlayer player = q.getPlayer();
+                if (player == null) {
+                    return;
+                }
+                if (targetLocation.getWorld().dimension().identifier()
+                        .equals(player.level().dimension().identifier())) {
+                    final FabricLocation lockedTarget = new FabricLocation(targetLocation.getWorld(),
+                            targetLocation.getX(), targetLocation.getY(), targetLocation.getZ());
+                    final FabricQuestUpdateCompassEvent event
+                            = new FabricQuestUpdateCompassEvent(quest, q, lockedTarget);
+                    FabricQuestUpdateCompassEvent.EVENT.invoker().onEvent(event);
+                    if (event.isCancelled()) {
+                        return;
+                    }
+                    q.setCompassTarget(this);
+                    q.setPlayerCompass(lockedTarget);
+                }
+            }
+        }, 1L);
         return true;
     }
 
-    @Override
+    /**
+     * Format GUI display item with applicable display name, lore, and item flags
+     *
+     * @param quester The quester to prepare for
+     * @return formatted item
+     */
+    public ItemStack prepareDisplay(final FabricQuester quester) {
+        final ItemStack display = getGUIDisplay().copy();
+        final ServerPlayer player = quester.getPlayer();
+        final String displayName;
+        if (quester.getCompletedQuests().contains(this)) {
+            displayName = ChatFormatting.DARK_PURPLE + FabricConfigUtil.parseString(getName()
+                    + " " + ChatFormatting.GREEN + FabricLang.get(player, "redoCompleted"), this);
+        } else {
+            displayName = ChatFormatting.DARK_PURPLE + FabricConfigUtil.parseString(getName(), this);
+        }
+        display.set(DataComponents.CUSTOM_NAME, Component.literal(displayName));
+        if (display.get(DataComponents.LORE) == null) {
+            String description = getDescription();
+            if (description != null && !description.isEmpty()) {
+                if (plugin.getDependencies().getPlaceholderApi() != null) {
+                    description = FabricPlaceholderSupport.setPlaceholders(player, description);
+                }
+                final LinkedList<String> lines;
+                if (description.equals(ChatFormatting.stripFormatting(description))) {
+                    lines = FabricMiscUtil.makeLines(description, " ", 40, ChatFormatting.DARK_GREEN);
+                } else {
+                    lines = FabricMiscUtil.makeLines(description, " ", 40, null);
+                }
+                final LinkedList<Component> lore = new LinkedList<>();
+                for (final String line : lines) {
+                    lore.add(Component.literal(line));
+                }
+                display.set(DataComponents.LORE, new ItemLore(lore));
+            }
+        }
+        return display;
+    }
+
+    /**
+     * Check that a quester has met all Requirements to accept this quest<p>
+     *
+     * Item, experience, permission and custom Requirements are only checked for online players
+     *
+     * @param quester The quester to check
+     * @return true if all Requirements have been met
+     */
     public boolean testRequirements(final Quester quester) {
         if (quester == null || requirements == null) return false;
 

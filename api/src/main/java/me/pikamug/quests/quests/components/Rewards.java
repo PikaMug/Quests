@@ -44,30 +44,6 @@ public interface Rewards {
 
     List<?> getItems();
 
-    List<String> getMcmmoSkills();
-
-    void setMcmmoSkills(final List<String> mcmmoSkills);
-
-    List<Integer> getMcmmoAmounts();
-
-    void setMcmmoAmounts(final List<Integer> mcmmoAmounts);
-
-    List<String> getHeroesClasses();
-
-    void setHeroesClasses(final List<String> heroesClasses);
-
-    List<Double> getHeroesAmounts();
-
-    void setHeroesAmounts(final List<Double> heroesAmounts);
-
-    int getPartiesExperience();
-
-    void setPartiesExperience(final int partiesExperience);
-
-    List<String> getPhatLoots();
-
-    void setPhatLoots(final List<String> phatLoots);
-
     Map<String, Map<String, Object>> getCustomRewards();
 
     void setCustomRewards(final Map<String, Map<String, Object>> customRewards);

@@ -266,6 +266,9 @@ public class BukkitQuest implements Quest {
      */
     public void nextStage(final Quester quester, final boolean allowSharedProgress) {
         final BukkitQuester q = (BukkitQuester) quester;
+        if (q.getPlayer() == null) {
+            return;
+        }
         final Stage currentStage = q.getCurrentStage(this);
         if (currentStage == null) {
             plugin.getLogger().severe("Current stage was null for quester " + q.getPlayer().getUniqueId());
@@ -361,6 +364,9 @@ public class BukkitQuest implements Quest {
         updateCompass(quester, nextStage);
         if (player.isOnline()) {
             final Player p = q.getPlayer();
+            if (p == null) {
+                return;
+            }
             final String title = BukkitLang.get(p, "objectives").replace("<quest>", name);
             BukkitLang.send(p, ChatColor.GOLD + title);
             quester.showCurrentObjectives(this, quester, false);
@@ -565,14 +571,14 @@ public class BukkitQuest implements Quest {
             }
             if (!meta.hasLore()) {
                 final LinkedList<String> lines;
-                String desc = getDescription();
+                String description = getDescription();
                 if (plugin.getDependencies().getPlaceholderApi() != null) {
-                    desc = PlaceholderAPI.setPlaceholders(player, desc);
+                    description = PlaceholderAPI.setPlaceholders(player, description);
                 }
-                if (desc.equals(ChatColor.stripColor(desc))) {
-                    lines = BukkitMiscUtil.makeLines(desc, " ", 40, ChatColor.DARK_GREEN);
+                if (description.equals(ChatColor.stripColor(description))) {
+                    lines = BukkitMiscUtil.makeLines(description, " ", 40, ChatColor.DARK_GREEN);
                 } else {
-                    lines = BukkitMiscUtil.makeLines(desc, " ", 40, null);
+                    lines = BukkitMiscUtil.makeLines(description, " ", 40, null);
                 }
                 meta.setLore(lines);
             }

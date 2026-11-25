@@ -44,22 +44,6 @@ public interface Requirements {
 
     void setPermissions(final List<String> permissions);
 
-    List<String> getMcmmoSkills();
-
-    void setMcmmoSkills(final List<String> mcmmoSkills);
-
-    List<Integer> getMcmmoAmounts();
-
-    void setMcmmoAmounts(final List<Integer> mcmmoAmounts);
-
-    String getHeroesPrimaryClass();
-
-    void setHeroesPrimaryClass(final String heroesPrimaryClass);
-
-    String getHeroesSecondaryClass();
-
-    void setHeroesSecondaryClass(final String heroesSecondaryClass);
-
     Map<String, Map<String, Object>> getCustomRequirements();
 
     void setCustomRequirements(final Map<String, Map<String, Object>> customRequirements);

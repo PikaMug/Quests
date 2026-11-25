@@ -107,7 +107,7 @@ public class FabricBlockListener {
                 quester.firePostUpdateObjective(quest, ObjectiveType.DAMAGE_BLOCK, i);
                 if (before < goal && progress.getBlocksDamaged().get(i) >= goal) {
                     quester.finishObjective(quest, new FabricObjective(ObjectiveType.DAMAGE_BLOCK, null,
-                            progress.getBlocksDamaged().get(i), goal, stage.getBlocksToDamage().get(i)), i);
+                            progress.getBlocksDamaged().get(i), stage.getBlocksToDamage().get(i)), i);
                 }
                 quester.checkQuest(quest);
             }
@@ -175,7 +175,7 @@ public class FabricBlockListener {
                 quester.firePostUpdateObjective(quest, ObjectiveType.BREAK_BLOCK, i);
                 if (before < goal && progress.getBlocksBroken().get(i) >= goal) {
                     quester.finishObjective(quest, new FabricObjective(ObjectiveType.BREAK_BLOCK, null,
-                            progress.getBlocksBroken().get(i), goal, stage.getBlocksToBreak().get(i)), i);
+                            progress.getBlocksBroken().get(i), stage.getBlocksToBreak().get(i)), i);
                 }
                 quester.checkQuest(quest);
             }
@@ -253,7 +253,7 @@ public class FabricBlockListener {
                 quester.firePostUpdateObjective(quest, ObjectiveType.PLACE_BLOCK, i);
                 if (before < goal && progress.getBlocksPlaced().get(i) >= goal) {
                     quester.finishObjective(quest, new FabricObjective(ObjectiveType.PLACE_BLOCK, null,
-                            progress.getBlocksPlaced().get(i), goal, stage.getBlocksToPlace().get(i)), i);
+                            progress.getBlocksPlaced().get(i), stage.getBlocksToPlace().get(i)), i);
                 }
                 quester.checkQuest(quest);
             }
@@ -393,7 +393,7 @@ public class FabricBlockListener {
                 quester.firePostUpdateObjective(quest, ObjectiveType.USE_BLOCK, i);
                 if (before < goal && progress.getBlocksUsed().get(i) >= goal) {
                     quester.finishObjective(quest, new FabricObjective(ObjectiveType.USE_BLOCK, null,
-                            progress.getBlocksUsed().get(i), goal, stage.getBlocksToUse().get(i)), i);
+                            progress.getBlocksUsed().get(i), stage.getBlocksToUse().get(i)), i);
                 }
                 quester.checkQuest(quest);
             }

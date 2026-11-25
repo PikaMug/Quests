@@ -19,6 +19,7 @@ import me.pikamug.quests.convo.misc.FabricQuestAcceptPrompt;
 import me.pikamug.quests.dependencies.FabricDependencies;
 import me.pikamug.quests.dependencies.FabricPlaceholderSupport;
 import me.pikamug.quests.dependencies.npc.FabricNpcDependency;
+import me.pikamug.quests.entity.FabricCountableMob;
 import me.pikamug.quests.enums.ObjectiveType;
 import me.pikamug.quests.events.quest.FabricQuestQuitEvent;
 import me.pikamug.quests.events.quest.FabricQuestTakeEvent;
@@ -1453,7 +1454,8 @@ public class FabricQuester implements Quester {
             if (formatNames) {
                 message = message.replace("<mob>", FabricMiscUtil.getPrettyMobName(e));
             }
-            objectives.add(new FabricObjective(ObjectiveType.KILL_MOB, message, progress, goal, e));
+            objectives.add(new FabricObjective(ObjectiveType.KILL_MOB, message,
+                    new FabricCountableMob(e, progress), new FabricCountableMob(e, goal)));
             mobKillIndex++;
         }
         int tameIndex = 0;
@@ -1479,7 +1481,8 @@ public class FabricQuester implements Quester {
                 message = message.replace("<mob>", FabricMiscUtil.getPrettyMobName(
                         stage.getMobsToTame().get(tameIndex)));
             }
-            objectives.add(new FabricObjective(ObjectiveType.TAME_MOB, message, progress, goal, e));
+            objectives.add(new FabricObjective(ObjectiveType.TAME_MOB, message,
+                    new FabricCountableMob(e, progress), new FabricCountableMob(e, goal)));
             tameIndex++;
         }
         if (stage.getFishToCatch() != null) {
@@ -1685,9 +1688,9 @@ public class FabricQuester implements Quester {
             String message = "- " + FabricLang.convertString(obj.getMessage());
             if (obj.getGoalObject() instanceof ItemStack) {
                 message = message.replace("<item>", FabricItemUtil.getName((ItemStack) obj.getGoalObject()));
-            } else if (obj.getType() == ObjectiveType.KILL_MOB || obj.getType() == ObjectiveType.TAME_MOB) {
+            } else if (obj.getGoalObject() instanceof FabricCountableMob) {
                 message = message.replace("<mob>", FabricMiscUtil.getPrettyMobName(
-                        (EntityType<?>) obj.getGoalObject()));
+                        ((FabricCountableMob) obj.getGoalObject()).getEntityType()));
             }
             if (obj.getType() == ObjectiveType.CUSTOM) {
                 message = message.trim().replaceAll("\\s{2,}", "");
@@ -2856,7 +2859,8 @@ public class FabricQuester implements Quester {
         return questProgress;
     }
 
-    //TODO - this method should not exist
+    //TODO - methods below this line should not exist
+
     public void setHasData(final boolean hasData) {
         this.hasData = hasData;
     }
@@ -2994,6 +2998,20 @@ public class FabricQuester implements Quester {
                 break;
         }
         return new ChestMenu(type, id, inventory, container, rows);
+    }
+
+    public void setPlayerCompass(final FabricLocation location) {
+        if (location == null || location.getWorld() == null) {
+            return;
+        }
+        final ServerPlayer player = getPlayer();
+        if (player == null) {
+            return;
+        }
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetDefaultSpawnPositionPacket(
+                net.minecraft.world.level.storage.LevelData.RespawnData.of(
+                        location.getWorld().dimension(), location.getBlockPos(), location.getYaw(),
+                        location.getPitch())));
     }
 
     /** Point the player's compass at the first location of the given stage that has not been reached yet. */

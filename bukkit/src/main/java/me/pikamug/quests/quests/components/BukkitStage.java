@@ -714,9 +714,6 @@ public class BukkitStage implements Stage {
         if (!blocksToPlace.isEmpty()) { return true; }
         if (!blocksToUse.isEmpty()) { return true; }
         if (!blocksToCut.isEmpty()) { return true; }
-        if (cowsToMilk != null) { return true; }
-        if (fishToCatch != null) { return true; }
-        if (playersToKill != null) { return true; }
         if (!itemsToCraft.isEmpty()) { return true; }
         if (!itemsToSmelt.isEmpty()) { return true; }
         if (!itemsToEnchant.isEmpty()) { return true; }
@@ -725,10 +722,13 @@ public class BukkitStage implements Stage {
         if (!itemsToDeliver.isEmpty()) { return true; }
         if (!npcsToInteract.isEmpty()) { return true; }
         if (!npcsToKill.isEmpty()) { return true; }
-        if (!locationsToReach.isEmpty()) { return true; }
-        if (!mobsToKill.isEmpty()) {return true; }
+        if (!mobsToKill.isEmpty()) { return true; }
         if (!mobsToTame.isEmpty()) { return true; }
+        if (cowsToMilk != null) { return true; }
+        if (fishToCatch != null) { return true; }
         if (!sheepToShear.isEmpty()) { return true; }
+        if (playersToKill != null) { return true; }
+        if (!locationsToReach.isEmpty()) { return true; }
         if (!passwordDisplays.isEmpty()) { return true; }
         return !customObjectives.isEmpty();
     }

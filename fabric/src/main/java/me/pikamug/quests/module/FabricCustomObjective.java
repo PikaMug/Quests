@@ -198,7 +198,7 @@ public class FabricCustomObjective implements CustomObjective {
                         if (old < indexGoal && customObjCounts.get(index) >= indexGoal) {
                             ((FabricQuester) quester).finishObjective(quest, new FabricObjective(
                                     me.pikamug.quests.enums.ObjectiveType.CUSTOM, null,
-                                    customObjCounts.get(index), indexGoal, null), index);
+                                    customObjCounts.get(index).intValue(), indexGoal), index);
                         }
                         break;
                     }
@@ -222,7 +222,7 @@ public class FabricCustomObjective implements CustomObjective {
                             final int old = qProgress.getCustomObjectiveCounts().get(finalIndex);
                             qProgress.getCustomObjectiveCounts().set(finalIndex, old + count);
                             ((FabricQuester) q).finishObjective(quest, new FabricObjective(
-                                    me.pikamug.quests.enums.ObjectiveType.CUSTOM, null, progress, goal, null),
+                                    me.pikamug.quests.enums.ObjectiveType.CUSTOM, null, progress, goal),
                                     finalIndex);
                             q.checkQuest(quest);
                             return null;

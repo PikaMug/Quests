@@ -92,7 +92,7 @@ public class FabricPlayerMoveThread implements Runnable {
                         quester.firePreUpdateObjective(quest, ObjectiveType.REACH_LOCATION, i);
                         progress.getLocationsReached().set(i, true);
                         quester.firePostUpdateObjective(quest, ObjectiveType.REACH_LOCATION, i);
-                        quester.finishObjective(quest, new FabricObjective(ObjectiveType.REACH_LOCATION, null, 1, 1, null), i);
+                        quester.finishObjective(quest, new FabricObjective(ObjectiveType.REACH_LOCATION, null, 1, 1), i);
                         changed = true;
                     }
                 }

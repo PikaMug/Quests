@@ -201,7 +201,7 @@ public class FabricQuestJsonStorage implements QuestStorageImpl {
                 final FabricStage stage = parseStage(stageJson);
                 stages.add(stage);
             }
-            quest.setOrderedStages(stages);
+            quest.getStages().addAll(stages);
         }
         return quest;
     }

@@ -112,7 +112,7 @@ public class FabricChatListener {
             quester.firePreUpdateObjective(quest, ObjectiveType.PASSWORD, index);
             progress.getPasswordsSaid().set(index, true);
             quester.firePostUpdateObjective(quest, ObjectiveType.PASSWORD, index);
-            quester.finishObjective(quest, new FabricObjective(ObjectiveType.PASSWORD, null, 1, 1, null), index);
+            quester.finishObjective(quest, new FabricObjective(ObjectiveType.PASSWORD, null, 1, 1), index);
         }
         quester.checkQuest(quest);
     }
